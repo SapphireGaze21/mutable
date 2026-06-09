@@ -1023,12 +1023,12 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                                                     (ptr + static_byte_offset).template to<uint8_t*>(); // compute byte address
                                                 setbit<U8x1>(byte_ptr, is_null, static_bit_offset); // update bit
                                             } else {
-                                                auto store = [&, is_null, layout_idx]<typename U>() { // copy due to structured binding
+                                                auto store = [&, layout_idx]<typename U>() { // C++20: structured bindings capturable by ref via [&]
                                                     using type = typename U::type;
                                                     static constexpr std::size_t lanes = U::num_simd_lanes;
                                                     Ptr<U> bytes_ptr =
                                                         (ptr + leaf_info.offset_in_bits / 8).template to<type*, lanes>(); // compute bytes address
-                                                    setbit<U>(bytes_ptr, is_null, layout_idx); // update bits
+                                                    setbit<U>(bytes_ptr, std::move(is_null), layout_idx); // update bits
                                                 };
                                                 switch (ceil_to_pow_2(tuple_value_schema.num_entries())) {
                                                     default: store.template operator()<U8 <L>>(); break; // <= 8

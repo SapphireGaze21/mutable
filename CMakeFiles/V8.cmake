@@ -25,6 +25,14 @@ if(APPLE)
     get_filename_component(CLANG_BASE_PATH "${CLANG_DIR}/.." ABSOLUTE)
     message("[V8] Setting Clang base path to ${CLANG_BASE_PATH}")
     set(V8_BUILD_ARGS "${V8_BUILD_ARGS} clang_base_path=\"${CLANG_BASE_PATH}\"")
+    # Use current macOS SDK deployment target; 10.13 is incompatible with
+    # the macOS 15.5 SDK's __DARWIN_ALIAS_STARTING availability macros.
+    set(V8_BUILD_ARGS "${V8_BUILD_ARGS} mac_deployment_target=\"15.0\"")
+    # zlib's zutil.h redefines fdopen as NULL on TARGET_OS_MAC (old Mac OS compat)
+    # then includes <stdio.h> which tries to declare FILE *fdopen(...), causing a
+    # parse error because fdopen is already a macro. Defining fdopen=fdopen (identity
+    # macro) causes #ifndef fdopen to be false, skipping the broken redefinition.
+    set(V8_BUILD_ARGS "${V8_BUILD_ARGS} extra_cflags=\"-Dfdopen=fdopen\"")
 endif()
 
 if(${BUILD_SHARED_LIBS})
@@ -60,11 +68,26 @@ ExternalProject_Add(
     COMMAND cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" && git remote add mutable "https://gitlab.cs.uni-saarland.de/bigdata/mutable/v8.git" || true
     COMMAND cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" && git fetch mutable
     COMMAND cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" && git checkout adfc01872f43132c74bbd2182b127ad6f462f2c1
-    UPDATE_COMMAND cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" && env DEPOT_TOOLS_UPDATE=0 "${DEPOT_TOOLS_GCLIENT}" sync
-    COMMAND        cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" && env DEPOT_TOOLS_UPDATE=0 "${DEPOT_TOOLS_GCLIENT}" sync -D -f
+    UPDATE_COMMAND /bin/sh -c "git -C '${CMAKE_SOURCE_DIR}/third-party/v8/v8/third_party/zlib' checkout -- . 2>/dev/null; true"
+    COMMAND        /bin/sh -c "cd '${CMAKE_SOURCE_DIR}/third-party/v8/v8/' && env DEPOT_TOOLS_UPDATE=0 '${DEPOT_TOOLS_GCLIENT}' sync --nohooks"
+    COMMAND        /bin/sh -c "git -C '${CMAKE_SOURCE_DIR}/third-party/v8/v8/third_party/zlib' checkout -- . 2>/dev/null; true"
+    COMMAND        /bin/sh -c "cd '${CMAKE_SOURCE_DIR}/third-party/v8/v8/' && env DEPOT_TOOLS_UPDATE=0 '${DEPOT_TOOLS_GCLIENT}' sync -D -f --nohooks"
+    COMMAND        python3 -c "p='${CMAKE_SOURCE_DIR}/third-party/v8/v8/third_party/zlib/zutil.h'; c=open(p).read(); open(p,'w').write(c.replace('#        define fdopen(fd,mode) NULL /* No fdopen() */','/* fdopen() is available on macOS */\n/*       define fdopen(fd,mode) NULL */')) if '#        define fdopen(fd,mode) NULL /* No fdopen() */' in c else None"
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory "${V8_BINARY_DIR}" &&
+                      ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/xcode-shims" &&
+                      ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/xcode-dev/Platforms/MacOSX.platform/Developer/SDKs" &&
+                      ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/xcode-dev/Toolchains/XcodeDefault.xctoolchain/usr" &&
+                      printf "#!/bin/sh\\necho 'Xcode 16.4'\\necho 'Build version 16E6014f'\\n" > "${CMAKE_BINARY_DIR}/xcode-shims/xcodebuild" &&
+                      chmod +x "${CMAKE_BINARY_DIR}/xcode-shims/xcodebuild" &&
+                      printf "#!/bin/sh\\necho '${CMAKE_BINARY_DIR}/xcode-dev'\\n" > "${CMAKE_BINARY_DIR}/xcode-shims/xcode-select" &&
+                      chmod +x "${CMAKE_BINARY_DIR}/xcode-shims/xcode-select" &&
+                      rm -f "${CMAKE_BINARY_DIR}/xcode-dev/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk" &&
+                      ln -sf /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk "${CMAKE_BINARY_DIR}/xcode-dev/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk" &&
+                      rm -rf "${CMAKE_BINARY_DIR}/xcode-dev/Toolchains/XcodeDefault.xctoolchain/usr/bin" &&
+                      ln -sf /Library/Developer/CommandLineTools/usr/bin "${CMAKE_BINARY_DIR}/xcode-dev/Toolchains/XcodeDefault.xctoolchain/usr/bin" &&
+
                       cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" &&
-                      PATH=${DEPOT_TOOLS_PATH}:$ENV{PATH} third_party/depot_tools/gn gen "${V8_BINARY_DIR}" --root=${CMAKE_SOURCE_DIR}/third-party/v8/v8 --args=${V8_BUILD_ARGS}
+                      PATH=${CMAKE_BINARY_DIR}/xcode-shims:${DEPOT_TOOLS_PATH}:$ENV{PATH} "${DEPOT_TOOLS_GN}" gen "${V8_BINARY_DIR}" --root=${CMAKE_SOURCE_DIR}/third-party/v8/v8 --args=${V8_BUILD_ARGS}
     CONFIGURE_HANDLED_BY_BUILD true
     BUILD_BYPRODUCTS ${V8_BUILD_BYPRODUCTS}
     BUILD_COMMAND cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" &&

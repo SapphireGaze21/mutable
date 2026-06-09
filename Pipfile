@@ -13,8 +13,7 @@ jupyter = "*"
 matplotlib = "*"
 numpy = "*"
 pandas = "*"
-psycopg2 = "*"
-Python-EasyGraph = "*"
+psycopg2-binary = "*"
 pyyaml = "*"
 scipy = "*"
 screeninfo = "*"
@@ -30,7 +29,7 @@ Wand = "*"
 yamale = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3"
 
 [dev-packages]
 mypy = "*"

@@ -281,12 +281,15 @@ if(APPLE)
         "UBSAN_OPTIONS=print_stacktrace=1"
         "ASAN_OPTIONS=detect_stack_use_after_return=1:detect_container_overflow=0"
         "MallocNanoZone=0"
+        "PIPENV_PYTHON=/opt/homebrew/bin/python3"
+        "PATH=/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
     )
 else()
     set(
         env
         "UBSAN_OPTIONS=print_stacktrace=1"
         "ASAN_OPTIONS=detect_stack_use_after_return=1"
+        "PIPENV_PYTHON=/opt/homebrew/bin/python3"
     )
 endif()
 
@@ -296,7 +299,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
         pipenv-sync
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         VERBATIM USES_TERMINAL
-        COMMAND pipenv sync
+        COMMAND ${CMAKE_COMMAND} -E env PIPENV_PYTHON=/opt/homebrew/bin/python3 pipenv sync
     )
 
     # Unit test target
