@@ -89,6 +89,7 @@ struct DPsize final : PlanEnumeratorCRTP<DPsize>
                     for (auto S2 = GospersHack::enumerate_all(s2, n); S2; ++S2) { // enumerate all subsets of size `s - s1`
                         if (not PT.has_plan(*S2)) continue; // subproblem S2 not connected -> skip
                         if (*S1 & *S2) continue; // subproblems not disjoint -> skip
+                        std::cout << "[DPsize] Checking disjoint pair " << *S1 << " and " << *S2 << std::endl;
                         if (not M.is_connected(*S1, *S2)) continue; // subproblems not connected -> skip
                         cnf::CNF condition; // TODO use join condition
                         PT.update(G, CE, CF, *S1, *S2, condition);
@@ -216,6 +217,7 @@ struct DPsub final : PlanEnumeratorCRTP<DPsub>
             if (not M.is_connected(S)) continue; // not connected -> skip
             for (Subproblem S1(least_subset(S)); S1 != S; S1 = Subproblem(next_subset(S1, S))) {
                 Subproblem S2 = S - S1;
+                std::cout << "[DPsub] Checking disjoint pair " << S1 << " and " << S2 << " to form " << S << std::endl;
                 M_insist(M.is_connected(S1, S2), "implied by S inducing a connected subgraph");
                 if (not PT.has_plan(S1)) continue; // not connected -> skip
                 if (not PT.has_plan(S2)) continue; // not connected -> skip
@@ -280,6 +282,7 @@ void DPccp::operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const 
     cnf::CNF condition; // TODO use join condition
 
     auto handle_CSG_pair = [&](const Subproblem left, const Subproblem right) {
+        std::cout << "[DPccp] Graph-based generator produced pair " << left << " and " << right << std::endl;
         PT.update(G, CE, CF, left, right, condition);
     };
 
