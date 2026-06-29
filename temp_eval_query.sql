@@ -1,19 +1,19 @@
 CREATE DATABASE tpcds_eval;
 USE tpcds_eval;
 
-CREATE TABLE catalog_returns(cr_returned_date_sk INT(4));
-CREATE TABLE catalog_sales(cs_sold_date_sk INT(4));
-CREATE TABLE customer(c_customer_sk INT(4));
-CREATE TABLE customer_address(ca_address_sk INT(4));
-CREATE TABLE customer_demographics(cd_demo_sk INT(4));
-CREATE TABLE date_dim(d_date_sk INT(4), d_year INT(4), d_moy INT(4));
-CREATE TABLE item(i_item_sk INT(4));
-CREATE TABLE store(s_store_sk INT(4));
-CREATE TABLE store_returns(sr_returned_date_sk INT(4));
-CREATE TABLE store_sales(ss_sold_date_sk INT(4));
-CREATE TABLE web_page(wp_web_page_sk INT(4));
-CREATE TABLE web_returns(wr_returned_date_sk INT(4));
-CREATE TABLE web_sales(ws_sold_date_sk INT(4));
+CREATE TABLE catalog_returns(cr_returned_date_sk INT(4), cr_returned_time_sk INT(4), cr_item_sk INT(4), cr_refunded_customer_sk INT(4), cr_refunded_cdemo_sk INT(4), cr_refunded_hdemo_sk INT(4), cr_refunded_addr_sk INT(4), cr_returning_customer_sk INT(4), cr_returning_cdemo_sk INT(4), cr_returning_hdemo_sk INT(4), cr_returning_addr_sk INT(4), cr_call_center_sk INT(4), cr_catalog_page_sk INT(4), cr_ship_mode_sk INT(4), cr_warehouse_sk INT(4), cr_reason_sk INT(4), cr_order_number INT(4), cr_return_quantity INT(4), cr_return_amount INT(4));
+CREATE TABLE catalog_sales(cs_sold_date_sk INT(4), cs_sold_time_sk INT(4), cs_ship_date_sk INT(4), cs_bill_customer_sk INT(4), cs_bill_cdemo_sk INT(4), cs_bill_hdemo_sk INT(4), cs_bill_addr_sk INT(4), cs_ship_customer_sk INT(4), cs_ship_cdemo_sk INT(4), cs_ship_hdemo_sk INT(4), cs_ship_addr_sk INT(4), cs_call_center_sk INT(4), cs_catalog_page_sk INT(4), cs_ship_mode_sk INT(4), cs_warehouse_sk INT(4), cs_item_sk INT(4), cs_promo_sk INT(4), cs_order_number INT(4), cs_quantity INT(4), cs_wholesale_cost INT(4));
+CREATE TABLE customer(c_customer_sk INT(4), c_current_cdemo_sk INT(4), c_current_hdemo_sk INT(4), c_current_addr_sk INT(4), c_first_shipto_date_sk INT(4), c_first_sales_date_sk INT(4), c_birth_day INT(4), c_birth_month INT(4), c_birth_year INT(4), c_last_review_date_sk INT(4));
+CREATE TABLE customer_address(ca_address_sk INT(4), ca_gmt_offset INT(4));
+CREATE TABLE customer_demographics(cd_demo_sk INT(4), cd_purchase_estimate INT(4), cd_dep_count INT(4), cd_dep_employed_count INT(4), cd_dep_college_count INT(4));
+CREATE TABLE date_dim(d_date_sk INT(4), d_date INT(4), d_month_seq INT(4), d_week_seq INT(4), d_quarter_seq INT(4), d_year INT(4), d_dow INT(4), d_moy INT(4), d_dom INT(4), d_qoy INT(4), d_fy_year INT(4), d_fy_quarter_seq INT(4), d_fy_week_seq INT(4), d_first_dom INT(4), d_last_dom INT(4), d_same_day_ly INT(4), d_same_day_lq INT(4));
+CREATE TABLE item(i_item_sk INT(4), i_rec_start_date INT(4), i_rec_end_date INT(4), i_current_price INT(4));
+CREATE TABLE store(s_store_sk INT(4), s_rec_start_date INT(4), s_rec_end_date INT(4), s_closed_date_sk INT(4), s_number_employees INT(4), s_floor_space INT(4), s_market_id INT(4), s_division_id INT(4), s_company_id INT(4), s_gmt_offset INT(4));
+CREATE TABLE store_returns(sr_returned_date_sk INT(4), sr_return_time_sk INT(4), sr_item_sk INT(4), sr_customer_sk INT(4), sr_cdemo_sk INT(4), sr_hdemo_sk INT(4), sr_addr_sk INT(4), sr_store_sk INT(4), sr_reason_sk INT(4), sr_ticket_number INT(4), sr_return_quantity INT(4), sr_return_amt INT(4));
+CREATE TABLE store_sales(ss_sold_date_sk INT(4), ss_sold_time_sk INT(4), ss_item_sk INT(4), ss_customer_sk INT(4), ss_cdemo_sk INT(4), ss_hdemo_sk INT(4), ss_addr_sk INT(4), ss_store_sk INT(4), ss_promo_sk INT(4), ss_ticket_number INT(4), ss_quantity INT(4), ss_wholesale_cost INT(4));
+CREATE TABLE web_page(wp_web_page_sk INT(4), wp_rec_start_date INT(4), wp_rec_end_date INT(4), wp_creation_date_sk INT(4), wp_access_date_sk INT(4), wp_customer_sk INT(4), wp_char_count INT(4), wp_link_count INT(4), wp_image_count INT(4), wp_max_ad_count INT(4));
+CREATE TABLE web_returns(wr_returned_date_sk INT(4), wr_returned_time_sk INT(4), wr_item_sk INT(4), wr_refunded_customer_sk INT(4), wr_refunded_cdemo_sk INT(4), wr_refunded_hdemo_sk INT(4), wr_refunded_addr_sk INT(4), wr_returning_customer_sk INT(4), wr_returning_cdemo_sk INT(4), wr_returning_hdemo_sk INT(4), wr_returning_addr_sk INT(4), wr_web_page_sk INT(4), wr_reason_sk INT(4), wr_order_number INT(4), wr_return_quantity INT(4), wr_return_amt INT(4));
+CREATE TABLE web_sales(ws_sold_date_sk INT(4), ws_sold_time_sk INT(4), ws_ship_date_sk INT(4), ws_item_sk INT(4), ws_bill_customer_sk INT(4), ws_bill_cdemo_sk INT(4), ws_bill_hdemo_sk INT(4), ws_bill_addr_sk INT(4), ws_ship_customer_sk INT(4), ws_ship_cdemo_sk INT(4), ws_ship_hdemo_sk INT(4), ws_ship_addr_sk INT(4), ws_web_page_sk INT(4), ws_web_site_sk INT(4), ws_ship_mode_sk INT(4), ws_warehouse_sk INT(4), ws_promo_sk INT(4), ws_order_number INT(4), ws_quantity INT(4), ws_wholesale_cost INT(4));
 
 IMPORT INTO catalog_returns DSV "benchmark/tpcds/data/csvs/lean_catalog_returns.csv" DELIMITER "," HAS HEADER SKIP HEADER;
 IMPORT INTO catalog_sales DSV "benchmark/tpcds/data/csvs/lean_catalog_sales.csv" DELIMITER "," HAS HEADER SKIP HEADER;
@@ -27,4 +27,11 @@ IMPORT INTO store_returns DSV "benchmark/tpcds/data/csvs/lean_store_returns.csv"
 IMPORT INTO store_sales DSV "benchmark/tpcds/data/csvs/lean_store_sales.csv" DELIMITER "," HAS HEADER SKIP HEADER;
 IMPORT INTO web_page DSV "benchmark/tpcds/data/csvs/lean_web_page.csv" DELIMITER "," HAS HEADER SKIP HEADER;
 IMPORT INTO web_returns DSV "benchmark/tpcds/data/csvs/lean_web_returns.csv" DELIMITER "," HAS HEADER SKIP HEADER;
-IMPORT INTO web_sales DSV "benchmark/tpcds/data/csvs/lean_web_sales.csv" DELIMITER "," HAS HEADER SKIP HEADER; SELECT * FROM web_sales, item, date_dim WHERE ws_item_sk = i_item_sk AND ws_sold_date_sk = d_date_sk;
+IMPORT INTO web_sales DSV "benchmark/tpcds/data/csvs/lean_web_sales.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+SELECT * FROM web_sales, item, date_dim WHERE ws_item_sk = i_item_sk AND ws_sold_date_sk = d_date_sk;
+SELECT * FROM catalog_sales, customer, customer_address, date_dim WHERE cs_bill_customer_sk = c_customer_sk AND c_current_addr_sk = ca_address_sk AND cs_sold_date_sk = d_date_sk AND d_qoy = 1 AND d_year = 1998;
+SELECT * FROM store_sales, date_dim d1, item, store WHERE d1.d_year = 1998 AND d1.d_date_sk = ss_sold_date_sk AND i_item_sk = ss_item_sk AND s_store_sk = ss_store_sk;
+SELECT * FROM store_sales, customer_demographics, date_dim, store, item WHERE ss_sold_date_sk = d_date_sk AND ss_item_sk = i_item_sk AND ss_store_sk = s_store_sk AND ss_cdemo_sk = cd_demo_sk AND d_year = 1998;
+SELECT * FROM store_sales, date_dim, item, customer, catalog_sales, web_sales WHERE ss_sold_date_sk = d_date_sk AND ss_item_sk = i_item_sk AND ss_customer_sk = c_customer_sk AND d_year = 1998 AND d_moy = 1 AND cs_sold_date_sk = d_date_sk AND ws_sold_date_sk = d_date_sk AND cs_bill_customer_sk = c_customer_sk AND ws_bill_customer_sk = c_customer_sk;
+SELECT * FROM store_sales, store_returns, catalog_sales, date_dim d1, date_dim d2, date_dim d3, store, item WHERE d1.d_moy = 4 AND d1.d_year = 1998 AND d1.d_date_sk = ss_sold_date_sk AND i_item_sk = ss_item_sk AND s_store_sk = ss_store_sk AND ss_customer_sk = sr_customer_sk AND ss_item_sk = sr_item_sk AND ss_ticket_number = sr_ticket_number AND sr_returned_date_sk = d2.d_date_sk AND d2.d_year = 1998 AND sr_customer_sk = cs_bill_customer_sk AND sr_item_sk = cs_item_sk AND cs_sold_date_sk = d3.d_date_sk AND d3.d_year = 1998;
+SELECT * FROM store_sales, date_dim, store, store_returns, catalog_sales, catalog_returns, web_sales, web_page, web_returns WHERE ss_sold_date_sk = d_date_sk AND ss_store_sk = s_store_sk AND sr_returned_date_sk = d_date_sk AND sr_store_sk = s_store_sk AND cs_sold_date_sk = d_date_sk AND cr_returned_date_sk = d_date_sk AND ws_sold_date_sk = d_date_sk AND ws_web_page_sk = wp_web_page_sk AND wr_returned_date_sk = d_date_sk AND wr_web_page_sk = wp_web_page_sk;

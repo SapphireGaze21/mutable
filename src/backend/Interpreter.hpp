@@ -100,7 +100,7 @@ struct Block
         return iterator(*this, mask_ & (-1UL << index));
     }
     /** Returns an iterator to the tuple at index `index`. */
-    const_iterator at(std::size_t index) const { return const_cast<Block>(this)->at(index); }
+    const_iterator at(std::size_t index) const { return const_cast<Block*>(this)->at(index); }
 
     /** Check whether the tuple at the given `index` is alive. */
     bool alive(std::size_t index) const {

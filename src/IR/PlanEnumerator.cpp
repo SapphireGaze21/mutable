@@ -1,6 +1,7 @@
 #include <mutable/IR/PlanEnumerator.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <cstring>
 #include <execution>
 #include <functional>
@@ -82,6 +83,7 @@ struct DPsize final : PlanEnumeratorCRTP<DPsize>
         auto &CE = Catalog::Get().get_database_in_use().cardinality_estimator();
 
         /* Process all subplans of size greater than one. */
+        auto t_start = std::chrono::high_resolution_clock::now();
         for (std::size_t s = 2; s <= n; ++s) {
             for (std::size_t s1 = 1; s1 < s; ++s1) {
                 std::size_t s2 = s - s1;
@@ -101,8 +103,11 @@ struct DPsize final : PlanEnumeratorCRTP<DPsize>
                 }
             }
         }
+        auto t_end = std::chrono::high_resolution_clock::now();
+        auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
         std::cout << "EvaluatedCounter = "<< EvaluatedCounter << '\n';
         std::cout << "CCPCounter = "<< CCPCounter << '\n';
+        std::cout << "PlanningTime_us = " << elapsed_us << '\n';
     }
 };
 
@@ -130,6 +135,7 @@ struct DPsizeOpt final : PlanEnumeratorCRTP<DPsizeOpt>
         auto &CE = Catalog::Get().get_database_in_use().cardinality_estimator();
 
         /* Process all subplans of size greater than one. */
+        auto t_start = std::chrono::high_resolution_clock::now();
         for (std::size_t s = 2; s <= n; ++s) {
             std::size_t m = s / 2; // division with rounding down
             for (std::size_t s1 = 1; s1 <= m; ++s1) {
@@ -168,8 +174,11 @@ struct DPsizeOpt final : PlanEnumeratorCRTP<DPsizeOpt>
                 }
             }
         }
+        auto t_end = std::chrono::high_resolution_clock::now();
+        auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
         std::cout << "EvaluatedCounter = "<< EvaluatedCounter << '\n';
         std::cout << "CCPCounter = "<< CCPCounter << '\n';
+        std::cout << "PlanningTime_us = " << elapsed_us << '\n';
     }
 };
 
@@ -245,6 +254,7 @@ struct DPsub final : PlanEnumeratorCRTP<DPsub>
         }
     } */
 
+        auto t_start = std::chrono::high_resolution_clock::now();
         for (std::size_t i = 1, end = 1UL << n; i < end; ++i) {
             Subproblem S(i);
             if (S.size() == 1)
@@ -267,8 +277,11 @@ struct DPsub final : PlanEnumeratorCRTP<DPsub>
                 PT.update(G, CE, CF, S1, S2, condition);
             }
         }
+        auto t_end = std::chrono::high_resolution_clock::now();
+        auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
         std::cout << "EvaluatedCounter = "<< EvaluatedCounter << '\n';
         std::cout << "CCPCounter = "<< CCPCounter << '\n';
+        std::cout << "PlanningTime_us = " << elapsed_us << '\n';
     }
 };
 
@@ -325,14 +338,20 @@ void DPccp::operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const 
     const Subproblem All = SmallBitset::All(G.num_sources());
     cnf::CNF condition; // TODO use join condition
 
+    std::size_t CCPCounter = 0;
+    auto t_start = std::chrono::high_resolution_clock::now();
+
     auto handle_CSG_pair = [&](const Subproblem left, const Subproblem right) {
-        std::cout << "[DPccp] Graph-based generator produced pair " << left << " and " << right << std::endl;
+        ++CCPCounter;
         PT.update(G, CE, CF, left, right, condition);
     };
 
     M.for_each_CSG_pair_undirected(All, handle_CSG_pair);
-    std::cout<<"Done"<<std::endl;
-    std::cout<<"Done"<<std::endl;
+
+    auto t_end = std::chrono::high_resolution_clock::now();
+    auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
+    std::cout << "CCPCounter = " << CCPCounter << '\n';
+    std::cout << "PlanningTime_us = " << elapsed_us << '\n';
 }
 
 

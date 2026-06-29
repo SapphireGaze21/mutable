@@ -1,14 +1,213 @@
-Evaluating 7 Target TPCDS Queries with Real 300MB Dataset...
+Evaluating 7 Target TPCDS Queries with Real Data...
 
-[query12.sql] Testing with 3 tables...
-  -> Running DPsize...
-     Failed execution for DPsize!
+  -> Running DPsize (all queries in one pass)...
+  -> Running DPsizeOpt (all queries in one pass)...
+  -> Running DPsub (all queries in one pass)...
+  -> Running DPccp (all queries in one pass)...
 
-STDERR:
-Tuple CRASH: type=5 expected Vi
-/Users/thapan/mutable-org/mutable/include/mutable/IR/Tuple.hpp:87: Condition 'this->type == Vi' failed.
+[query12.sql] 3 tables
 
+[query15.sql] 4 tables
+
+[query36.sql] 4 tables
+
+[query27.sql] 5 tables
+
+[query23.sql] 6 tables
+
+[query25.sql] 8 tables
+
+[query77.sql] 9 tables
 
 ================================================================================
-TOPOLOGY REPORT AND EVALUATION WITH REAL DATA
+TOPOLOGY REPORT AND EVALUATION WITH REAL TPCDS DATA
 ================================================================================
+
+--- Chain: 3 Tables, 6 CSGs, 4 CCPs ---
+
+  Query: query12.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality:           YES
+  Algorithm Performance:
+    - DPsize    : Cost = 1000100000000.0     , Evaluated=24, CCP_Evaluated=8, PlanningTime=36µs
+    - DPsizeOpt : Cost = 1000100000000.0     , Evaluated=12, CCP_Evaluated=4, PlanningTime=18µs
+    - DPsub     : Cost = 1000100000000.0     , Evaluated=12, CCP_Evaluated=8, PlanningTime=26µs
+    - DPccp     : Cost = 1000100000000.0     , PlanningTime=59µs
+  -> DPsizeOpt saved 12 pair evaluations vs DPsize
+
+  Join Plan (DPsize):
+
+--- Chain: 4 Tables, 10 CSGs, 10 CCPs ---
+
+  Query: query15.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality:           NO
+  Algorithm Performance:
+    - DPsize    : Cost = 1e+16               , Evaluated=118, CCP_Evaluated=28, PlanningTime=35µs
+    - DPsizeOpt : Cost = 1e+16               , Evaluated=68, CCP_Evaluated=14, PlanningTime=25µs
+    - DPsub     : Cost = 1e+16               , Evaluated=62, CCP_Evaluated=28, PlanningTime=62µs
+    - DPccp     : Cost = 1e+16               , PlanningTime=55µs
+  -> DPsizeOpt saved 50 pair evaluations vs DPsize
+
+  Join Plan (DPsize):
+  ProjectionOperator
+  ` JoinOperator (ws_item_sk = i_item_sk)
+    ` ScanOperator (item AS item)
+    ` JoinOperator (ws_sold_date_sk = d_date_sk)
+      ` ScanOperator (web_sales AS web_sales)
+      ` ScanOperator (date_dim AS date_dim)
+  10 CSGs, 10 CCPs
+  EvaluatedCounter = 118
+  CCPCounter = 28
+  PlanningTime_us = 35
+
+--- Star: 4 Tables, 11 CSGs, 12 CCPs ---
+
+  Query: query36.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality:           NO
+  Algorithm Performance:
+    - DPsize    : Cost = 12001200000000.0    , Evaluated=216, CCP_Evaluated=52, PlanningTime=44µs
+    - DPsizeOpt : Cost = 12001200000000.0    , Evaluated=125, CCP_Evaluated=26, PlanningTime=27µs
+    - DPsub     : Cost = 12001200000000.0    , Evaluated=112, CCP_Evaluated=52, PlanningTime=74µs
+    - DPccp     : Cost = 12001200000000.0    , PlanningTime=65µs
+  -> DPsizeOpt saved 91 pair evaluations vs DPsize
+
+  Join Plan (DPsize):
+  ProjectionOperator
+  ` JoinOperator (cs_bill_customer_sk = c_customer_sk)
+    ` JoinOperator (c_current_addr_sk = ca_address_sk)
+      ` ScanOperator (customer AS customer)
+      ` ScanOperator (customer_address AS customer_address)
+    ` JoinOperator (cs_sold_date_sk = d_date_sk)
+      ` ScanOperator (catalog_sales AS catalog_sales)
+      ` FilterOperator ((d_year = 1998)) ^ ((d_qoy = 1))
+        ` ScanOperator (date_dim AS date_dim)
+  11 CSGs, 12 CCPs
+  EvaluatedCounter = 216
+  CCPCounter = 52
+  PlanningTime_us = 44
+
+--- Star: 5 Tables, 20 CSGs, 32 CCPs ---
+
+  Query: query27.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality:           NO
+  Algorithm Performance:
+    - DPsize    : Cost = 1.20012e+17         , Evaluated=576, CCP_Evaluated=116, PlanningTime=108µs
+    - DPsizeOpt : Cost = 1.20012e+17         , Evaluated=326, CCP_Evaluated=58, PlanningTime=61µs
+    - DPsub     : Cost = 1.20012e+17         , Evaluated=292, CCP_Evaluated=116, PlanningTime=187µs
+    - DPccp     : Cost = 1.20012e+17         , PlanningTime=118µs
+  -> DPsizeOpt saved 250 pair evaluations vs DPsize
+
+  Join Plan (DPsize):
+  ProjectionOperator
+  ` JoinOperator (d1.d_date_sk = ss_sold_date_sk)
+    ` FilterOperator (d1.d_year = 1998)
+      ` ScanOperator (date_dim AS d1)
+    ` JoinOperator (i_item_sk = ss_item_sk)
+      ` ScanOperator (item AS item)
+      ` JoinOperator (s_store_sk = ss_store_sk)
+        ` ScanOperator (store_sales AS store_sales)
+        ` ScanOperator (store AS store)
+  20 CSGs, 32 CCPs
+  EvaluatedCounter = 576
+  CCPCounter = 116
+  PlanningTime_us = 108
+
+--- Complex/Cyclic: 6 Tables, 40 CSGs, 113 CCPs ---
+
+  Query: query23.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality:           NO
+  Algorithm Performance:
+    - DPsize    : Cost = 2.00377e+18         , Evaluated=2031, CCP_Evaluated=342, PlanningTime=385µs
+    - DPsizeOpt : Cost = 2.00377e+18         , Evaluated=1090, CCP_Evaluated=171, PlanningTime=214µs
+    - DPsub     : Cost = 2.00377e+18         , Evaluated=894, CCP_Evaluated=342, PlanningTime=664µs
+    - DPccp     : Cost = 2.00377e+18         , PlanningTime=304µs
+  -> DPsizeOpt saved 941 pair evaluations vs DPsize
+
+  Join Plan (DPsize):
+  ProjectionOperator
+  ` JoinOperator (ss_cdemo_sk = cd_demo_sk)
+    ` ScanOperator (customer_demographics AS customer_demographics)
+    ` JoinOperator (ss_sold_date_sk = d_date_sk)
+      ` FilterOperator (d_year = 1998)
+        ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator (ss_item_sk = i_item_sk)
+        ` ScanOperator (item AS item)
+        ` JoinOperator (ss_store_sk = s_store_sk)
+          ` ScanOperator (store_sales AS store_sales)
+          ` ScanOperator (store AS store)
+  40 CSGs, 113 CCPs
+  EvaluatedCounter = 2031
+  CCPCounter = 342
+  PlanningTime_us = 385
+
+--- Complex/Cyclic: 8 Tables, 69 CSGs, 214 CCPs ---
+
+  Query: query25.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality:           NO
+  Algorithm Performance:
+    - DPsize    : Cost = 1.68524e+19         , Evaluated=11795, CCP_Evaluated=770, PlanningTime=1409µs
+    - DPsizeOpt : Cost = 1.68524e+19         , Evaluated=6911, CCP_Evaluated=385, PlanningTime=815µs
+    - DPsub     : Cost = 1.68524e+19         , Evaluated=6944, CCP_Evaluated=770, PlanningTime=3990µs
+    - DPccp     : Cost = 1.68524e+19         , PlanningTime=576µs
+  -> DPsizeOpt saved 4884 pair evaluations vs DPsize
+
+  Join Plan (DPsize):
+  ProjectionOperator
+  ` JoinOperator ((ws_sold_date_sk = d_date_sk)) ^ ((ss_customer_sk = c_customer_sk)) ^ ((cs_sold_date_sk = d_date_sk))
+    ` JoinOperator (ss_sold_date_sk = d_date_sk)
+      ` FilterOperator ((d_year = 1998)) ^ ((d_moy = 1))
+        ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator (ss_item_sk = i_item_sk)
+        ` ScanOperator (store_sales AS store_sales)
+        ` ScanOperator (item AS item)
+    ` JoinOperator (cs_bill_customer_sk = c_customer_sk)
+      ` ScanOperator (catalog_sales AS catalog_sales)
+      ` JoinOperator (ws_bill_customer_sk = c_customer_sk)
+        ` ScanOperator (customer AS customer)
+        ` ScanOperator (web_sales AS web_sales)
+  69 CSGs, 214 CCPs
+  EvaluatedCounter = 11795
+  CCPCounter = 770
+  PlanningTime_us = 1409
+
+--- Complex/Cyclic: 9 Tables, 210 CSGs, 988 CCPs ---
+
+  Query: query77.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality:           NO
+  Algorithm Performance:
+    - DPsize    : Cost = 1.53795e+19         , Evaluated=65819, CCP_Evaluated=2746, PlanningTime=7269µs
+    - DPsizeOpt : Cost = 1.53795e+19         , Evaluated=31848, CCP_Evaluated=1373, PlanningTime=3539µs
+    - DPsub     : Cost = 1.53795e+19         , Evaluated=25604, CCP_Evaluated=2746, PlanningTime=13662µs
+    - DPccp     : Cost = 1.53795e+19         , PlanningTime=2264µs
+  -> DPsizeOpt saved 33971 pair evaluations vs DPsize
+
+  Join Plan (DPsize):
+  ProjectionOperator
+  ` JoinOperator ((ss_ticket_number = sr_ticket_number)) ^ ((ss_item_sk = sr_item_sk)) ^ ((ss_customer_sk = sr_customer_sk))
+    ` JoinOperator ((sr_item_sk = cs_item_sk)) ^ ((sr_customer_sk = cs_bill_customer_sk))
+      ` JoinOperator (sr_returned_date_sk = d2.d_date_sk)
+        ` ScanOperator (store_returns AS store_returns)
+        ` FilterOperator (d2.d_year = 1998)
+          ` ScanOperator (date_dim AS d2)
+      ` JoinOperator (cs_sold_date_sk = d3.d_date_sk)
+        ` ScanOperator (catalog_sales AS catalog_sales)
+        ` FilterOperator (d3.d_year = 1998)
+          ` ScanOperator (date_dim AS d3)
+    ` JoinOperator (d1.d_date_sk = ss_sold_date_sk)
+      ` FilterOperator ((d1.d_year = 1998)) ^ ((d1.d_moy = 4))
+        ` ScanOperator (date_dim AS d1)
+      ` JoinOperator (i_item_sk = ss_item_sk)
+        ` ScanOperator (item AS item)
+        ` JoinOperator (s_store_sk = ss_store_sk)
+          ` ScanOperator (store_sales AS store_sales)
+          ` ScanOperator (store AS store)
+  210 CSGs, 988 CCPs
+  EvaluatedCounter = 65819
+  CCPCounter = 2746
+  PlanningTime_us = 7269

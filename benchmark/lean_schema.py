@@ -87,7 +87,9 @@ for tname in sorted(used_tables):
         next(reader)  # skip original header
         writer = csv_mod.writer(fout, lineterminator='\n')
         writer.writerow(lean_header)
-        for row in reader:
+        for row_num, row in enumerate(reader):
+            if row_num >= 10000:  # sample: fast import, real relative sizes
+                break
             lean_row = []
             for idx in lean_indices:
                 v = row[idx].strip() if idx < len(row) else ''

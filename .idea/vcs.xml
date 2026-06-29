@@ -35,5 +35,6 @@
     <mapping directory="$PROJECT_DIR$/third-party/v8/v8/third_party/protobuf" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/third-party/v8/v8/third_party/zlib" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/third-party/v8/v8/tools/clang" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tpcds queries/tpcds-kit" vcs="Git" />
   </component>
 </project>
