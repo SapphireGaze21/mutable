@@ -1,0 +1,1 @@
+SELECT * FROM web_sales, customer, customer_address, date_dim, item WHERE ws_bill_customer_sk = c_customer_sk AND c_current_addr_sk = ca_address_sk AND ws_item_sk = i_item_sk AND ws_sold_date_sk = d_date_sk AND d_qoy = 1 AND d_year = 1998;

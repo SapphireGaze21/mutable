@@ -1,0 +1,17 @@
+digraph plan
+{
+    forcelabels=true;
+    overlap=false;
+    rankdir=BT;
+    graph [compound=true];
+    graph [fontname = "DejaVu Sans"];
+    node [fontname = "DejaVu Sans"];
+    edge [fontname = "DejaVu Sans"];
+    "0x608000004520" [label=<<B>t1</B>>];
+    "0x6080000045a0" [label=<<B>t2</B>>];
+    "0x60c000006280" [label=<<B>⋈</B><SUB><FONT COLOR="0.0 0.0 0.25" POINT-SIZE="10">(t1.id = t2.id)</FONT></SUB>>];
+    "0x608000004520" -> "0x60c000006280";
+    "0x6080000045a0" -> "0x60c000006280";
+"0x60c000006340" [label=<<B>π</B><SUB><FONT COLOR="0.0 0.0 0.25" POINT-SIZE="10">t2.id, t1.id</FONT></SUB>>];
+"0x60c000006280" -> "0x60c000006340";
+}

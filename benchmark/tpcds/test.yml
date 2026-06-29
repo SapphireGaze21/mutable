@@ -1,0 +1,15 @@
+description: Dataset for graph experiments (TPCDS)
+suite: dataset_for_graph
+benchmark: dataset_for_graph
+name: TPCDS (moved DB)
+readonly: true
+database: benchmark/dataset_for_graph/data/tpcds.db
+data: {}
+systems:
+  DuckDB:
+    cases:
+      ShowTables: |
+        SELECT table_name FROM information_schema.tables WHERE table_schema='main';
+      PreviewAny: |
+        -- Replace TABLE_NAME with an actual table from the DB (e.g., store_sales)
+        SELECT * FROM "call_center" LIMIT 10;

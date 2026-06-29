@@ -1,0 +1,1 @@
+SELECT * FROM catalog_sales, warehouse, ship_mode, call_center, date_dim WHERE cs_ship_date_sk = d_date_sk AND cs_warehouse_sk = w_warehouse_sk AND cs_ship_mode_sk = sm_ship_mode_sk AND cs_call_center_sk = cc_call_center_sk;

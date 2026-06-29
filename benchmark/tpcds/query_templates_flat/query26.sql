@@ -1,0 +1,1 @@
+SELECT * FROM catalog_sales, customer_demographics, date_dim, item, promotion WHERE cs_sold_date_sk = d_date_sk AND cs_item_sk = i_item_sk AND cs_bill_cdemo_sk = cd_demo_sk AND cs_promo_sk = p_promo_sk AND (p_channel_email = "N" OR p_channel_event = "N") AND d_year = 1998;

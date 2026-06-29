@@ -1,0 +1,808 @@
+Evaluating TPCDS queries...
+
+[query10.sql] Testing with 7 tables...
+[query12.sql] Testing with 3 tables...
+[query15.sql] Testing with 4 tables...
+[query17.sql] Testing with 8 tables...
+[query18.sql] Testing with 7 tables...
+[query20.sql] Testing with 3 tables...
+[query21.sql] Testing with 4 tables...
+[query22.sql] Testing with 3 tables...
+[query23.sql] Testing with 6 tables...
+[query25.sql] Testing with 8 tables...
+[query26.sql] Testing with 5 tables...
+[query27.sql] Testing with 5 tables...
+[query29.sql] Testing with 8 tables...
+[query3.sql] Testing with 3 tables...
+[query30.sql] Testing with 4 tables...
+[query31.sql] Testing with 4 tables...
+[query32.sql] Testing with 3 tables...
+[query33.sql] Testing with 6 tables...
+[query34.sql] Testing with 5 tables...
+[query35.sql] Testing with 7 tables...
+[query36.sql] Testing with 4 tables...
+[query37.sql] Testing with 4 tables...
+[query38.sql] Testing with 5 tables...
+[query39.sql] Testing with 4 tables...
+[query40.sql] Testing with 5 tables...
+[query42.sql] Testing with 3 tables...
+[query43.sql] Testing with 3 tables...
+[query45.sql] Testing with 5 tables...
+[query49.sql] Testing with 7 tables...
+[query50.sql] Testing with 5 tables...
+[query52.sql] Testing with 3 tables...
+[query53.sql] Testing with 4 tables...
+[query55.sql] Testing with 3 tables...
+[query56.sql] Testing with 6 tables...
+[query58.sql] Testing with 5 tables...
+[query60.sql] Testing with 6 tables...
+[query61.sql] Testing with 7 tables...
+[query62.sql] Testing with 5 tables...
+[query63.sql] Testing with 4 tables...
+[query66.sql] Testing with 6 tables...
+[query69.sql] Testing with 7 tables...
+[query7.sql] Testing with 5 tables...
+[query72.sql] Testing with 11 tables...
+[query73.sql] Testing with 5 tables...
+[query74.sql] Testing with 4 tables...
+[query75.sql] Testing with 8 tables...
+[query77.sql] Testing with 9 tables...
+[query79.sql] Testing with 5 tables...
+[query80.sql] Testing with 12 tables...
+[query81.sql] Testing with 4 tables...
+[query82.sql] Testing with 4 tables...
+[query83.sql] Testing with 5 tables...
+[query84.sql] Testing with 6 tables...
+[query85.sql] Testing with 8 tables...
+[query86.sql] Testing with 3 tables...
+[query87.sql] Testing with 5 tables...
+[query88.sql] Testing with 4 tables...
+[query89.sql] Testing with 4 tables...
+[query90.sql] Testing with 4 tables...
+[query91.sql] Testing with 7 tables...
+[query92.sql] Testing with 3 tables...
+[query93.sql] Testing with 3 tables...
+[query96.sql] Testing with 4 tables...
+[query97.sql] Testing with 3 tables...
+[query98.sql] Testing with 3 tables...
+[query99.sql] Testing with 5 tables...
+
+================================================================================
+TOPOLOGY REPORT AND EVALUATION
+================================================================================
+
+--- Topology Group: 7 Tables, 73 CSGs, 260 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query10.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=5124, CCP_Evaluated=520
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=2513, CCP_Evaluated=260
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=1932, CCP_Evaluated=520
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 2611 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (c.c_current_addr_sk = ca.ca_address_sk)
+    ` ScanOperator (customer_address AS ca)
+    ` JoinOperator (cd_demo_sk = c.c_current_cdemo_sk)
+      ` ScanOperator (customer_demographics AS customer_demographics)
+      ` JoinOperator ((c.c_customer_sk = cs_ship_customer_sk)) ^ ((c.c_customer_sk = ss_customer_sk)) ^ ((c.c_customer_sk = ws_bill_customer_sk))
+        ` ScanOperator (customer AS c)
+        ` JoinOperator (ss_sold_date_sk = d_date_sk)
+          ` ScanOperator (store_sales AS store_sales)
+          ` JoinOperator (ws_sold_date_sk = d_date_sk)
+            ` ScanOperator (web_sales AS web_sales)
+            ` JoinOperator (cs_sold_date_sk = d_date_sk)
+              ` FilterOperator (d_year = 1999)
+                ` ScanOperator (date_dim AS date_dim)
+              ` ScanOperator (catalog_sales AS catalog_sales)
+
+  Query: query35.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=5124, CCP_Evaluated=520
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=2513, CCP_Evaluated=260
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=1932, CCP_Evaluated=520
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 2611 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (c.c_current_addr_sk = ca.ca_address_sk)
+    ` ScanOperator (customer_address AS ca)
+    ` JoinOperator (cd_demo_sk = c.c_current_cdemo_sk)
+      ` ScanOperator (customer_demographics AS customer_demographics)
+      ` JoinOperator ((c.c_customer_sk = ws_bill_customer_sk)) ^ ((c.c_customer_sk = cs_ship_customer_sk)) ^ ((c.c_customer_sk = ss_customer_sk))
+        ` ScanOperator (customer AS c)
+        ` JoinOperator (ss_sold_date_sk = d_date_sk)
+          ` ScanOperator (store_sales AS store_sales)
+          ` JoinOperator (ws_sold_date_sk = d_date_sk)
+            ` ScanOperator (web_sales AS web_sales)
+            ` JoinOperator (cs_sold_date_sk = d_date_sk)
+              ` FilterOperator ((d_qoy < 4)) ^ ((d_year = 1999))
+                ` ScanOperator (date_dim AS date_dim)
+              ` ScanOperator (catalog_sales AS catalog_sales)
+
+--- Topology Group: 3 Tables, 6 CSGs, 4 CCPs ---
+Mathematical Topology Classification: Chain
+
+  Query: query12.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=24, CCP_Evaluated=8
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=12, CCP_Evaluated=4
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=12, CCP_Evaluated=8
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 12 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (ws_item_sk = i_item_sk)
+    ` ScanOperator (item AS item)
+    ` JoinOperator (ws_sold_date_sk = d_date_sk)
+      ` ScanOperator (web_sales AS web_sales)
+      ` ScanOperator (date_dim AS date_dim)
+
+  Query: query20.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=24, CCP_Evaluated=8
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=12, CCP_Evaluated=4
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=12, CCP_Evaluated=8
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 12 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (cs_item_sk = i_item_sk)
+    ` ScanOperator (item AS item)
+    ` JoinOperator (cs_sold_date_sk = d_date_sk)
+      ` ScanOperator (catalog_sales AS catalog_sales)
+      ` ScanOperator (date_dim AS date_dim)
+
+--- Topology Group: 4 Tables, 10 CSGs, 10 CCPs ---
+Mathematical Topology Classification: Chain
+
+  Query: query15.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=94, CCP_Evaluated=20
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=56, CCP_Evaluated=10
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=50, CCP_Evaluated=20
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 38 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (c_current_addr_sk = ca_address_sk)
+    ` ScanOperator (customer_address AS customer_address)
+    ` JoinOperator (cs_bill_customer_sk = c_customer_sk)
+      ` ScanOperator (customer AS customer)
+      ` JoinOperator (cs_sold_date_sk = d_date_sk)
+        ` ScanOperator (catalog_sales AS catalog_sales)
+        ` FilterOperator ((d_year = 1998)) ^ ((d_qoy = 1))
+          ` ScanOperator (date_dim AS date_dim)
+
+  Query: query30.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=94, CCP_Evaluated=20
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=55, CCP_Evaluated=10
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=50, CCP_Evaluated=20
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 39 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (ca_address_sk = c_current_addr_sk)
+    ` ScanOperator (customer AS customer)
+    ` JoinOperator (wr_returning_addr_sk = ca_address_sk)
+      ` ScanOperator (customer_address AS customer_address)
+      ` JoinOperator (wr_returned_date_sk = d_date_sk)
+        ` ScanOperator (web_returns AS web_returns)
+        ` FilterOperator (d_year = 1999)
+          ` ScanOperator (date_dim AS date_dim)
+
+--- Topology Group: 7 Tables, 49 CSGs, 128 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query18.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=3486, CCP_Evaluated=256
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=1984, CCP_Evaluated=128
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=1932, CCP_Evaluated=256
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 1502 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (cs_bill_cdemo_sk = cd1.cd_demo_sk)
+    ` ScanOperator (customer_demographics AS cd1)
+    ` JoinOperator (c_current_cdemo_sk = cd2.cd_demo_sk)
+      ` ScanOperator (customer_demographics AS cd2)
+      ` JoinOperator (c_current_addr_sk = ca_address_sk)
+        ` ScanOperator (customer_address AS customer_address)
+        ` JoinOperator (cs_bill_customer_sk = c_customer_sk)
+          ` ScanOperator (customer AS customer)
+          ` JoinOperator (cs_sold_date_sk = d_date_sk)
+            ` FilterOperator (d_year = 1998)
+              ` ScanOperator (date_dim AS date_dim)
+            ` JoinOperator (cs_item_sk = i_item_sk)
+              ` ScanOperator (catalog_sales AS catalog_sales)
+              ` ScanOperator (item AS item)
+
+--- Topology Group: 6 Tables, 40 CSGs, 113 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query23.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=1455, CCP_Evaluated=226
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=764, CCP_Evaluated=113
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=602, CCP_Evaluated=226
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 691 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((cs_sold_date_sk = d_date_sk)) ^ ((ws_sold_date_sk = d_date_sk)) ^ ((ss_sold_date_sk = d_date_sk))
+    ` FilterOperator ((d_moy = 1)) ^ ((d_year = 1998))
+      ` ScanOperator (date_dim AS date_dim)
+    ` JoinOperator (ss_item_sk = i_item_sk)
+      ` ScanOperator (item AS item)
+      ` JoinOperator (ss_customer_sk = c_customer_sk)
+        ` ScanOperator (store_sales AS store_sales)
+        ` JoinOperator (cs_bill_customer_sk = c_customer_sk)
+          ` ScanOperator (catalog_sales AS catalog_sales)
+          ` JoinOperator (ws_bill_customer_sk = c_customer_sk)
+            ` ScanOperator (customer AS customer)
+            ` ScanOperator (web_sales AS web_sales)
+
+--- Topology Group: 8 Tables, 69 CSGs, 214 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query25.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=9764, CCP_Evaluated=428
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=5821, CCP_Evaluated=214
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=6050, CCP_Evaluated=428
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 3943 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (d1.d_date_sk = ss_sold_date_sk)
+    ` FilterOperator ((d1.d_year = 1998)) ^ ((d1.d_moy = 4))
+      ` ScanOperator (date_dim AS d1)
+    ` JoinOperator (sr_returned_date_sk = d2.d_date_sk)
+      ` FilterOperator (d2.d_year = 1998)
+        ` ScanOperator (date_dim AS d2)
+      ` JoinOperator (cs_sold_date_sk = d3.d_date_sk)
+        ` FilterOperator (d3.d_year = 1998)
+          ` ScanOperator (date_dim AS d3)
+        ` JoinOperator ((sr_item_sk = cs_item_sk)) ^ ((sr_customer_sk = cs_bill_customer_sk))
+          ` ScanOperator (catalog_sales AS catalog_sales)
+          ` JoinOperator ((ss_ticket_number = sr_ticket_number)) ^ ((ss_item_sk = sr_item_sk)) ^ ((ss_customer_sk = sr_customer_sk))
+            ` ScanOperator (store_returns AS store_returns)
+            ` JoinOperator (s_store_sk = ss_store_sk)
+              ` ScanOperator (store AS store)
+              ` JoinOperator (i_item_sk = ss_item_sk)
+                ` ScanOperator (store_sales AS store_sales)
+                ` ScanOperator (item AS item)
+
+  Query: query29.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=9764, CCP_Evaluated=428
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=5821, CCP_Evaluated=214
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=6050, CCP_Evaluated=428
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 3943 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (d1.d_date_sk = ss_sold_date_sk)
+    ` FilterOperator ((d1.d_year = 1998)) ^ ((d1.d_moy = 4))
+      ` ScanOperator (date_dim AS d1)
+    ` JoinOperator (sr_returned_date_sk = d2.d_date_sk)
+      ` FilterOperator (d2.d_year = 1998)
+        ` ScanOperator (date_dim AS d2)
+      ` JoinOperator (cs_sold_date_sk = d3.d_date_sk)
+        ` ScanOperator (date_dim AS d3)
+        ` JoinOperator ((sr_item_sk = cs_item_sk)) ^ ((sr_customer_sk = cs_bill_customer_sk))
+          ` ScanOperator (catalog_sales AS catalog_sales)
+          ` JoinOperator ((ss_ticket_number = sr_ticket_number)) ^ ((ss_item_sk = sr_item_sk)) ^ ((ss_customer_sk = sr_customer_sk))
+            ` ScanOperator (store_returns AS store_returns)
+            ` JoinOperator (s_store_sk = ss_store_sk)
+              ` ScanOperator (store AS store)
+              ` JoinOperator (i_item_sk = ss_item_sk)
+                ` ScanOperator (store_sales AS store_sales)
+                ` ScanOperator (item AS item)
+
+--- Topology Group: 5 Tables, 20 CSGs, 32 CCPs ---
+Mathematical Topology Classification: Star
+
+  Query: query27.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=360, CCP_Evaluated=64
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=201, CCP_Evaluated=32
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=180, CCP_Evaluated=64
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 159 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (ss_cdemo_sk = cd_demo_sk)
+    ` ScanOperator (customer_demographics AS customer_demographics)
+    ` JoinOperator (ss_sold_date_sk = d_date_sk)
+      ` FilterOperator (d_year = 1998)
+        ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator (ss_store_sk = s_store_sk)
+        ` ScanOperator (store AS store)
+        ` JoinOperator (ss_item_sk = i_item_sk)
+          ` ScanOperator (store_sales AS store_sales)
+          ` ScanOperator (item AS item)
+
+  Query: query34.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=360, CCP_Evaluated=64
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=198, CCP_Evaluated=32
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=180, CCP_Evaluated=64
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 162 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (ss_customer_sk = c_customer_sk)
+    ` ScanOperator (customer AS customer)
+    ` JoinOperator (store_sales.ss_sold_date_sk = date_dim.d_date_sk)
+      ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator (store_sales.ss_store_sk = store.s_store_sk)
+        ` ScanOperator (store AS store)
+        ` JoinOperator (store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk)
+          ` ScanOperator (store_sales AS store_sales)
+          ` FilterOperator (household_demographics.hd_vehicle_count > 0)
+            ` ScanOperator (household_demographics AS household_demographics)
+
+--- Topology Group: 4 Tables, 13 CSGs, 18 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query31.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=112, CCP_Evaluated=36
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=56, CCP_Evaluated=18
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=50, CCP_Evaluated=36
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 56 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((ss_addr_sk = ca_address_sk)) ^ ((ss_sold_date_sk = d_date_sk))
+    ` ScanOperator (store_sales AS store_sales)
+    ` JoinOperator (ws_sold_date_sk = d_date_sk)
+      ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator (ws_bill_addr_sk = ca_address_sk)
+        ` ScanOperator (customer_address AS customer_address)
+        ` ScanOperator (web_sales AS web_sales)
+
+  Query: query74.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=112, CCP_Evaluated=36
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=56, CCP_Evaluated=18
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=50, CCP_Evaluated=36
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 56 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((c_customer_sk = ws_bill_customer_sk)) ^ ((c_customer_sk = ss_customer_sk))
+    ` ScanOperator (customer AS customer)
+    ` JoinOperator (ss_sold_date_sk = d_date_sk)
+      ` ScanOperator (store_sales AS store_sales)
+      ` JoinOperator (ws_sold_date_sk = d_date_sk)
+        ` ScanOperator (date_dim AS date_dim)
+        ` ScanOperator (web_sales AS web_sales)
+
+--- Topology Group: 6 Tables, 55 CSGs, 207 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query33.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=1965, CCP_Evaluated=414
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=899, CCP_Evaluated=207
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=602, CCP_Evaluated=414
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 1066 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((ss_addr_sk = ca_address_sk)) ^ ((ss_sold_date_sk = d_date_sk)) ^ ((ss_item_sk = i_item_sk))
+    ` ScanOperator (store_sales AS store_sales)
+    ` JoinOperator ((ws_sold_date_sk = d_date_sk)) ^ ((cs_sold_date_sk = d_date_sk))
+      ` FilterOperator ((d_moy = 1)) ^ ((d_year = 1998))
+        ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator ((ws_bill_addr_sk = ca_address_sk)) ^ ((cs_bill_addr_sk = ca_address_sk))
+        ` ScanOperator (customer_address AS customer_address)
+        ` JoinOperator (cs_item_sk = i_item_sk)
+          ` ScanOperator (catalog_sales AS catalog_sales)
+          ` JoinOperator (ws_item_sk = i_item_sk)
+            ` ScanOperator (item AS item)
+            ` ScanOperator (web_sales AS web_sales)
+
+  Query: query56.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=1965, CCP_Evaluated=414
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=899, CCP_Evaluated=207
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=602, CCP_Evaluated=414
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 1066 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((ss_addr_sk = ca_address_sk)) ^ ((ss_sold_date_sk = d_date_sk)) ^ ((ss_item_sk = i_item_sk))
+    ` ScanOperator (store_sales AS store_sales)
+    ` JoinOperator ((ws_sold_date_sk = d_date_sk)) ^ ((cs_sold_date_sk = d_date_sk))
+      ` FilterOperator ((d_moy = 1)) ^ ((d_year = 1998))
+        ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator ((ws_bill_addr_sk = ca_address_sk)) ^ ((cs_bill_addr_sk = ca_address_sk))
+        ` ScanOperator (customer_address AS customer_address)
+        ` JoinOperator (cs_item_sk = i_item_sk)
+          ` ScanOperator (catalog_sales AS catalog_sales)
+          ` JoinOperator (ws_item_sk = i_item_sk)
+            ` ScanOperator (item AS item)
+            ` ScanOperator (web_sales AS web_sales)
+
+--- Topology Group: 4 Tables, 11 CSGs, 12 CCPs ---
+Mathematical Topology Classification: Star
+
+  Query: query36.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=98, CCP_Evaluated=24
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=57, CCP_Evaluated=12
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=50, CCP_Evaluated=24
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 41 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (d1.d_date_sk = ss_sold_date_sk)
+    ` FilterOperator (d1.d_year = 1998)
+      ` ScanOperator (date_dim AS d1)
+    ` JoinOperator (i_item_sk = ss_item_sk)
+      ` ScanOperator (item AS item)
+      ` JoinOperator (s_store_sk = ss_store_sk)
+        ` ScanOperator (store_sales AS store_sales)
+        ` ScanOperator (store AS store)
+
+  Query: query53.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=98, CCP_Evaluated=24
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=55, CCP_Evaluated=12
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=50, CCP_Evaluated=24
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 43 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (ss_item_sk = i_item_sk)
+    ` ScanOperator (item AS item)
+    ` JoinOperator (ss_sold_date_sk = d_date_sk)
+      ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator (ss_store_sk = s_store_sk)
+        ` ScanOperator (store_sales AS store_sales)
+        ` ScanOperator (store AS store)
+
+--- Topology Group: 5 Tables, 26 CSGs, 59 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query38.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=460, CCP_Evaluated=118
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=224, CCP_Evaluated=59
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=180, CCP_Evaluated=118
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 236 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((web_sales.ws_bill_customer_sk = customer.c_customer_sk)) ^ ((web_sales.ws_sold_date_sk = date_dim.d_date_sk))
+    ` ScanOperator (web_sales AS web_sales)
+    ` JoinOperator ((store_sales.ss_sold_date_sk = date_dim.d_date_sk)) ^ ((catalog_sales.cs_sold_date_sk = date_dim.d_date_sk))
+      ` ScanOperator (date_dim AS date_dim)
+      ` JoinOperator (store_sales.ss_customer_sk = customer.c_customer_sk)
+        ` ScanOperator (store_sales AS store_sales)
+        ` JoinOperator (catalog_sales.cs_bill_customer_sk = customer.c_customer_sk)
+          ` ScanOperator (customer AS customer)
+          ` ScanOperator (catalog_sales AS catalog_sales)
+
+  Query: query58.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=460, CCP_Evaluated=118
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=224, CCP_Evaluated=59
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=180, CCP_Evaluated=118
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 236 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((ss_sold_date_sk = d_date_sk)) ^ ((ss_item_sk = i_item_sk))
+    ` ScanOperator (store_sales AS store_sales)
+    ` JoinOperator ((cs_item_sk = i_item_sk)) ^ ((ws_item_sk = i_item_sk))
+      ` ScanOperator (item AS item)
+      ` JoinOperator (cs_sold_date_sk = d_date_sk)
+        ` ScanOperator (catalog_sales AS catalog_sales)
+        ` JoinOperator (ws_sold_date_sk = d_date_sk)
+          ` ScanOperator (date_dim AS date_dim)
+          ` ScanOperator (web_sales AS web_sales)
+
+--- Topology Group: 5 Tables, 17 CSGs, 25 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query45.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=325, CCP_Evaluated=50
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=200, CCP_Evaluated=25
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=180, CCP_Evaluated=50
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 125 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (c_current_addr_sk = ca_address_sk)
+    ` ScanOperator (customer_address AS customer_address)
+    ` JoinOperator (ws_bill_customer_sk = c_customer_sk)
+      ` ScanOperator (customer AS customer)
+      ` JoinOperator (ws_sold_date_sk = d_date_sk)
+        ` FilterOperator ((d_year = 1998)) ^ ((d_qoy = 1))
+          ` ScanOperator (date_dim AS date_dim)
+        ` JoinOperator (ws_item_sk = i_item_sk)
+          ` ScanOperator (web_sales AS web_sales)
+          ` ScanOperator (item AS item)
+
+  Query: query50.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=325, CCP_Evaluated=50
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=200, CCP_Evaluated=25
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=180, CCP_Evaluated=50
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 125 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (ss_store_sk = s_store_sk)
+    ` ScanOperator (store AS store)
+    ` JoinOperator (ss_sold_date_sk = d1.d_date_sk)
+      ` ScanOperator (date_dim AS d1)
+      ` JoinOperator ((ss_customer_sk = sr_customer_sk)) ^ ((ss_item_sk = sr_item_sk)) ^ ((ss_ticket_number = sr_ticket_number))
+        ` ScanOperator (store_sales AS store_sales)
+        ` JoinOperator (sr_returned_date_sk = d2.d_date_sk)
+          ` ScanOperator (store_returns AS store_returns)
+          ` FilterOperator ((d2.d_year = 1998)) ^ ((d2.d_moy = 8))
+            ` ScanOperator (date_dim AS d2)
+
+--- Topology Group: 7 Tables, 36 CSGs, 84 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query49.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=2814, CCP_Evaluated=168
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=1818, CCP_Evaluated=84
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=1932, CCP_Evaluated=168
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 996 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((sts.ss_ticket_number = sr.sr_ticket_number)) ^ ((sts.ss_item_sk = sr.sr_item_sk))
+    ` FilterOperator (sr.sr_return_amt > 10000)
+      ` ScanOperator (store_returns AS sr)
+    ` JoinOperator (ss_sold_date_sk = d_date_sk)
+      ` FilterOperator ((sts.ss_quantity > 0)) ^ ((sts.ss_net_paid > 0)) ^ ((sts.ss_net_profit > 1))
+        ` ScanOperator (store_sales AS sts)
+      ` JoinOperator ((ws.ws_item_sk = wr.wr_item_sk)) ^ ((ws.ws_order_number = wr.wr_order_number))
+        ` FilterOperator (wr.wr_return_amt > 10000)
+          ` ScanOperator (web_returns AS wr)
+        ` JoinOperator (ws_sold_date_sk = d_date_sk)
+          ` FilterOperator ((ws.ws_quantity > 0)) ^ ((ws.ws_net_paid > 0)) ^ ((ws.ws_net_profit > 1))
+            ` ScanOperator (web_sales AS ws)
+          ` JoinOperator (cs_sold_date_sk = d_date_sk)
+            ` FilterOperator ((d_year = 1998)) ^ ((d_moy = 11))
+              ` ScanOperator (date_dim AS date_dim)
+            ` JoinOperator ((cs.cs_order_number = cr.cr_order_number)) ^ ((cs.cs_item_sk = cr.cr_item_sk))
+              ` FilterOperator ((cs.cs_quantity > 0)) ^ ((cs.cs_net_paid > 0)) ^ ((cs.cs_net_profit > 1))
+                ` ScanOperator (catalog_sales AS cs)
+              ` FilterOperator (cr.cr_return_amount > 10000)
+                ` ScanOperator (catalog_returns AS cr)
+
+--- Topology Group: 6 Tables, 51 CSGs, 172 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query66.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=1806, CCP_Evaluated=344
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=823, CCP_Evaluated=172
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=602, CCP_Evaluated=344
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 983 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((ws_ship_mode_sk = sm_ship_mode_sk)) ^ ((ws_sold_time_sk = t_time_sk)) ^ ((ws_sold_date_sk = d_date_sk)) ^ ((ws_warehouse_sk = w_warehouse_sk))
+    ` ScanOperator (web_sales AS web_sales)
+    ` JoinOperator (cs_warehouse_sk = w_warehouse_sk)
+      ` ScanOperator (warehouse AS warehouse)
+      ` JoinOperator (cs_sold_date_sk = d_date_sk)
+        ` FilterOperator (d_year = 1998)
+          ` ScanOperator (date_dim AS date_dim)
+        ` JoinOperator (cs_sold_time_sk = t_time_sk)
+          ` ScanOperator (time_dim AS time_dim)
+          ` JoinOperator (cs_ship_mode_sk = sm_ship_mode_sk)
+            ` ScanOperator (ship_mode AS ship_mode)
+            ` ScanOperator (catalog_sales AS catalog_sales)
+
+--- Topology Group: 8 Tables, 89 CSGs, 364 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query75.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=12976, CCP_Evaluated=728
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=7355, CCP_Evaluated=364
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=6050, CCP_Evaluated=728
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 5621 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((i_item_sk = ss_item_sk)) ^ ((i_item_sk = cs_item_sk)) ^ ((i_item_sk = ws_item_sk))
+    ` ScanOperator (item AS item)
+    ` JoinOperator ((ws_order_number = wr_order_number)) ^ ((ws_item_sk = wr_item_sk))
+      ` ScanOperator (web_returns AS web_returns)
+      ` JoinOperator (d_date_sk = ws_sold_date_sk)
+        ` ScanOperator (web_sales AS web_sales)
+        ` JoinOperator ((cs_order_number = cr_order_number)) ^ ((cs_item_sk = cr_item_sk))
+          ` ScanOperator (catalog_returns AS catalog_returns)
+          ` JoinOperator (d_date_sk = cs_sold_date_sk)
+            ` ScanOperator (catalog_sales AS catalog_sales)
+            ` JoinOperator (d_date_sk = ss_sold_date_sk)
+              ` ScanOperator (date_dim AS date_dim)
+              ` JoinOperator ((ss_item_sk = sr_item_sk)) ^ ((ss_ticket_number = sr_ticket_number))
+                ` ScanOperator (store_sales AS store_sales)
+                ` ScanOperator (store_returns AS store_returns)
+
+--- Topology Group: 9 Tables, 210 CSGs, 988 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query77.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=54024, CCP_Evaluated=1976
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=24937, CCP_Evaluated=988
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=18660, CCP_Evaluated=1976
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 29087 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator ((ss_store_sk = s_store_sk)) ^ ((ss_sold_date_sk = d_date_sk))
+    ` ScanOperator (store_sales AS store_sales)
+    ` JoinOperator (sr_store_sk = s_store_sk)
+      ` ScanOperator (store AS store)
+      ` JoinOperator (sr_returned_date_sk = d_date_sk)
+        ` ScanOperator (store_returns AS store_returns)
+        ` JoinOperator (cs_sold_date_sk = d_date_sk)
+          ` ScanOperator (catalog_sales AS catalog_sales)
+          ` JoinOperator (cr_returned_date_sk = d_date_sk)
+            ` ScanOperator (catalog_returns AS catalog_returns)
+            ` JoinOperator ((wr_returned_date_sk = d_date_sk)) ^ ((ws_sold_date_sk = d_date_sk))
+              ` ScanOperator (date_dim AS date_dim)
+              ` JoinOperator (ws_web_page_sk = wp_web_page_sk)
+                ` ScanOperator (web_sales AS web_sales)
+                ` JoinOperator (wr_web_page_sk = wp_web_page_sk)
+                  ` ScanOperator (web_page AS web_page)
+                  ` ScanOperator (web_returns AS web_returns)
+
+--- Topology Group: 6 Tables, 25 CSGs, 47 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query84.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=980, CCP_Evaluated=94
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=645, CCP_Evaluated=47
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=602, CCP_Evaluated=94
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 335 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (c_current_addr_sk = ca_address_sk)
+    ` ScanOperator (customer_address AS customer_address)
+    ` JoinOperator (ib_income_band_sk = hd_income_band_sk)
+      ` FilterOperator (ib_lower_bound >= 0)
+        ` ScanOperator (income_band AS income_band)
+      ` JoinOperator (hd_demo_sk = c_current_hdemo_sk)
+        ` ScanOperator (household_demographics AS household_demographics)
+        ` JoinOperator (cd_demo_sk = c_current_cdemo_sk)
+          ` ScanOperator (customer AS customer)
+          ` JoinOperator (sr_cdemo_sk = cd_demo_sk)
+            ` ScanOperator (customer_demographics AS customer_demographics)
+            ` ScanOperator (store_returns AS store_returns)
+
+--- Topology Group: 8 Tables, 90 CSGs, 292 CCPs ---
+Mathematical Topology Classification: Complex/Cyclic
+
+  Query: query85.sql
+  Cost equality across all DP algos: YES
+  Plan structure equality across all DP algos: NO
+  Algorithm Performance & Optimality Checks:
+    - DPsize    : Cost = 0.0       , Time = N/A, Evaluated=12186, CCP_Evaluated=584
+    - DPsizeOpt : Cost = 0.0       , Time = N/A, Evaluated=6537, CCP_Evaluated=292
+    - DPsub     : Cost = 0.0       , Time = N/A, Evaluated=6050, CCP_Evaluated=584
+    - DPccp     : Cost = 0.0       , Time = N/A
+  -> Optimality Confirmed: DPsizeOpt evaluated 5649 fewer pairs than DPsize.
+
+  Clean Join Plan (First Algorithm):
+  ProjectionOperator
+  ` JoinOperator (ws_web_page_sk = wp_web_page_sk)
+    ` ScanOperator (web_page AS web_page)
+    ` JoinOperator (cd1.cd_demo_sk = wr_refunded_cdemo_sk)
+      ` ScanOperator (customer_demographics AS cd1)
+      ` JoinOperator (cd2.cd_demo_sk = wr_returning_cdemo_sk)
+        ` ScanOperator (customer_demographics AS cd2)
+        ` JoinOperator (ca_address_sk = wr_refunded_addr_sk)
+          ` ScanOperator (customer_address AS customer_address)
+          ` JoinOperator (ws_sold_date_sk = d_date_sk)
+            ` FilterOperator (d_year = 1998)
+              ` ScanOperator (date_dim AS date_dim)
+            ` JoinOperator ((ws_item_sk = wr_item_sk)) ^ ((ws_order_number = wr_order_number))
+              ` ScanOperator (web_sales AS web_sales)
+              ` JoinOperator (r_reason_sk = wr_reason_sk)
+                ` ScanOperator (web_returns AS web_returns)
+                ` ScanOperator (reason AS reason)

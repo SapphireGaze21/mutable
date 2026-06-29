@@ -1,0 +1,30 @@
+CREATE DATABASE tpcds_eval;
+USE tpcds_eval;
+
+CREATE TABLE catalog_returns(cr_returned_date_sk INT(4));
+CREATE TABLE catalog_sales(cs_sold_date_sk INT(4));
+CREATE TABLE customer(c_customer_sk INT(4));
+CREATE TABLE customer_address(ca_address_sk INT(4));
+CREATE TABLE customer_demographics(cd_demo_sk INT(4));
+CREATE TABLE date_dim(d_date_sk INT(4), d_year INT(4), d_moy INT(4));
+CREATE TABLE item(i_item_sk INT(4));
+CREATE TABLE store(s_store_sk INT(4));
+CREATE TABLE store_returns(sr_returned_date_sk INT(4));
+CREATE TABLE store_sales(ss_sold_date_sk INT(4));
+CREATE TABLE web_page(wp_web_page_sk INT(4));
+CREATE TABLE web_returns(wr_returned_date_sk INT(4));
+CREATE TABLE web_sales(ws_sold_date_sk INT(4));
+
+IMPORT INTO catalog_returns DSV "benchmark/tpcds/data/csvs/lean_catalog_returns.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO catalog_sales DSV "benchmark/tpcds/data/csvs/lean_catalog_sales.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO customer DSV "benchmark/tpcds/data/csvs/lean_customer.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO customer_address DSV "benchmark/tpcds/data/csvs/lean_customer_address.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO customer_demographics DSV "benchmark/tpcds/data/csvs/lean_customer_demographics.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO date_dim DSV "benchmark/tpcds/data/csvs/lean_date_dim.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO item DSV "benchmark/tpcds/data/csvs/lean_item.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO store DSV "benchmark/tpcds/data/csvs/lean_store.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO store_returns DSV "benchmark/tpcds/data/csvs/lean_store_returns.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO store_sales DSV "benchmark/tpcds/data/csvs/lean_store_sales.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO web_page DSV "benchmark/tpcds/data/csvs/lean_web_page.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO web_returns DSV "benchmark/tpcds/data/csvs/lean_web_returns.csv" DELIMITER "," HAS HEADER SKIP HEADER;
+IMPORT INTO web_sales DSV "benchmark/tpcds/data/csvs/lean_web_sales.csv" DELIMITER "," HAS HEADER SKIP HEADER; SELECT * FROM web_sales, item, date_dim WHERE ws_item_sk = i_item_sk AND ws_sold_date_sk = d_date_sk;

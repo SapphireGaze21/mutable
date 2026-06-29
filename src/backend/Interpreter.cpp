@@ -63,7 +63,8 @@ static StackMachine compile_data_layout(const Schema &tuple_schema, void *addres
     /*----- Check whether any of the entries in `tuple_schema` can be NULL, so that we need the NULL bitmap. -----*/
     const bool needs_null_bitmap = [&]() {
         for (auto &tuple_entry : tuple_schema) {
-            if (layout_schema[tuple_entry.id].second.nullable())
+            auto it = std::find_if(layout_schema.begin(), layout_schema.end(), [&](const auto &e) { return e.id.name == tuple_entry.id.name; });
+            if (it != layout_schema.end() && it->nullable())
                 return true; // found an entry in `tuple_schema` that can be NULL according to `layout_schema`
         }
         return false; // no attribute in `tuple_schema` can be NULL according to `layout_schema`
@@ -117,7 +118,8 @@ static StackMachine compile_data_layout(const Schema &tuple_schema, void *addres
                         auto &id = layout_schema[child_leaf->index()].id;
 
                         /* Locate the attribute in the operator schema. */
-                        if (auto it = tuple_schema.find(id); it != tuple_schema.end()) {
+                        auto it = std::find_if(tuple_schema.begin(), tuple_schema.end(), [&](const auto &e) { return e.id.name == id.name; });
+                        if (it != tuple_schema.end()) {
                             uint64_t idx = std::distance(tuple_schema.begin(), it); // get attribute index in schema
                             const uint64_t additional_offset_in_bits = child.offset_in_bits + row_id * child.stride_in_bits;
                             const std::size_t byte_offset = additional_offset_in_bits / 8;

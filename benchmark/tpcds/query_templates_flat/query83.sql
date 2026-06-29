@@ -1,0 +1,1 @@
+SELECT * FROM store_returns, item, date_dim, catalog_returns, web_returns WHERE sr_item_sk = i_item_sk AND sr_returned_date_sk = d_date_sk AND cr_item_sk = i_item_sk AND cr_returned_date_sk = d_date_sk AND wr_item_sk = i_item_sk AND wr_returned_date_sk = d_date_sk;

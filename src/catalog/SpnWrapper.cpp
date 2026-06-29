@@ -56,16 +56,21 @@ SpnWrapper SpnWrapper::learn_spn_table(const ThreadSafePooledString &name_of_dat
         auto &type = table.at(current_column).type;
         std::size_t current_row = 0;
 
+        /* The Tuple T returned by the callback is indexed by the SELECT * result schema position,
+         * NOT by the raw table attribute ID. We must resolve the correct tuple index via the Schema
+         * passed into the callback. */
+
         if (type->is_float()) {
             if (leaf_types[current_column - primary_key_count] == Spn::AUTO) {
                 leaf_types[current_column - primary_key_count] = Spn::CONTINUOUS;
             }
-            auto callback_data = std::make_unique<CallbackOperator>([&](const Schema &S, const Tuple &T) {
-                if (T.is_null(current_column)) {
+            auto callback_data = std::make_unique<CallbackOperator>([&, attribute](const Schema &S, const Tuple &T) {
+                auto [tuple_idx, _] = S.at({table.name(), attribute});
+                if (T.is_null(tuple_idx)) {
                     null_matrix(current_row, current_column - primary_key_count) = 1;
                     data(current_row, current_column - primary_key_count) = 0;
                 } else {
-                    data(current_row, current_column - primary_key_count) = T.get(current_column).as_f();
+                    data(current_row, current_column - primary_key_count) = T.get(tuple_idx).as_f();
                 }
                 current_row++;
             });
@@ -76,12 +81,13 @@ SpnWrapper SpnWrapper::learn_spn_table(const ThreadSafePooledString &name_of_dat
             if (leaf_types[current_column - primary_key_count] == Spn::AUTO) {
                 leaf_types[current_column - primary_key_count] = Spn::CONTINUOUS;
             }
-            auto callback_data = std::make_unique<CallbackOperator>([&](const Schema &S, const Tuple &T) {
-                if (T.is_null(current_column)) {
+            auto callback_data = std::make_unique<CallbackOperator>([&, attribute](const Schema &S, const Tuple &T) {
+                auto [tuple_idx, _] = S.at({table.name(), attribute});
+                if (T.is_null(tuple_idx)) {
                     null_matrix(current_row, current_column - primary_key_count) = 1;
                     data(current_row, current_column - primary_key_count) = 0;
                 } else {
-                    data(current_row, current_column - primary_key_count) = float(T.get(current_column).as_d());
+                    data(current_row, current_column - primary_key_count) = float(T.get(tuple_idx).as_d());
                 }
                 current_row++;
             });
@@ -92,12 +98,13 @@ SpnWrapper SpnWrapper::learn_spn_table(const ThreadSafePooledString &name_of_dat
             if (leaf_types[current_column - primary_key_count] == Spn::AUTO) {
                 leaf_types[current_column - primary_key_count] = Spn::DISCRETE;
             }
-            auto callback_data = std::make_unique<CallbackOperator>([&](const Schema &S, const Tuple &T) {
-                if (T.is_null(current_column)) {
+            auto callback_data = std::make_unique<CallbackOperator>([&, attribute](const Schema &S, const Tuple &T) {
+                auto [tuple_idx, _] = S.at({table.name(), attribute});
+                if (T.is_null(tuple_idx)) {
                     null_matrix(current_row, current_column - primary_key_count) = 1;
                     data(current_row, current_column - primary_key_count) = 0;
                 } else {
-                    data(current_row, current_column - primary_key_count) = float(T.get(current_column).as_i());
+                    data(current_row, current_column - primary_key_count) = float(T.get(tuple_idx).as_i());
                 }
                 current_row++;
             });
@@ -108,15 +115,15 @@ SpnWrapper SpnWrapper::learn_spn_table(const ThreadSafePooledString &name_of_dat
             if (leaf_types[current_column - primary_key_count] == Spn::AUTO) {
                 leaf_types[current_column - primary_key_count] = Spn::CONTINUOUS;
             }
-            auto callback_data = std::make_unique<CallbackOperator>([&](const Schema &S, const Tuple &T) {
-                if (T.is_null(current_column)) {
+            auto callback_data = std::make_unique<CallbackOperator>([&, attribute](const Schema &S, const Tuple &T) {
+                auto [tuple_idx, _] = S.at({table.name(), attribute});
+                if (T.is_null(tuple_idx)) {
                     null_matrix(current_row, current_column - primary_key_count) = 1;
                     data(current_row, current_column - primary_key_count) = 0;
                 } else {
-                    auto v_pointer = T.get(current_column).as_p();
+                    auto v_pointer = T.get(tuple_idx).as_p();
                     const char* value = static_cast<const char*>(v_pointer);
                     data(current_row, current_column - primary_key_count) = float(std::hash<const char*>{}(value));
-                    //data(current_row, current_column-primary_key_count) = 0;
                 }
                 current_row++;
             });

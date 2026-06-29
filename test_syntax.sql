@@ -1,0 +1,1 @@
+CREATE TABLE a (b DECIMAL(7,2));

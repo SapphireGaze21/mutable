@@ -10,3 +10,5 @@ add_library(
     Store.cpp
     store_manip.cpp
 )
+
+add_dependencies(storage Boost)

@@ -16,3 +16,5 @@ add_library(
     Timer.cpp
     WebSocketServer.cpp
 )
+
+add_dependencies(util Boost)

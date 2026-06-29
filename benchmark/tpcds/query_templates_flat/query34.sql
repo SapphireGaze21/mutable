@@ -1,0 +1,1 @@
+SELECT * FROM customer, store_sales, date_dim, store, household_demographics WHERE ss_customer_sk = c_customer_sk AND store_sales.ss_sold_date_sk = date_dim.d_date_sk AND store_sales.ss_store_sk = store.s_store_sk AND store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk AND household_demographics.hd_vehicle_count > 0;

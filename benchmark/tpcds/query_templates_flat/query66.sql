@@ -1,0 +1,1 @@
+SELECT * FROM web_sales, warehouse, date_dim, time_dim, ship_mode, catalog_sales WHERE ws_warehouse_sk = w_warehouse_sk AND ws_sold_date_sk = d_date_sk AND ws_sold_time_sk = t_time_sk AND ws_ship_mode_sk = sm_ship_mode_sk AND d_year = 1998 AND cs_warehouse_sk = w_warehouse_sk AND cs_sold_date_sk = d_date_sk AND cs_sold_time_sk = t_time_sk AND cs_ship_mode_sk = sm_ship_mode_sk;

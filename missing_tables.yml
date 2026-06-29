@@ -1,0 +1,329 @@
+dbgen_version:
+  attributes:
+    dv_version: CHAR 255
+    dv_create_date: DATE
+    dv_create_time: CHAR 255
+    dv_cmdline_args: CHAR 255
+customer_address:
+  attributes:
+    ca_address_sk: BIGINT
+    ca_address_id: CHAR 255
+    ca_street_number: CHAR 255
+    ca_street_name: CHAR 255
+    ca_street_type: CHAR 255
+    ca_suite_number: CHAR 255
+    ca_city: CHAR 255
+    ca_county: CHAR 255
+    ca_state: CHAR 255
+    ca_zip: CHAR 255
+    ca_country: CHAR 255
+    ca_gmt_offset: DECIMAL 5 2
+    ca_location_type: CHAR 255
+customer_demographics:
+  attributes:
+    cd_demo_sk: BIGINT
+    cd_gender: CHAR 255
+    cd_marital_status: CHAR 255
+    cd_education_status: CHAR 255
+    cd_purchase_estimate: BIGINT
+    cd_credit_rating: CHAR 255
+    cd_dep_count: BIGINT
+    cd_dep_employed_count: BIGINT
+    cd_dep_college_count: BIGINT
+warehouse:
+  attributes:
+    w_warehouse_sk: BIGINT
+    w_warehouse_id: CHAR 255
+    w_warehouse_name: CHAR 255
+    w_warehouse_sq_ft: BIGINT
+    w_street_number: CHAR 255
+    w_street_name: CHAR 255
+    w_street_type: CHAR 255
+    w_suite_number: CHAR 255
+    w_city: CHAR 255
+    w_county: CHAR 255
+    w_state: CHAR 255
+    w_zip: CHAR 255
+    w_country: CHAR 255
+    w_gmt_offset: DECIMAL 5 2
+ship_mode:
+  attributes:
+    sm_ship_mode_sk: BIGINT
+    sm_ship_mode_id: CHAR 255
+    sm_type: CHAR 255
+    sm_code: CHAR 255
+    sm_carrier: CHAR 255
+    sm_contract: CHAR 255
+time_dim:
+  attributes:
+    t_time_sk: BIGINT
+    t_time_id: CHAR 255
+    t_time: BIGINT
+    t_hour: BIGINT
+    t_minute: BIGINT
+    t_second: BIGINT
+    t_am_pm: CHAR 255
+    t_shift: CHAR 255
+    t_sub_shift: CHAR 255
+    t_meal_time: CHAR 255
+reason:
+  attributes:
+    r_reason_sk: BIGINT
+    r_reason_id: CHAR 255
+    r_reason_desc: CHAR 255
+income_band:
+  attributes:
+    ib_income_band_sk: BIGINT
+    ib_lower_bound: BIGINT
+    ib_upper_bound: BIGINT
+call_center:
+  attributes:
+    cc_call_center_sk: BIGINT
+    cc_call_center_id: CHAR 255
+    cc_rec_start_date: DATE
+    cc_rec_end_date: DATE
+    cc_closed_date_sk: BIGINT
+    cc_open_date_sk: BIGINT
+    cc_name: CHAR 255
+    cc_class: CHAR 255
+    cc_employees: BIGINT
+    cc_sq_ft: BIGINT
+    cc_hours: CHAR 255
+    cc_manager: CHAR 255
+    cc_mkt_id: BIGINT
+    cc_mkt_class: CHAR 255
+    cc_mkt_desc: CHAR 255
+    cc_market_manager: CHAR 255
+    cc_division: BIGINT
+    cc_division_name: CHAR 255
+    cc_company: BIGINT
+    cc_company_name: CHAR 255
+    cc_street_number: CHAR 255
+    cc_street_name: CHAR 255
+    cc_street_type: CHAR 255
+    cc_suite_number: CHAR 255
+    cc_city: CHAR 255
+    cc_county: CHAR 255
+    cc_state: CHAR 255
+    cc_zip: CHAR 255
+    cc_country: CHAR 255
+    cc_gmt_offset: DECIMAL 5 2
+    cc_tax_percentage: DECIMAL 5 2
+web_site:
+  attributes:
+    web_site_sk: BIGINT
+    web_site_id: CHAR 255
+    web_rec_start_date: DATE
+    web_rec_end_date: DATE
+    web_name: CHAR 255
+    web_open_date_sk: BIGINT
+    web_close_date_sk: BIGINT
+    web_class: CHAR 255
+    web_manager: CHAR 255
+    web_mkt_id: BIGINT
+    web_mkt_class: CHAR 255
+    web_mkt_desc: CHAR 255
+    web_market_manager: CHAR 255
+    web_company_id: BIGINT
+    web_company_name: CHAR 255
+    web_street_number: CHAR 255
+    web_street_name: CHAR 255
+    web_street_type: CHAR 255
+    web_suite_number: CHAR 255
+    web_city: CHAR 255
+    web_county: CHAR 255
+    web_state: CHAR 255
+    web_zip: CHAR 255
+    web_country: CHAR 255
+    web_gmt_offset: DECIMAL 5 2
+    web_tax_percentage: DECIMAL 5 2
+store_returns:
+  attributes:
+    sr_returned_date_sk: BIGINT
+    sr_return_time_sk: BIGINT
+    sr_item_sk: BIGINT
+    sr_customer_sk: BIGINT
+    sr_cdemo_sk: BIGINT
+    sr_hdemo_sk: BIGINT
+    sr_addr_sk: BIGINT
+    sr_store_sk: BIGINT
+    sr_reason_sk: BIGINT
+    sr_ticket_number: BIGINT
+    sr_return_quantity: BIGINT
+    sr_return_amt: DECIMAL 7 2
+    sr_return_tax: DECIMAL 7 2
+    sr_return_amt_inc_tax: DECIMAL 7 2
+    sr_fee: DECIMAL 7 2
+    sr_return_ship_cost: DECIMAL 7 2
+    sr_refunded_cash: DECIMAL 7 2
+    sr_reversed_charge: DECIMAL 7 2
+    sr_store_credit: DECIMAL 7 2
+    sr_net_loss: DECIMAL 7 2
+household_demographics:
+  attributes:
+    hd_demo_sk: BIGINT
+    hd_income_band_sk: BIGINT
+    hd_buy_potential: CHAR 255
+    hd_dep_count: BIGINT
+    hd_vehicle_count: BIGINT
+web_page:
+  attributes:
+    wp_web_page_sk: BIGINT
+    wp_web_page_id: CHAR 255
+    wp_rec_start_date: DATE
+    wp_rec_end_date: DATE
+    wp_creation_date_sk: BIGINT
+    wp_access_date_sk: BIGINT
+    wp_autogen_flag: CHAR 255
+    wp_customer_sk: BIGINT
+    wp_url: CHAR 255
+    wp_type: CHAR 255
+    wp_char_count: BIGINT
+    wp_link_count: BIGINT
+    wp_image_count: BIGINT
+    wp_max_ad_count: BIGINT
+catalog_page:
+  attributes:
+    cp_catalog_page_sk: BIGINT
+    cp_catalog_page_id: CHAR 255
+    cp_start_date_sk: BIGINT
+    cp_end_date_sk: BIGINT
+    cp_department: CHAR 255
+    cp_catalog_number: BIGINT
+    cp_catalog_page_number: BIGINT
+    cp_description: CHAR 255
+    cp_type: CHAR 255
+inventory:
+  attributes:
+    inv_date_sk: BIGINT
+    inv_item_sk: BIGINT
+    inv_warehouse_sk: BIGINT
+    inv_quantity_on_hand: BIGINT
+catalog_returns:
+  attributes:
+    cr_returned_date_sk: BIGINT
+    cr_returned_time_sk: BIGINT
+    cr_item_sk: BIGINT
+    cr_refunded_customer_sk: BIGINT
+    cr_refunded_cdemo_sk: BIGINT
+    cr_refunded_hdemo_sk: BIGINT
+    cr_refunded_addr_sk: BIGINT
+    cr_returning_customer_sk: BIGINT
+    cr_returning_cdemo_sk: BIGINT
+    cr_returning_hdemo_sk: BIGINT
+    cr_returning_addr_sk: BIGINT
+    cr_call_center_sk: BIGINT
+    cr_catalog_page_sk: BIGINT
+    cr_ship_mode_sk: BIGINT
+    cr_warehouse_sk: BIGINT
+    cr_reason_sk: BIGINT
+    cr_order_number: BIGINT
+    cr_return_quantity: BIGINT
+    cr_return_amount: DECIMAL 7 2
+    cr_return_tax: DECIMAL 7 2
+    cr_return_amt_inc_tax: DECIMAL 7 2
+    cr_fee: DECIMAL 7 2
+    cr_return_ship_cost: DECIMAL 7 2
+    cr_refunded_cash: DECIMAL 7 2
+    cr_reversed_charge: DECIMAL 7 2
+    cr_store_credit: DECIMAL 7 2
+    cr_net_loss: DECIMAL 7 2
+web_returns:
+  attributes:
+    wr_returned_date_sk: BIGINT
+    wr_returned_time_sk: BIGINT
+    wr_item_sk: BIGINT
+    wr_refunded_customer_sk: BIGINT
+    wr_refunded_cdemo_sk: BIGINT
+    wr_refunded_hdemo_sk: BIGINT
+    wr_refunded_addr_sk: BIGINT
+    wr_returning_customer_sk: BIGINT
+    wr_returning_cdemo_sk: BIGINT
+    wr_returning_hdemo_sk: BIGINT
+    wr_returning_addr_sk: BIGINT
+    wr_web_page_sk: BIGINT
+    wr_reason_sk: BIGINT
+    wr_order_number: BIGINT
+    wr_return_quantity: BIGINT
+    wr_return_amt: DECIMAL 7 2
+    wr_return_tax: DECIMAL 7 2
+    wr_return_amt_inc_tax: DECIMAL 7 2
+    wr_fee: DECIMAL 7 2
+    wr_return_ship_cost: DECIMAL 7 2
+    wr_refunded_cash: DECIMAL 7 2
+    wr_reversed_charge: DECIMAL 7 2
+    wr_account_credit: DECIMAL 7 2
+    wr_net_loss: DECIMAL 7 2
+web_sales:
+  attributes:
+    ws_sold_date_sk: BIGINT
+    ws_sold_time_sk: BIGINT
+    ws_ship_date_sk: BIGINT
+    ws_item_sk: BIGINT
+    ws_bill_customer_sk: BIGINT
+    ws_bill_cdemo_sk: BIGINT
+    ws_bill_hdemo_sk: BIGINT
+    ws_bill_addr_sk: BIGINT
+    ws_ship_customer_sk: BIGINT
+    ws_ship_cdemo_sk: BIGINT
+    ws_ship_hdemo_sk: BIGINT
+    ws_ship_addr_sk: BIGINT
+    ws_web_page_sk: BIGINT
+    ws_web_site_sk: BIGINT
+    ws_ship_mode_sk: BIGINT
+    ws_warehouse_sk: BIGINT
+    ws_promo_sk: BIGINT
+    ws_order_number: BIGINT
+    ws_quantity: BIGINT
+    ws_wholesale_cost: DECIMAL 7 2
+    ws_list_price: DECIMAL 7 2
+    ws_sales_price: DECIMAL 7 2
+    ws_ext_discount_amt: DECIMAL 7 2
+    ws_ext_sales_price: DECIMAL 7 2
+    ws_ext_wholesale_cost: DECIMAL 7 2
+    ws_ext_list_price: DECIMAL 7 2
+    ws_ext_tax: DECIMAL 7 2
+    ws_coupon_amt: DECIMAL 7 2
+    ws_ext_ship_cost: DECIMAL 7 2
+    ws_net_paid: DECIMAL 7 2
+    ws_net_paid_inc_tax: DECIMAL 7 2
+    ws_net_paid_inc_ship: DECIMAL 7 2
+    ws_net_paid_inc_ship_tax: DECIMAL 7 2
+    ws_net_profit: DECIMAL 7 2
+catalog_sales:
+  attributes:
+    cs_sold_date_sk: BIGINT
+    cs_sold_time_sk: BIGINT
+    cs_ship_date_sk: BIGINT
+    cs_bill_customer_sk: BIGINT
+    cs_bill_cdemo_sk: BIGINT
+    cs_bill_hdemo_sk: BIGINT
+    cs_bill_addr_sk: BIGINT
+    cs_ship_customer_sk: BIGINT
+    cs_ship_cdemo_sk: BIGINT
+    cs_ship_hdemo_sk: BIGINT
+    cs_ship_addr_sk: BIGINT
+    cs_call_center_sk: BIGINT
+    cs_catalog_page_sk: BIGINT
+    cs_ship_mode_sk: BIGINT
+    cs_warehouse_sk: BIGINT
+    cs_item_sk: BIGINT
+    cs_promo_sk: BIGINT
+    cs_order_number: BIGINT
+    cs_quantity: BIGINT
+    cs_wholesale_cost: DECIMAL 7 2
+    cs_list_price: DECIMAL 7 2
+    cs_sales_price: DECIMAL 7 2
+    cs_ext_discount_amt: DECIMAL 7 2
+    cs_ext_sales_price: DECIMAL 7 2
+    cs_ext_wholesale_cost: DECIMAL 7 2
+    cs_ext_list_price: DECIMAL 7 2
+    cs_ext_tax: DECIMAL 7 2
+    cs_coupon_amt: DECIMAL 7 2
+    cs_ext_ship_cost: DECIMAL 7 2
+    cs_net_paid: DECIMAL 7 2
+    cs_net_paid_inc_tax: DECIMAL 7 2
+    cs_net_paid_inc_ship: DECIMAL 7 2
+    cs_net_paid_inc_ship_tax: DECIMAL 7 2
+    cs_net_profit: DECIMAL 7 2
+

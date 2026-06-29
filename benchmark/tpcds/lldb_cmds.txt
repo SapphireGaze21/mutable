@@ -1,0 +1,4 @@
+settings set -- target.run-args --plan-enumerator DPccp --plan benchmark/dataset_for_graph/test_join6.sql
+run
+bt
+quit

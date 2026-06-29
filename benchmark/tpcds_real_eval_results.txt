@@ -1,0 +1,14 @@
+Evaluating 7 Target TPCDS Queries with Real 300MB Dataset...
+
+[query12.sql] Testing with 3 tables...
+  -> Running DPsize...
+     Failed execution for DPsize!
+
+STDERR:
+Tuple CRASH: type=5 expected Vi
+/Users/thapan/mutable-org/mutable/include/mutable/IR/Tuple.hpp:87: Condition 'this->type == Vi' failed.
+
+
+================================================================================
+TOPOLOGY REPORT AND EVALUATION WITH REAL DATA
+================================================================================

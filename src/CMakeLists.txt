@@ -7,6 +7,15 @@ add_subdirectory(io)
 add_subdirectory(IR)
 add_subdirectory(backend)
 
+add_dependencies(util Boost)
+add_dependencies(catalog Boost)
+add_dependencies(lex Boost)
+add_dependencies(parse Boost)
+add_dependencies(storage Boost)
+add_dependencies(io Boost)
+add_dependencies(IR Boost)
+add_dependencies(backend Boost)
+
 
 ########################################################################################################################
 # libmutable

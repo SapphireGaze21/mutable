@@ -3,6 +3,7 @@ suite: str()
 benchmark: str()
 name: str(required=False)
 readonly: bool()
+database: str(required=False)
 chart: include('chart_def', required=False)
 data: map(include('table'), required=False)      # Map from table name to 'table'
 systems:

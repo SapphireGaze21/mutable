@@ -1,0 +1,1 @@
+SELECT * FROM store_sales, date_dim, item, customer, catalog_sales, web_sales WHERE ss_sold_date_sk = d_date_sk AND ss_item_sk = i_item_sk AND ss_customer_sk = c_customer_sk AND d_year = 1998 AND d_moy = 1 AND cs_sold_date_sk = d_date_sk AND ws_sold_date_sk = d_date_sk AND cs_bill_customer_sk = c_customer_sk AND ws_bill_customer_sk = c_customer_sk;

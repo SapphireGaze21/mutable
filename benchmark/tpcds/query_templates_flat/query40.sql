@@ -1,0 +1,1 @@
+SELECT * FROM catalog_sales, catalog_returns, warehouse, item, date_dim WHERE i_item_sk = cs_item_sk AND cs_warehouse_sk = w_warehouse_sk AND cs_sold_date_sk = d_date_sk AND (cs_order_number = cr_order_number AND cs_item_sk = cr_item_sk);

@@ -51,8 +51,12 @@ class DuckDB(Connector):
             measurement_result[case] = list()
 
         # For query execution
-        command: str = f"./{self.duckdb_cli} {TMP_DB}"
-        if not self.multithreaded:
+        db_file = params.get('database')
+        if db_file is None:
+            db_file = TMP_DB
+        command: str = f"duckdb {db_file}"
+        import platform
+        if not self.multithreaded and platform.system() == 'Linux':
             command = 'taskset -c 2 ' + command
 
         popen_args: dict[str, Any] = {'shell': True, 'text': True}

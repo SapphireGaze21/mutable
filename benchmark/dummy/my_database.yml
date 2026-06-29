@@ -1,0 +1,41 @@
+description: My custom database benchmark
+suite: custom_suite
+benchmark: my_database
+readonly: true
+
+# 1. Define the database tables and where the CSVs are located on your disk
+data:
+  students:
+    file: 'benchmark/dummy/students.csv'
+    format: 'csv'
+    delimiter: ','
+    header: 1                      # 1 means skip the header row
+    attributes:
+      'id': 'INT NOT NULL PRIMARY KEY'
+      'name': 'CHAR 20 NOT NULL'
+      'grade': 'CHAR 2 NOT NULL'
+  mentor:
+    file: 'benchmark/dummy/mentor.csv'
+    format: 'csv'
+    delimiter: ','
+    header: 1                      # 1 means skip the header row
+    attributes:
+      'mid': 'INT NOT NULL PRIMARY KEY'
+      'sid': 'INT NOT NULL'
+      'names': 'CHAR 20 NOT NULL'
+
+# 2. Configure the database run settings and choose your DP algorithm
+systems:
+  mutable:
+    configurations:
+      'Interpreter-DPsub':
+        args: --backend Interpreter --plan-enumerator DPsub --plan
+        pattern: '^Execute query:.*'
+
+    # 3. Define the query you want to run
+    cases:
+      query_three: |
+        SELECT * FROM students, mentor WHERE id = sid;
+      complex_join: |
+        SELECT * FROM students s1, mentor m1, students s2, mentor m2
+        WHERE s1.id = m1.sid AND s1.id = s2.id AND s2.id = m2.sid;

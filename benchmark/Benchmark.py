@@ -333,6 +333,8 @@ def run_benchmarks(args: argparse.Namespace) -> None:
                 benchmark_files.append(path)
             else:  # path is a directory containing multiple experiment files
                 benchmark_files.extend(glob.glob(os.path.join(path, '**', '[!_]*.yml'), recursive=True))
+                benchmark_files.extend(glob.glob(os.path.join(path, '**', '[!_]*.tpl'), recursive=True))
+                benchmark_files.extend(glob.glob(os.path.join(path, '**', '[!_]*.sql'), recursive=True))
 
     benchmark_files: list[str] = sorted(list(set(benchmark_files)))
 
@@ -388,94 +390,127 @@ def run_benchmarks(args: argparse.Namespace) -> None:
         log.set_description_str(f'Running benchmark "{path_to_file}"'.ljust(80))
 
         # Validate schema
-        if not validate_schema(path_to_file, YML_SCHEMA):
+        is_tpl = path_to_file.endswith('.tpl')
+        is_sql = path_to_file.endswith('.sql')
+        if not is_tpl and not is_sql and not validate_schema(path_to_file, YML_SCHEMA):
             continue
 
-        with open(path_to_file, 'r') as yml_file:
-            yml: dict[str, Any] = yaml.safe_load(yml_file)
+        if is_tpl or is_sql:
+            if is_tpl:
+                import sys
+                sys.path.append('benchmark')
+                import tpl_parser
+                query_str = tpl_parser.parse_tpl(path_to_file)
+            else:
+                with open(path_to_file, 'r') as sql_file:
+                    query_str = sql_file.read().strip()
+            with open('benchmark/tpcds/graph_mutable.yml', 'r') as f:
+                data_yml = yaml.safe_load(f)
+            yml = {
+                'suite': 'tpcds',
+                'benchmark': 'tpcds',
+                'name': os.path.basename(path_to_file),
+                'readonly': True,
+                'data': data_yml['data'],
+                'systems': {
+                    'mutable': {
+                        'cases': { 'query': query_str },
+                        'configurations': {
+                            'Interpreter-DPsub': {
+                                'args': '--backend Interpreter --plan-enumerator DPsub --plan',
+                                'pattern': '^Execute query:.*',
+                                'variables': {}
+                            }
+                        }
+                    }
+                }
+            }
+        else:
+            with open(path_to_file, 'r') as yml_file:
+                yml = yaml.safe_load(yml_file)
 
-            # Get information about experiment
-            info: SimpleNamespace = SimpleNamespace()
-            info.path_to_file = path_to_file
-            info.date = date
-            info.commit = commit
-            info.version = yml.get('version', 1)
-            info.suite_name = yml.get('suite')
-            info.benchmark_name = yml.get('benchmark')
-            info.experiment_name = yml.get('name', path_to_file)
+        # Get information about experiment
+        info: SimpleNamespace = SimpleNamespace()
+        info.path_to_file = path_to_file
+        info.date = date
+        info.commit = commit
+        info.version = yml.get('version', 1)
+        info.suite_name = yml.get('suite')
+        info.benchmark_name = yml.get('benchmark')
+        info.experiment_name = yml.get('name', path_to_file)
 
-            # Count the lines in each table file and add it to the table entry
-            info.experiment_data = yml.get('data')
-            if info.experiment_data:
-                table_access_error: bool = False
-                for table_name, table in info.experiment_data.items():
-                    if 'file' not in table:
-                        continue  # Skip counting files when table does not have a file with data
-                    p: str = os.path.join(table['file'])  # Path to file
-                    if not os.path.isfile(p):
-                        tqdm_print(f'Table file \'{p}\' not found.  Skipping benchmark.\n')
-                        table_access_error = True
+        # Count the lines in each table file and add it to the table entry
+        info.experiment_data = yml.get('data')
+        if info.experiment_data:
+            table_access_error: bool = False
+            for table_name, table in info.experiment_data.items():
+                if 'file' not in table:
+                    continue  # Skip counting files when table does not have a file with data
+                p: str = os.path.join(table['file'])  # Path to file
+                if not os.path.isfile(p):
+                    tqdm_print(f'Table file \'{p}\' not found.  Skipping benchmark.\n')
+                    table_access_error = True
+                else:
+                    if 'lines_in_file' in yml:  # use `if` for lazy evaluation
+                        info.experiment_data[table_name]['lines_in_file'] = yml['lines_in_file']
                     else:
-                        if 'lines_in_file' in yml:  # use `if` for lazy evaluation
-                            info.experiment_data[table_name]['lines_in_file'] = yml['lines_in_file']
-                        else:
-                            info.experiment_data[table_name]['lines_in_file'] = int(os.popen(f"wc -l < {p}").read())
-                if table_access_error:
-                    continue  # At least one table file could not be opened.  Skip benchmark.
+                        info.experiment_data[table_name]['lines_in_file'] = int(os.popen(f"wc -l < {p}").read())
+            if table_access_error:
+                continue  # At least one table file could not be opened.  Skip benchmark.
 
-            tqdm_print('\n\n==========================================================')
-            tqdm_print(f'Perform benchmarks in \'{path_to_file}\'.')
-            tqdm_print('==========================================================')
+        tqdm_print('\n\n==========================================================')
+        tqdm_print(f'Perform benchmarks in \'{path_to_file}\'.')
+        tqdm_print('==========================================================')
 
-            # Perform experiment for each system
-            for system in yml.get('systems', dict()).keys():
-                if system not in test_systems:
-                    continue
+        # Perform experiment for each system
+        for system in yml.get('systems', dict()).keys():
+            if system not in test_systems:
+                continue
 
-                connectors: list[connector.Connector] = list()
+            connectors: list[connector.Connector] = list()
 
-                match system:
-                    case 'mutable':
-                        connectors.append(mutable.Mutable(dict(
-                            path_to_binary=os.path.join(args.builddir, 'bin', 'shell'),
-                            verbose=args.verbose,
-                        )))
-                    case 'PostgreSQL':
-                        connectors.append(postgresql.PostgreSQL(dict(
-                            verbose=args.verbose
-                        )))
-                    case 'DuckDB':
-                        connectors.append(duckdb.DuckDB(dict(
-                            path_to_binary='benchmark/database_connectors/duckdb',
-                            verbose=args.verbose,
-                            multithreaded=False
-                        )))
-                        connectors.append(duckdb.DuckDB(dict(
-                            path_to_binary='benchmark/database_connectors/duckdb',
-                            verbose=args.verbose,
-                            multithreaded=True
-                        )))
-                    case 'HyPer':
-                        connectors.append(hyper.HyPer(dict(
-                            verbose=args.verbose,
-                            multithreaded=False
-                        )))
-                        connectors.append(hyper.HyPer(dict(
-                            verbose=args.verbose,
-                            multithreaded=True
-                        )))
+            match system:
+                case 'mutable':
+                    connectors.append(mutable.Mutable(dict(
+                        path_to_binary=os.path.join(args.builddir, 'bin', 'shell'),
+                        verbose=args.verbose,
+                    )))
+                case 'PostgreSQL':
+                    connectors.append(postgresql.PostgreSQL(dict(
+                        verbose=args.verbose
+                    )))
+                case 'DuckDB':
+                    connectors.append(duckdb.DuckDB(dict(
+                        path_to_binary='benchmark/database_connectors/duckdb',
+                        verbose=args.verbose,
+                        multithreaded=False
+                    )))
+                    connectors.append(duckdb.DuckDB(dict(
+                        path_to_binary='benchmark/database_connectors/duckdb',
+                        verbose=args.verbose,
+                        multithreaded=True
+                    )))
+                case 'HyPer':
+                    connectors.append(hyper.HyPer(dict(
+                        verbose=args.verbose,
+                        multithreaded=False
+                    )))
+                    connectors.append(hyper.HyPer(dict(
+                        verbose=args.verbose,
+                        multithreaded=True
+                    )))
 
-                for conn in connectors:
+            for conn in connectors:
+                if system == 'mutable':
+                    num_experiments_total += 1
+                try:
+                    perform_experiment(yml, conn, system, info, results, output_csv_file, args.num_runs)
+                except BenchmarkError:
+                    pass  # nothing to be done
+                else:
+                    # Count number of benchmarks passed on mutable
                     if system == 'mutable':
-                        num_experiments_total += 1
-                    try:
-                        perform_experiment(yml, conn, system, info, results, output_csv_file, args.num_runs)
-                    except BenchmarkError:
-                        pass  # nothing to be done
-                    else:
-                        # Count number of benchmarks passed on mutable
-                        if system == 'mutable':
-                            num_experiments_passed += 1
+                        num_experiments_passed += 1
 
     # Create .pgsql file
     if args.pgsql:
