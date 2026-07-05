@@ -1,0 +1,35 @@
+Join Order Benchmark (JOB) Query Graph Classification
+=====================================================
+q1.yml: joins 5 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Chain
+q10.yml: joins 7 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q11.yml: joins 8 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q12.yml: joins 8 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q13.yml: joins 9 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q14.yml: joins 8 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q15.yml: joins 9 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q16.yml: joins 8 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic
+q17.yml: joins 7 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q18.yml: joins 7 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q19.yml: joins 10 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic
+q2.yml: joins 5 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Chain
+q20.yml: joins 10 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q21.yml: joins 9 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q22.yml: joins 11 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q23.yml: joins 11 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q24.yml: joins 12 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic
+q25.yml: joins 9 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q26.yml: joins 12 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q27.yml: joins 12 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q28.yml: joins 14 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q29.yml: joins 17 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic
+q3.yml: joins 4 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Chain
+q30.yml: joins 12 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q31.yml: joins 11 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Star-like / Snowflake Tree
+q32.yml: joins 6 tables | Physical SQL Graph: Star-like / Snowflake Tree | Logical Schema Graph: Star-like / Snowflake Tree
+q33.yml: joins 14 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic
+q4.yml: joins 5 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Chain
+q5.yml: joins 5 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Chain
+q6.yml: joins 5 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Chain
+q7.yml: joins 8 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic
+q8.yml: joins 7 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic
+q9.yml: joins 8 tables | Physical SQL Graph: Cyclic | Logical Schema Graph: Cyclic

@@ -2,61 +2,97 @@ description: Join Order Benchmark Query 2
 suite: job
 benchmark: q2
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(t.title) AS movie_title
-        FROM company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code = "[de]"
-          AND k.keyword = "character-name-in-title"
-          AND cn.id = mc.company_id
-          AND mc.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND mc.movie_id = mk.movie_id;
-    b: |
-        SELECT MIN(t.title) AS movie_title
-        FROM company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code = "[nl]"
-          AND k.keyword = "character-name-in-title"
-          AND cn.id = mc.company_id
-          AND mc.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND mc.movie_id = mk.movie_id;
-    c: |
-        SELECT MIN(t.title) AS movie_title
-        FROM company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code = "[sm]"
-          AND k.keyword = "character-name-in-title"
-          AND cn.id = mc.company_id
-          AND mc.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND mc.movie_id = mk.movie_id;
-    d: |
-        SELECT MIN(t.title) AS movie_title
-        FROM company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code = "[us]"
-          AND k.keyword = "character-name-in-title"
-          AND cn.id = mc.company_id
-          AND mc.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND mc.movie_id = mk.movie_id;
+data:
+  company_name:
+    file: benchmark/job/data/company_name.csv
+    lines_in_file: 234997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      country_code: CHAR 6
+      imdb_id: INT
+      name_pcode_nf: CHAR 5
+      name_pcode_sf: CHAR 5
+      md5sum: CHAR 32
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  movie_companies:
+    file: benchmark/job/data/movie_companies.csv
+    lines_in_file: 2609129
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      company_id: INT NOT NULL
+      company_type_id: INT NOT NULL
+      note: CHAR 100
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT t.title AS movie_title\nFROM company_name AS cn,\n     keyword AS\
+        \ k,\n     movie_companies AS mc,\n     movie_keyword AS mk,\n     title AS\
+        \ t\nWHERE cn.country_code = \"[de]\"\n  AND k.keyword = \"character-name-in-title\"\
+        \n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n\
+        \  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;"
+      b: "SELECT t.title AS movie_title\nFROM company_name AS cn,\n     keyword AS\
+        \ k,\n     movie_companies AS mc,\n     movie_keyword AS mk,\n     title AS\
+        \ t\nWHERE cn.country_code = \"[nl]\"\n  AND k.keyword = \"character-name-in-title\"\
+        \n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n\
+        \  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;"
+      c: "SELECT t.title AS movie_title\nFROM company_name AS cn,\n     keyword AS\
+        \ k,\n     movie_companies AS mc,\n     movie_keyword AS mk,\n     title AS\
+        \ t\nWHERE cn.country_code = \"[sm]\"\n  AND k.keyword = \"character-name-in-title\"\
+        \n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n\
+        \  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;"
+      d: "SELECT t.title AS movie_title\nFROM company_name AS cn,\n     keyword AS\
+        \ k,\n     movie_companies AS mc,\n     movie_keyword AS mk,\n     title AS\
+        \ t\nWHERE cn.country_code = \"[us]\"\n  AND k.keyword = \"character-name-in-title\"\
+        \n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n\
+        \  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;"

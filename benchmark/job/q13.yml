@@ -2,127 +2,157 @@ description: Join Order Benchmark Query 13
 suite: job
 benchmark: q13
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(mi.info) AS release_date,
-               MIN(miidx.info) AS rating,
-               MIN(t.title) AS german_movie
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it,
-             info_type AS it2,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS miidx,
-             title AS t
-        WHERE cn.country_code = "[de]"
-          AND ct.kind = "production companies"
-          AND it.info = "rating"
-          AND it2.info = "release dates"
-          AND kt.kind = "movie"
-          AND mi.movie_id = t.id
-          AND it2.id = mi.info_type_id
-          AND kt.id = t.kind_id
-          AND mc.movie_id = t.id
-          AND cn.id = mc.company_id
-          AND ct.id = mc.company_type_id
-          AND miidx.movie_id = t.id
-          AND it.id = miidx.info_type_id
-          AND mi.movie_id = miidx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND miidx.movie_id = mc.movie_id;
-    b: |
-        SELECT MIN(cn.name) AS producing_company,
-               MIN(miidx.info) AS rating,
-               MIN(t.title) AS movie_about_winning
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it,
-             info_type AS it2,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS miidx,
-             title AS t
-        WHERE cn.country_code = "[us]"
-          AND ct.kind = "production companies"
-          AND it.info = "rating"
-          AND it2.info = "release dates"
-          AND kt.kind = "movie"
-          AND t.title != ""
-          AND (t.title LIKE "%Champion%"
-               OR t.title LIKE "%Loser%")
-          AND mi.movie_id = t.id
-          AND it2.id = mi.info_type_id
-          AND kt.id = t.kind_id
-          AND mc.movie_id = t.id
-          AND cn.id = mc.company_id
-          AND ct.id = mc.company_type_id
-          AND miidx.movie_id = t.id
-          AND it.id = miidx.info_type_id
-          AND mi.movie_id = miidx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND miidx.movie_id = mc.movie_id;
-    c: |
-        SELECT MIN(cn.name) AS producing_company,
-               MIN(miidx.info) AS rating,
-               MIN(t.title) AS movie_about_winning
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it,
-             info_type AS it2,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS miidx,
-             title AS t
-        WHERE cn.country_code = "[us]"
-          AND ct.kind = "production companies"
-          AND it.info = "rating"
-          AND it2.info = "release dates"
-          AND kt.kind = "movie"
-          AND t.title != ""
-          AND (t.title LIKE "Champion%"
-               OR t.title LIKE "Loser%")
-          AND mi.movie_id = t.id
-          AND it2.id = mi.info_type_id
-          AND kt.id = t.kind_id
-          AND mc.movie_id = t.id
-          AND cn.id = mc.company_id
-          AND ct.id = mc.company_type_id
-          AND miidx.movie_id = t.id
-          AND it.id = miidx.info_type_id
-          AND mi.movie_id = miidx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND miidx.movie_id = mc.movie_id;
-    d: |
-        SELECT MIN(cn.name) AS producing_company,
-               MIN(miidx.info) AS rating,
-               MIN(t.title) AS movie
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it,
-             info_type AS it2,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS miidx,
-             title AS t
-        WHERE cn.country_code = "[us]"
-          AND ct.kind = "production companies"
-          AND it.info = "rating"
-          AND it2.info = "release dates"
-          AND kt.kind = "movie"
-          AND mi.movie_id = t.id
-          AND it2.id = mi.info_type_id
-          AND kt.id = t.kind_id
-          AND mc.movie_id = t.id
-          AND cn.id = mc.company_id
-          AND ct.id = mc.company_type_id
-          AND miidx.movie_id = t.id
-          AND it.id = miidx.info_type_id
-          AND mi.movie_id = miidx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND miidx.movie_id = mc.movie_id;
+data:
+  company_name:
+    file: benchmark/job/data/company_name.csv
+    lines_in_file: 234997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      country_code: CHAR 6
+      imdb_id: INT
+      name_pcode_nf: CHAR 5
+      name_pcode_sf: CHAR 5
+      md5sum: CHAR 32
+  company_type:
+    file: benchmark/job/data/company_type.csv
+    lines_in_file: 4
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 32
+  info_type:
+    file: benchmark/job/data/info_type.csv
+    lines_in_file: 113
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      info: CHAR 32 NOT NULL
+  kind_type:
+    file: benchmark/job/data/kind_type.csv
+    lines_in_file: 7
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 15
+  movie_companies:
+    file: benchmark/job/data/movie_companies.csv
+    lines_in_file: 2609129
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      company_id: INT NOT NULL
+      company_type_id: INT NOT NULL
+      note: CHAR 100
+  movie_info:
+    file: benchmark/job/data/movie_info.csv
+    lines_in_file: 14835720
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 100
+  movie_info_idx:
+    file: benchmark/job/data/movie_info_idx.csv
+    lines_in_file: 1380035
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 1
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT mi.info AS release_date,\n       miidx.info AS rating,\n       t.title\
+        \ AS german_movie\nFROM company_name AS cn,\n     company_type AS ct,\n  \
+        \   info_type AS it,\n     info_type AS it2,\n     kind_type AS kt,\n    \
+        \ movie_companies AS mc,\n     movie_info AS mi,\n     movie_info_idx AS miidx,\n\
+        \     title AS t\nWHERE cn.country_code = \"[de]\"\n  AND ct.kind = \"production\
+        \ companies\"\n  AND it.info = \"rating\"\n  AND it2.info = \"release dates\"\
+        \n  AND kt.kind = \"movie\"\n  AND mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n\
+        \  AND kt.id = t.kind_id\n  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n\
+        \  AND ct.id = mc.company_type_id\n  AND miidx.movie_id = t.id\n  AND it.id\
+        \ = miidx.info_type_id\n  AND mi.movie_id = miidx.movie_id\n  AND mi.movie_id\
+        \ = mc.movie_id\n  AND miidx.movie_id = mc.movie_id;"
+      b: "SELECT cn.name AS producing_company,\n       miidx.info AS rating,\n   \
+        \    t.title AS movie_about_winning\nFROM company_name AS cn,\n     company_type\
+        \ AS ct,\n     info_type AS it,\n     info_type AS it2,\n     kind_type AS\
+        \ kt,\n     movie_companies AS mc,\n     movie_info AS mi,\n     movie_info_idx\
+        \ AS miidx,\n     title AS t\nWHERE cn.country_code = \"[us]\"\n  AND ct.kind\
+        \ = \"production companies\"\n  AND it.info = \"rating\"\n  AND it2.info =\
+        \ \"release dates\"\n  AND kt.kind = \"movie\"\n  AND t.title != \"\"\n  AND\
+        \ (t.title LIKE \"%Champion%\"\n       OR t.title LIKE \"%Loser%\")\n  AND\
+        \ mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n\
+        \  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n\
+        \  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id\
+        \ = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id\
+        \ = mc.movie_id;"
+      c: "SELECT cn.name AS producing_company,\n       miidx.info AS rating,\n   \
+        \    t.title AS movie_about_winning\nFROM company_name AS cn,\n     company_type\
+        \ AS ct,\n     info_type AS it,\n     info_type AS it2,\n     kind_type AS\
+        \ kt,\n     movie_companies AS mc,\n     movie_info AS mi,\n     movie_info_idx\
+        \ AS miidx,\n     title AS t\nWHERE cn.country_code = \"[us]\"\n  AND ct.kind\
+        \ = \"production companies\"\n  AND it.info = \"rating\"\n  AND it2.info =\
+        \ \"release dates\"\n  AND kt.kind = \"movie\"\n  AND t.title != \"\"\n  AND\
+        \ (t.title LIKE \"Champion%\"\n       OR t.title LIKE \"Loser%\")\n  AND mi.movie_id\
+        \ = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id\
+        \ = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n\
+        \  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id\
+        \ = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id\
+        \ = mc.movie_id;"
+      d: "SELECT cn.name AS producing_company,\n       miidx.info AS rating,\n   \
+        \    t.title AS movie\nFROM company_name AS cn,\n     company_type AS ct,\n\
+        \     info_type AS it,\n     info_type AS it2,\n     kind_type AS kt,\n  \
+        \   movie_companies AS mc,\n     movie_info AS mi,\n     movie_info_idx AS\
+        \ miidx,\n     title AS t\nWHERE cn.country_code = \"[us]\"\n  AND ct.kind\
+        \ = \"production companies\"\n  AND it.info = \"rating\"\n  AND it2.info =\
+        \ \"release dates\"\n  AND kt.kind = \"movie\"\n  AND mi.movie_id = t.id\n\
+        \  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id\
+        \ = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n\
+        \  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id\
+        \ = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id\
+        \ = mc.movie_id;"

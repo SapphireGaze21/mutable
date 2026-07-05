@@ -2,207 +2,207 @@ description: Join Order Benchmark Query 22
 suite: job
 benchmark: q22
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(cn.name) AS movie_company,
-               MIN(mi_idx.info) AS rating,
-               MIN(t.title) AS western_violent_movie
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it1,
-             info_type AS it2,
-             keyword AS k,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code != "[us]"
-          AND it1.info = "countries"
-          AND it2.info = "rating"
-          AND k.keyword IN ("murder",
-                            "murder-in-title",
-                            "blood",
-                            "violence")
-          AND kt.kind IN ("movie",
-                          "episode")
-          AND NOT (mc.note LIKE "%(USA)%")
-          AND mc.note LIKE "%(200%)%"
-          AND mi.info IN ("Germany",
-                          "German",
-                          "USA",
-                          "American")
-          AND mi_idx.info < "7.0"
-          AND t.production_year > 2008
-          AND kt.id = t.kind_id
-          AND t.id = mi.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = mi_idx.movie_id
-          AND t.id = mc.movie_id
-          AND mk.movie_id = mi.movie_id
-          AND mk.movie_id = mi_idx.movie_id
-          AND mk.movie_id = mc.movie_id
-          AND mi.movie_id = mi_idx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND mc.movie_id = mi_idx.movie_id
-          AND k.id = mk.keyword_id
-          AND it1.id = mi.info_type_id
-          AND it2.id = mi_idx.info_type_id
-          AND ct.id = mc.company_type_id
-          AND cn.id = mc.company_id;
-    b: |
-        SELECT MIN(cn.name) AS movie_company,
-               MIN(mi_idx.info) AS rating,
-               MIN(t.title) AS western_violent_movie
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it1,
-             info_type AS it2,
-             keyword AS k,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code != "[us]"
-          AND it1.info = "countries"
-          AND it2.info = "rating"
-          AND k.keyword IN ("murder",
-                            "murder-in-title",
-                            "blood",
-                            "violence")
-          AND kt.kind IN ("movie",
-                          "episode")
-          AND NOT (mc.note LIKE "%(USA)%")
-          AND mc.note LIKE "%(200%)%"
-          AND mi.info IN ("Germany",
-                          "German",
-                          "USA",
-                          "American")
-          AND mi_idx.info < "7.0"
-          AND t.production_year > 2009
-          AND kt.id = t.kind_id
-          AND t.id = mi.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = mi_idx.movie_id
-          AND t.id = mc.movie_id
-          AND mk.movie_id = mi.movie_id
-          AND mk.movie_id = mi_idx.movie_id
-          AND mk.movie_id = mc.movie_id
-          AND mi.movie_id = mi_idx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND mc.movie_id = mi_idx.movie_id
-          AND k.id = mk.keyword_id
-          AND it1.id = mi.info_type_id
-          AND it2.id = mi_idx.info_type_id
-          AND ct.id = mc.company_type_id
-          AND cn.id = mc.company_id;
-    c: |
-        SELECT MIN(cn.name) AS movie_company,
-               MIN(mi_idx.info) AS rating,
-               MIN(t.title) AS western_violent_movie
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it1,
-             info_type AS it2,
-             keyword AS k,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code != "[us]"
-          AND it1.info = "countries"
-          AND it2.info = "rating"
-          AND k.keyword IN ("murder",
-                            "murder-in-title",
-                            "blood",
-                            "violence")
-          AND kt.kind IN ("movie",
-                          "episode")
-          AND NOT (mc.note LIKE "%(USA)%")
-          AND mc.note LIKE "%(200%)%"
-          AND mi.info IN ("Sweden",
-                          "Norway",
-                          "Germany",
-                          "Denmark",
-                          "Swedish",
-                          "Danish",
-                          "Norwegian",
-                          "German",
-                          "USA",
-                          "American")
-          AND mi_idx.info < "8.5"
-          AND t.production_year > 2005
-          AND kt.id = t.kind_id
-          AND t.id = mi.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = mi_idx.movie_id
-          AND t.id = mc.movie_id
-          AND mk.movie_id = mi.movie_id
-          AND mk.movie_id = mi_idx.movie_id
-          AND mk.movie_id = mc.movie_id
-          AND mi.movie_id = mi_idx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND mc.movie_id = mi_idx.movie_id
-          AND k.id = mk.keyword_id
-          AND it1.id = mi.info_type_id
-          AND it2.id = mi_idx.info_type_id
-          AND ct.id = mc.company_type_id
-          AND cn.id = mc.company_id;
-    d: |
-        SELECT MIN(cn.name) AS movie_company,
-               MIN(mi_idx.info) AS rating,
-               MIN(t.title) AS western_violent_movie
-        FROM company_name AS cn,
-             company_type AS ct,
-             info_type AS it1,
-             info_type AS it2,
-             keyword AS k,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cn.country_code != "[us]"
-          AND it1.info = "countries"
-          AND it2.info = "rating"
-          AND k.keyword IN ("murder",
-                            "murder-in-title",
-                            "blood",
-                            "violence")
-          AND kt.kind IN ("movie",
-                          "episode")
-          AND mi.info IN ("Sweden",
-                          "Norway",
-                          "Germany",
-                          "Denmark",
-                          "Swedish",
-                          "Danish",
-                          "Norwegian",
-                          "German",
-                          "USA",
-                          "American")
-          AND mi_idx.info < "8.5"
-          AND t.production_year > 2005
-          AND kt.id = t.kind_id
-          AND t.id = mi.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = mi_idx.movie_id
-          AND t.id = mc.movie_id
-          AND mk.movie_id = mi.movie_id
-          AND mk.movie_id = mi_idx.movie_id
-          AND mk.movie_id = mc.movie_id
-          AND mi.movie_id = mi_idx.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND mc.movie_id = mi_idx.movie_id
-          AND k.id = mk.keyword_id
-          AND it1.id = mi.info_type_id
-          AND it2.id = mi_idx.info_type_id
-          AND ct.id = mc.company_type_id
-          AND cn.id = mc.company_id;
+data:
+  company_name:
+    file: benchmark/job/data/company_name.csv
+    lines_in_file: 234997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      country_code: CHAR 6
+      imdb_id: INT
+      name_pcode_nf: CHAR 5
+      name_pcode_sf: CHAR 5
+      md5sum: CHAR 32
+  company_type:
+    file: benchmark/job/data/company_type.csv
+    lines_in_file: 4
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 32
+  info_type:
+    file: benchmark/job/data/info_type.csv
+    lines_in_file: 113
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      info: CHAR 32 NOT NULL
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  kind_type:
+    file: benchmark/job/data/kind_type.csv
+    lines_in_file: 7
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 15
+  movie_companies:
+    file: benchmark/job/data/movie_companies.csv
+    lines_in_file: 2609129
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      company_id: INT NOT NULL
+      company_type_id: INT NOT NULL
+      note: CHAR 100
+  movie_info:
+    file: benchmark/job/data/movie_info.csv
+    lines_in_file: 14835720
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 100
+  movie_info_idx:
+    file: benchmark/job/data/movie_info_idx.csv
+    lines_in_file: 1380035
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 1
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT cn.name AS movie_company,\n       mi_idx.info AS rating,\n      \
+        \ t.title AS western_violent_movie\nFROM company_name AS cn,\n     company_type\
+        \ AS ct,\n     info_type AS it1,\n     info_type AS it2,\n     keyword AS\
+        \ k,\n     kind_type AS kt,\n     movie_companies AS mc,\n     movie_info\
+        \ AS mi,\n     movie_info_idx AS mi_idx,\n     movie_keyword AS mk,\n    \
+        \ title AS t\nWHERE cn.country_code != \"[us]\"\n  AND it1.info = \"countries\"\
+        \n  AND it2.info = \"rating\"\n  AND (k.keyword = \"murder\" OR k.keyword\
+        \ = \"murder-in-title\" OR k.keyword = \"blood\" OR k.keyword = \"violence\"\
+        )\n  AND (kt.kind = \"movie\" OR kt.kind = \"episode\")\n  AND NOT (mc.note\
+        \ LIKE \"%(USA)%\")\n  AND mc.note LIKE \"%(200%)%\"\n  AND (mi.info = \"\
+        Germany\" OR mi.info = \"German\" OR mi.info = \"USA\" OR mi.info = \"American\"\
+        )\n  AND mi_idx.info < \"7.0\"\n  AND t.production_year > 2008\n  AND kt.id\
+        \ = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id\
+        \ = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n\
+        \  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND\
+        \ mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id\
+        \ = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n\
+        \  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND\
+        \ cn.id = mc.company_id;"
+      b: "SELECT cn.name AS movie_company,\n       mi_idx.info AS rating,\n      \
+        \ t.title AS western_violent_movie\nFROM company_name AS cn,\n     company_type\
+        \ AS ct,\n     info_type AS it1,\n     info_type AS it2,\n     keyword AS\
+        \ k,\n     kind_type AS kt,\n     movie_companies AS mc,\n     movie_info\
+        \ AS mi,\n     movie_info_idx AS mi_idx,\n     movie_keyword AS mk,\n    \
+        \ title AS t\nWHERE cn.country_code != \"[us]\"\n  AND it1.info = \"countries\"\
+        \n  AND it2.info = \"rating\"\n  AND (k.keyword = \"murder\" OR k.keyword\
+        \ = \"murder-in-title\" OR k.keyword = \"blood\" OR k.keyword = \"violence\"\
+        )\n  AND (kt.kind = \"movie\" OR kt.kind = \"episode\")\n  AND NOT (mc.note\
+        \ LIKE \"%(USA)%\")\n  AND mc.note LIKE \"%(200%)%\"\n  AND (mi.info = \"\
+        Germany\" OR mi.info = \"German\" OR mi.info = \"USA\" OR mi.info = \"American\"\
+        )\n  AND mi_idx.info < \"7.0\"\n  AND t.production_year > 2009\n  AND kt.id\
+        \ = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id\
+        \ = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n\
+        \  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND\
+        \ mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id\
+        \ = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n\
+        \  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND\
+        \ cn.id = mc.company_id;"
+      c: "SELECT cn.name AS movie_company,\n       mi_idx.info AS rating,\n      \
+        \ t.title AS western_violent_movie\nFROM company_name AS cn,\n     company_type\
+        \ AS ct,\n     info_type AS it1,\n     info_type AS it2,\n     keyword AS\
+        \ k,\n     kind_type AS kt,\n     movie_companies AS mc,\n     movie_info\
+        \ AS mi,\n     movie_info_idx AS mi_idx,\n     movie_keyword AS mk,\n    \
+        \ title AS t\nWHERE cn.country_code != \"[us]\"\n  AND it1.info = \"countries\"\
+        \n  AND it2.info = \"rating\"\n  AND (k.keyword = \"murder\" OR k.keyword\
+        \ = \"murder-in-title\" OR k.keyword = \"blood\" OR k.keyword = \"violence\"\
+        )\n  AND (kt.kind = \"movie\" OR kt.kind = \"episode\")\n  AND NOT (mc.note\
+        \ LIKE \"%(USA)%\")\n  AND mc.note LIKE \"%(200%)%\"\n  AND (mi.info = \"\
+        Sweden\" OR mi.info = \"Norway\" OR mi.info = \"Germany\" OR mi.info = \"\
+        Denmark\" OR mi.info = \"Swedish\" OR mi.info = \"Danish\" OR mi.info = \"\
+        Norwegian\" OR mi.info = \"German\" OR mi.info = \"USA\" OR mi.info = \"American\"\
+        )\n  AND mi_idx.info < \"8.5\"\n  AND t.production_year > 2005\n  AND kt.id\
+        \ = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id\
+        \ = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n\
+        \  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND\
+        \ mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id\
+        \ = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n\
+        \  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND\
+        \ cn.id = mc.company_id;"
+      d: "SELECT cn.name AS movie_company,\n       mi_idx.info AS rating,\n      \
+        \ t.title AS western_violent_movie\nFROM company_name AS cn,\n     company_type\
+        \ AS ct,\n     info_type AS it1,\n     info_type AS it2,\n     keyword AS\
+        \ k,\n     kind_type AS kt,\n     movie_companies AS mc,\n     movie_info\
+        \ AS mi,\n     movie_info_idx AS mi_idx,\n     movie_keyword AS mk,\n    \
+        \ title AS t\nWHERE cn.country_code != \"[us]\"\n  AND it1.info = \"countries\"\
+        \n  AND it2.info = \"rating\"\n  AND (k.keyword = \"murder\" OR k.keyword\
+        \ = \"murder-in-title\" OR k.keyword = \"blood\" OR k.keyword = \"violence\"\
+        )\n  AND (kt.kind = \"movie\" OR kt.kind = \"episode\")\n  AND (mi.info =\
+        \ \"Sweden\" OR mi.info = \"Norway\" OR mi.info = \"Germany\" OR mi.info =\
+        \ \"Denmark\" OR mi.info = \"Swedish\" OR mi.info = \"Danish\" OR mi.info\
+        \ = \"Norwegian\" OR mi.info = \"German\" OR mi.info = \"USA\" OR mi.info\
+        \ = \"American\")\n  AND mi_idx.info < \"8.5\"\n  AND t.production_year >\
+        \ 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n\
+        \  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id\
+        \ = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id =\
+        \ mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n\
+        \  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id\
+        \ = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n\
+        \  AND cn.id = mc.company_id;"

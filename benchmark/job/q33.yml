@@ -2,155 +2,167 @@ description: Join Order Benchmark Query 33
 suite: job
 benchmark: q33
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(cn1.name) AS first_company,
-               MIN(cn2.name) AS second_company,
-               MIN(mi_idx1.info) AS first_rating,
-               MIN(mi_idx2.info) AS second_rating,
-               MIN(t1.title) AS first_movie,
-               MIN(t2.title) AS second_movie
-        FROM company_name AS cn1,
-             company_name AS cn2,
-             info_type AS it1,
-             info_type AS it2,
-             kind_type AS kt1,
-             kind_type AS kt2,
-             link_type AS lt,
-             movie_companies AS mc1,
-             movie_companies AS mc2,
-             movie_info_idx AS mi_idx1,
-             movie_info_idx AS mi_idx2,
-             movie_link AS ml,
-             title AS t1,
-             title AS t2
-        WHERE cn1.country_code = "[us]"
-          AND it1.info = "rating"
-          AND it2.info = "rating"
-          AND kt1.kind IN ("tv series")
-          AND kt2.kind IN ("tv series")
-          AND lt.link IN ("sequel",
-                          "follows",
-                          "followed by")
-          AND mi_idx2.info < "3.0"
-          AND t2.production_year BETWEEN 2005 AND 2008
-          AND lt.id = ml.link_type_id
-          AND t1.id = ml.movie_id
-          AND t2.id = ml.linked_movie_id
-          AND it1.id = mi_idx1.info_type_id
-          AND t1.id = mi_idx1.movie_id
-          AND kt1.id = t1.kind_id
-          AND cn1.id = mc1.company_id
-          AND t1.id = mc1.movie_id
-          AND ml.movie_id = mi_idx1.movie_id
-          AND ml.movie_id = mc1.movie_id
-          AND mi_idx1.movie_id = mc1.movie_id
-          AND it2.id = mi_idx2.info_type_id
-          AND t2.id = mi_idx2.movie_id
-          AND kt2.id = t2.kind_id
-          AND cn2.id = mc2.company_id
-          AND t2.id = mc2.movie_id
-          AND ml.linked_movie_id = mi_idx2.movie_id
-          AND ml.linked_movie_id = mc2.movie_id
-          AND mi_idx2.movie_id = mc2.movie_id;
-    b: |
-        SELECT MIN(cn1.name) AS first_company,
-               MIN(cn2.name) AS second_company,
-               MIN(mi_idx1.info) AS first_rating,
-               MIN(mi_idx2.info) AS second_rating,
-               MIN(t1.title) AS first_movie,
-               MIN(t2.title) AS second_movie
-        FROM company_name AS cn1,
-             company_name AS cn2,
-             info_type AS it1,
-             info_type AS it2,
-             kind_type AS kt1,
-             kind_type AS kt2,
-             link_type AS lt,
-             movie_companies AS mc1,
-             movie_companies AS mc2,
-             movie_info_idx AS mi_idx1,
-             movie_info_idx AS mi_idx2,
-             movie_link AS ml,
-             title AS t1,
-             title AS t2
-        WHERE cn1.country_code = "[nl]"
-          AND it1.info = "rating"
-          AND it2.info = "rating"
-          AND kt1.kind IN ("tv series")
-          AND kt2.kind IN ("tv series")
-          AND lt.link LIKE "%follow%"
-          AND mi_idx2.info < "3.0"
-          AND t2.production_year = 2007
-          AND lt.id = ml.link_type_id
-          AND t1.id = ml.movie_id
-          AND t2.id = ml.linked_movie_id
-          AND it1.id = mi_idx1.info_type_id
-          AND t1.id = mi_idx1.movie_id
-          AND kt1.id = t1.kind_id
-          AND cn1.id = mc1.company_id
-          AND t1.id = mc1.movie_id
-          AND ml.movie_id = mi_idx1.movie_id
-          AND ml.movie_id = mc1.movie_id
-          AND mi_idx1.movie_id = mc1.movie_id
-          AND it2.id = mi_idx2.info_type_id
-          AND t2.id = mi_idx2.movie_id
-          AND kt2.id = t2.kind_id
-          AND cn2.id = mc2.company_id
-          AND t2.id = mc2.movie_id
-          AND ml.linked_movie_id = mi_idx2.movie_id
-          AND ml.linked_movie_id = mc2.movie_id
-          AND mi_idx2.movie_id = mc2.movie_id;
-    c: |
-        SELECT MIN(cn1.name) AS first_company,
-               MIN(cn2.name) AS second_company,
-               MIN(mi_idx1.info) AS first_rating,
-               MIN(mi_idx2.info) AS second_rating,
-               MIN(t1.title) AS first_movie,
-               MIN(t2.title) AS second_movie
-        FROM company_name AS cn1,
-             company_name AS cn2,
-             info_type AS it1,
-             info_type AS it2,
-             kind_type AS kt1,
-             kind_type AS kt2,
-             link_type AS lt,
-             movie_companies AS mc1,
-             movie_companies AS mc2,
-             movie_info_idx AS mi_idx1,
-             movie_info_idx AS mi_idx2,
-             movie_link AS ml,
-             title AS t1,
-             title AS t2
-        WHERE cn1.country_code != "[us]"
-          AND it1.info = "rating"
-          AND it2.info = "rating"
-          AND kt1.kind IN ("tv series",
-                           "episode")
-          AND kt2.kind IN ("tv series",
-                           "episode")
-          AND lt.link IN ("sequel",
-                          "follows",
-                          "followed by")
-          AND mi_idx2.info < "3.5"
-          AND t2.production_year BETWEEN 2000 AND 2010
-          AND lt.id = ml.link_type_id
-          AND t1.id = ml.movie_id
-          AND t2.id = ml.linked_movie_id
-          AND it1.id = mi_idx1.info_type_id
-          AND t1.id = mi_idx1.movie_id
-          AND kt1.id = t1.kind_id
-          AND cn1.id = mc1.company_id
-          AND t1.id = mc1.movie_id
-          AND ml.movie_id = mi_idx1.movie_id
-          AND ml.movie_id = mc1.movie_id
-          AND mi_idx1.movie_id = mc1.movie_id
-          AND it2.id = mi_idx2.info_type_id
-          AND t2.id = mi_idx2.movie_id
-          AND kt2.id = t2.kind_id
-          AND cn2.id = mc2.company_id
-          AND t2.id = mc2.movie_id
-          AND ml.linked_movie_id = mi_idx2.movie_id
-          AND ml.linked_movie_id = mc2.movie_id
-          AND mi_idx2.movie_id = mc2.movie_id;
+data:
+  company_name:
+    file: benchmark/job/data/company_name.csv
+    lines_in_file: 234997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      country_code: CHAR 6
+      imdb_id: INT
+      name_pcode_nf: CHAR 5
+      name_pcode_sf: CHAR 5
+      md5sum: CHAR 32
+  info_type:
+    file: benchmark/job/data/info_type.csv
+    lines_in_file: 113
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      info: CHAR 32 NOT NULL
+  kind_type:
+    file: benchmark/job/data/kind_type.csv
+    lines_in_file: 7
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 15
+  link_type:
+    file: benchmark/job/data/link_type.csv
+    lines_in_file: 18
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      link: CHAR 32 NOT NULL
+  movie_companies:
+    file: benchmark/job/data/movie_companies.csv
+    lines_in_file: 2609129
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      company_id: INT NOT NULL
+      company_type_id: INT NOT NULL
+      note: CHAR 100
+  movie_info_idx:
+    file: benchmark/job/data/movie_info_idx.csv
+    lines_in_file: 1380035
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 1
+  movie_link:
+    file: benchmark/job/data/movie_link.csv
+    lines_in_file: 29997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      linked_movie_id: INT NOT NULL
+      link_type_id: INT NOT NULL
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT cn1.name AS first_company,\n       cn2.name AS second_company,\n\
+        \       mi_idx1.info AS first_rating,\n       mi_idx2.info AS second_rating,\n\
+        \       t1.title AS first_movie,\n       t2.title AS second_movie\nFROM company_name\
+        \ AS cn1,\n     company_name AS cn2,\n     info_type AS it1,\n     info_type\
+        \ AS it2,\n     kind_type AS kt1,\n     kind_type AS kt2,\n     link_type\
+        \ AS lt,\n     movie_companies AS mc1,\n     movie_companies AS mc2,\n   \
+        \  movie_info_idx AS mi_idx1,\n     movie_info_idx AS mi_idx2,\n     movie_link\
+        \ AS ml,\n     title AS t1,\n     title AS t2\nWHERE cn1.country_code = \"\
+        [us]\"\n  AND it1.info = \"rating\"\n  AND it2.info = \"rating\"\n  AND (kt1.kind\
+        \ = \"tv series\")\n  AND (kt2.kind = \"tv series\")\n  AND (lt.link = \"\
+        sequel\" OR lt.link = \"follows\" OR lt.link = \"followed by\")\n  AND mi_idx2.info\
+        \ < \"3.0\"\n  AND (t2.production_year >= 2005 AND t2.production_year <= 2008)\n\
+        \  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n\
+        \  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND\
+        \ kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n\
+        \  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n\
+        \  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n\
+        \  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id =\
+        \ mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n\
+        \  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;"
+      b: "SELECT cn1.name AS first_company,\n       cn2.name AS second_company,\n\
+        \       mi_idx1.info AS first_rating,\n       mi_idx2.info AS second_rating,\n\
+        \       t1.title AS first_movie,\n       t2.title AS second_movie\nFROM company_name\
+        \ AS cn1,\n     company_name AS cn2,\n     info_type AS it1,\n     info_type\
+        \ AS it2,\n     kind_type AS kt1,\n     kind_type AS kt2,\n     link_type\
+        \ AS lt,\n     movie_companies AS mc1,\n     movie_companies AS mc2,\n   \
+        \  movie_info_idx AS mi_idx1,\n     movie_info_idx AS mi_idx2,\n     movie_link\
+        \ AS ml,\n     title AS t1,\n     title AS t2\nWHERE cn1.country_code = \"\
+        [nl]\"\n  AND it1.info = \"rating\"\n  AND it2.info = \"rating\"\n  AND (kt1.kind\
+        \ = \"tv series\")\n  AND (kt2.kind = \"tv series\")\n  AND lt.link LIKE \"\
+        %follow%\"\n  AND mi_idx2.info < \"3.0\"\n  AND t2.production_year = 2007\n\
+        \  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n\
+        \  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND\
+        \ kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n\
+        \  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n\
+        \  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n\
+        \  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id =\
+        \ mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n\
+        \  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;"
+      c: "SELECT cn1.name AS first_company,\n       cn2.name AS second_company,\n\
+        \       mi_idx1.info AS first_rating,\n       mi_idx2.info AS second_rating,\n\
+        \       t1.title AS first_movie,\n       t2.title AS second_movie\nFROM company_name\
+        \ AS cn1,\n     company_name AS cn2,\n     info_type AS it1,\n     info_type\
+        \ AS it2,\n     kind_type AS kt1,\n     kind_type AS kt2,\n     link_type\
+        \ AS lt,\n     movie_companies AS mc1,\n     movie_companies AS mc2,\n   \
+        \  movie_info_idx AS mi_idx1,\n     movie_info_idx AS mi_idx2,\n     movie_link\
+        \ AS ml,\n     title AS t1,\n     title AS t2\nWHERE cn1.country_code != \"\
+        [us]\"\n  AND it1.info = \"rating\"\n  AND it2.info = \"rating\"\n  AND (kt1.kind\
+        \ = \"tv series\" OR kt1.kind = \"episode\")\n  AND (kt2.kind = \"tv series\"\
+        \ OR kt2.kind = \"episode\")\n  AND (lt.link = \"sequel\" OR lt.link = \"\
+        follows\" OR lt.link = \"followed by\")\n  AND mi_idx2.info < \"3.5\"\n  AND\
+        \ (t2.production_year >= 2000 AND t2.production_year <= 2010)\n  AND lt.id\
+        \ = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n\
+        \  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND\
+        \ kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n\
+        \  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n\
+        \  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n\
+        \  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id =\
+        \ mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n\
+        \  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;"

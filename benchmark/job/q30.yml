@@ -2,187 +2,205 @@ description: Join Order Benchmark Query 30
 suite: job
 benchmark: q30
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(mi.info) AS movie_budget,
-               MIN(mi_idx.info) AS movie_votes,
-               MIN(n.name) AS writer,
-               MIN(t.title) AS complete_violent_movie
-        FROM complete_cast AS cc,
-             comp_cast_type AS cct1,
-             comp_cast_type AS cct2,
-             cast_info AS ci,
-             info_type AS it1,
-             info_type AS it2,
-             keyword AS k,
-             movie_info AS mi,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE cct1.kind IN ("cast",
-                            "crew")
-          AND cct2.kind = "complete+verified"
-          AND ci.note IN ("(writer)",
-                          "(head writer)",
-                          "(written by)",
-                          "(story)",
-                          "(story editor)")
-          AND it1.info = "genres"
-          AND it2.info = "votes"
-          AND k.keyword IN ("murder",
-                            "violence",
-                            "blood",
-                            "gore",
-                            "death",
-                            "female-nudity",
-                            "hospital")
-          AND mi.info IN ("Horror",
-                          "Thriller")
-          AND n.gender = "m"
-          AND t.production_year > 2000
-          AND t.id = mi.movie_id
-          AND t.id = mi_idx.movie_id
-          AND t.id = ci.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = cc.movie_id
-          AND ci.movie_id = mi.movie_id
-          AND ci.movie_id = mi_idx.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND ci.movie_id = cc.movie_id
-          AND mi.movie_id = mi_idx.movie_id
-          AND mi.movie_id = mk.movie_id
-          AND mi.movie_id = cc.movie_id
-          AND mi_idx.movie_id = mk.movie_id
-          AND mi_idx.movie_id = cc.movie_id
-          AND mk.movie_id = cc.movie_id
-          AND n.id = ci.person_id
-          AND it1.id = mi.info_type_id
-          AND it2.id = mi_idx.info_type_id
-          AND k.id = mk.keyword_id
-          AND cct1.id = cc.subject_id
-          AND cct2.id = cc.status_id;
-    b: |
-        SELECT MIN(mi.info) AS movie_budget,
-               MIN(mi_idx.info) AS movie_votes,
-               MIN(n.name) AS writer,
-               MIN(t.title) AS complete_gore_movie
-        FROM complete_cast AS cc,
-             comp_cast_type AS cct1,
-             comp_cast_type AS cct2,
-             cast_info AS ci,
-             info_type AS it1,
-             info_type AS it2,
-             keyword AS k,
-             movie_info AS mi,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE cct1.kind IN ("cast",
-                            "crew")
-          AND cct2.kind = "complete+verified"
-          AND ci.note IN ("(writer)",
-                          "(head writer)",
-                          "(written by)",
-                          "(story)",
-                          "(story editor)")
-          AND it1.info = "genres"
-          AND it2.info = "votes"
-          AND k.keyword IN ("murder",
-                            "violence",
-                            "blood",
-                            "gore",
-                            "death",
-                            "female-nudity",
-                            "hospital")
-          AND mi.info IN ("Horror",
-                          "Thriller")
-          AND n.gender = "m"
-          AND t.production_year > 2000
-          AND (t.title LIKE "%Freddy%"
-               OR t.title LIKE "%Jason%"
-               OR t.title LIKE "Saw%")
-          AND t.id = mi.movie_id
-          AND t.id = mi_idx.movie_id
-          AND t.id = ci.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = cc.movie_id
-          AND ci.movie_id = mi.movie_id
-          AND ci.movie_id = mi_idx.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND ci.movie_id = cc.movie_id
-          AND mi.movie_id = mi_idx.movie_id
-          AND mi.movie_id = mk.movie_id
-          AND mi.movie_id = cc.movie_id
-          AND mi_idx.movie_id = mk.movie_id
-          AND mi_idx.movie_id = cc.movie_id
-          AND mk.movie_id = cc.movie_id
-          AND n.id = ci.person_id
-          AND it1.id = mi.info_type_id
-          AND it2.id = mi_idx.info_type_id
-          AND k.id = mk.keyword_id
-          AND cct1.id = cc.subject_id
-          AND cct2.id = cc.status_id;
-    c: |
-        SELECT MIN(mi.info) AS movie_budget,
-               MIN(mi_idx.info) AS movie_votes,
-               MIN(n.name) AS writer,
-               MIN(t.title) AS complete_violent_movie
-        FROM complete_cast AS cc,
-             comp_cast_type AS cct1,
-             comp_cast_type AS cct2,
-             cast_info AS ci,
-             info_type AS it1,
-             info_type AS it2,
-             keyword AS k,
-             movie_info AS mi,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE cct1.kind = "cast"
-          AND cct2.kind = "complete+verified"
-          AND ci.note IN ("(writer)",
-                          "(head writer)",
-                          "(written by)",
-                          "(story)",
-                          "(story editor)")
-          AND it1.info = "genres"
-          AND it2.info = "votes"
-          AND k.keyword IN ("murder",
-                            "violence",
-                            "blood",
-                            "gore",
-                            "death",
-                            "female-nudity",
-                            "hospital")
-          AND mi.info IN ("Horror",
-                          "Action",
-                          "Sci-Fi",
-                          "Thriller",
-                          "Crime",
-                          "War")
-          AND n.gender = "m"
-          AND t.id = mi.movie_id
-          AND t.id = mi_idx.movie_id
-          AND t.id = ci.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = cc.movie_id
-          AND ci.movie_id = mi.movie_id
-          AND ci.movie_id = mi_idx.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND ci.movie_id = cc.movie_id
-          AND mi.movie_id = mi_idx.movie_id
-          AND mi.movie_id = mk.movie_id
-          AND mi.movie_id = cc.movie_id
-          AND mi_idx.movie_id = mk.movie_id
-          AND mi_idx.movie_id = cc.movie_id
-          AND mk.movie_id = cc.movie_id
-          AND n.id = ci.person_id
-          AND it1.id = mi.info_type_id
-          AND it2.id = mi_idx.info_type_id
-          AND k.id = mk.keyword_id
-          AND cct1.id = cc.subject_id
-          AND cct2.id = cc.status_id;
+data:
+  complete_cast:
+    file: benchmark/job/data/complete_cast.csv
+    lines_in_file: 135086
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT
+      subject_id: INT NOT NULL
+      status_id: INT NOT NULL
+  comp_cast_type:
+    file: benchmark/job/data/comp_cast_type.csv
+    lines_in_file: 4
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 32 NOT NULL
+  cast_info:
+    file: benchmark/job/data/cast_info.csv
+    lines_in_file: 36244344
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      person_id: INT NOT NULL
+      movie_id: INT NOT NULL
+      person_role_id: INT
+      note: CHAR 100
+      nr_order: INT
+      role_id: INT NOT NULL
+  info_type:
+    file: benchmark/job/data/info_type.csv
+    lines_in_file: 113
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      info: CHAR 32 NOT NULL
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  movie_info:
+    file: benchmark/job/data/movie_info.csv
+    lines_in_file: 14835720
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 100
+  movie_info_idx:
+    file: benchmark/job/data/movie_info_idx.csv
+    lines_in_file: 1380035
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 1
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  name:
+    file: benchmark/job/data/name.csv
+    lines_in_file: 4167491
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      imdb_index: CHAR 9
+      imdb_id: INT
+      gender: CHAR 1
+      name_pcode_cf: CHAR 5
+      name_pcode_nf: CHAR 5
+      surname_pcode: CHAR 5
+      md5sum: CHAR 32
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT mi.info AS movie_budget,\n       mi_idx.info AS movie_votes,\n  \
+        \     n.name AS writer,\n       t.title AS complete_violent_movie\nFROM complete_cast\
+        \ AS cc,\n     comp_cast_type AS cct1,\n     comp_cast_type AS cct2,\n   \
+        \  cast_info AS ci,\n     info_type AS it1,\n     info_type AS it2,\n    \
+        \ keyword AS k,\n     movie_info AS mi,\n     movie_info_idx AS mi_idx,\n\
+        \     movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE (cct1.kind\
+        \ = \"cast\" OR cct1.kind = \"crew\")\n  AND cct2.kind = \"complete+verified\"\
+        \n  AND (ci.note = \"(writer)\" OR ci.note = \"(head writer)\" OR ci.note\
+        \ = \"(written by)\" OR ci.note = \"(story)\" OR ci.note = \"(story editor)\"\
+        )\n  AND it1.info = \"genres\"\n  AND it2.info = \"votes\"\n  AND (k.keyword\
+        \ = \"murder\" OR k.keyword = \"violence\" OR k.keyword = \"blood\" OR k.keyword\
+        \ = \"gore\" OR k.keyword = \"death\" OR k.keyword = \"female-nudity\" OR\
+        \ k.keyword = \"hospital\")\n  AND (mi.info = \"Horror\" OR mi.info = \"Thriller\"\
+        )\n  AND n.gender = \"m\"\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n\
+        \  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n\
+        \  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id\
+        \ = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id =\
+        \ cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n\
+        \  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND\
+        \ mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id\
+        \ = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n\
+        \  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id\
+        \ = cc.status_id;"
+      b: "SELECT mi.info AS movie_budget,\n       mi_idx.info AS movie_votes,\n  \
+        \     n.name AS writer,\n       t.title AS complete_gore_movie\nFROM complete_cast\
+        \ AS cc,\n     comp_cast_type AS cct1,\n     comp_cast_type AS cct2,\n   \
+        \  cast_info AS ci,\n     info_type AS it1,\n     info_type AS it2,\n    \
+        \ keyword AS k,\n     movie_info AS mi,\n     movie_info_idx AS mi_idx,\n\
+        \     movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE (cct1.kind\
+        \ = \"cast\" OR cct1.kind = \"crew\")\n  AND cct2.kind = \"complete+verified\"\
+        \n  AND (ci.note = \"(writer)\" OR ci.note = \"(head writer)\" OR ci.note\
+        \ = \"(written by)\" OR ci.note = \"(story)\" OR ci.note = \"(story editor)\"\
+        )\n  AND it1.info = \"genres\"\n  AND it2.info = \"votes\"\n  AND (k.keyword\
+        \ = \"murder\" OR k.keyword = \"violence\" OR k.keyword = \"blood\" OR k.keyword\
+        \ = \"gore\" OR k.keyword = \"death\" OR k.keyword = \"female-nudity\" OR\
+        \ k.keyword = \"hospital\")\n  AND (mi.info = \"Horror\" OR mi.info = \"Thriller\"\
+        )\n  AND n.gender = \"m\"\n  AND t.production_year > 2000\n  AND (t.title\
+        \ LIKE \"%Freddy%\"\n       OR t.title LIKE \"%Jason%\"\n       OR t.title\
+        \ LIKE \"Saw%\")\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n\
+        \  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n\
+        \  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND\
+        \ ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id\
+        \ = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id =\
+        \ cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id\
+        \ = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n\
+        \  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND\
+        \ k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;"
+      c: "SELECT mi.info AS movie_budget,\n       mi_idx.info AS movie_votes,\n  \
+        \     n.name AS writer,\n       t.title AS complete_violent_movie\nFROM complete_cast\
+        \ AS cc,\n     comp_cast_type AS cct1,\n     comp_cast_type AS cct2,\n   \
+        \  cast_info AS ci,\n     info_type AS it1,\n     info_type AS it2,\n    \
+        \ keyword AS k,\n     movie_info AS mi,\n     movie_info_idx AS mi_idx,\n\
+        \     movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE cct1.kind\
+        \ = \"cast\"\n  AND cct2.kind = \"complete+verified\"\n  AND (ci.note = \"\
+        (writer)\" OR ci.note = \"(head writer)\" OR ci.note = \"(written by)\" OR\
+        \ ci.note = \"(story)\" OR ci.note = \"(story editor)\")\n  AND it1.info =\
+        \ \"genres\"\n  AND it2.info = \"votes\"\n  AND (k.keyword = \"murder\" OR\
+        \ k.keyword = \"violence\" OR k.keyword = \"blood\" OR k.keyword = \"gore\"\
+        \ OR k.keyword = \"death\" OR k.keyword = \"female-nudity\" OR k.keyword =\
+        \ \"hospital\")\n  AND (mi.info = \"Horror\" OR mi.info = \"Action\" OR mi.info\
+        \ = \"Sci-Fi\" OR mi.info = \"Thriller\" OR mi.info = \"Crime\" OR mi.info\
+        \ = \"War\")\n  AND n.gender = \"m\"\n  AND t.id = mi.movie_id\n  AND t.id\
+        \ = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n\
+        \  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id\
+        \ = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id =\
+        \ cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n\
+        \  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND\
+        \ mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id\
+        \ = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n\
+        \  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id\
+        \ = cc.status_id;"

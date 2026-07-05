@@ -2,129 +2,154 @@ description: Join Order Benchmark Query 17
 suite: job
 benchmark: q17
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(n.name) AS member_in_charnamed_american_movie,
-               MIN(n.name) AS a1
-        FROM cast_info AS ci,
-             company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE cn.country_code = "[us]"
-          AND k.keyword = "character-name-in-title"
-          AND n.name LIKE "B%"
-          AND n.id = ci.person_id
-          AND ci.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND t.id = mc.movie_id
-          AND mc.company_id = cn.id
-          AND ci.movie_id = mc.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND mc.movie_id = mk.movie_id;
-    b: |
-        SELECT MIN(n.name) AS member_in_charnamed_movie,
-               MIN(n.name) AS a1
-        FROM cast_info AS ci,
-             company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword = "character-name-in-title"
-          AND n.name LIKE "Z%"
-          AND n.id = ci.person_id
-          AND ci.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND t.id = mc.movie_id
-          AND mc.company_id = cn.id
-          AND ci.movie_id = mc.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND mc.movie_id = mk.movie_id;
-    c: |
-        SELECT MIN(n.name) AS member_in_charnamed_movie,
-               MIN(n.name) AS a1
-        FROM cast_info AS ci,
-             company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword = "character-name-in-title"
-          AND n.name LIKE "X%"
-          AND n.id = ci.person_id
-          AND ci.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND t.id = mc.movie_id
-          AND mc.company_id = cn.id
-          AND ci.movie_id = mc.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND mc.movie_id = mk.movie_id;
-    d: |
-        SELECT MIN(n.name) AS member_in_charnamed_movie
-        FROM cast_info AS ci,
-             company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword = "character-name-in-title"
-          AND n.name LIKE "%Bert%"
-          AND n.id = ci.person_id
-          AND ci.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND t.id = mc.movie_id
-          AND mc.company_id = cn.id
-          AND ci.movie_id = mc.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND mc.movie_id = mk.movie_id;
-    e: |
-        SELECT MIN(n.name) AS member_in_charnamed_movie
-        FROM cast_info AS ci,
-             company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE cn.country_code = "[us]"
-          AND k.keyword = "character-name-in-title"
-          AND n.id = ci.person_id
-          AND ci.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND t.id = mc.movie_id
-          AND mc.company_id = cn.id
-          AND ci.movie_id = mc.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND mc.movie_id = mk.movie_id;
-    f: |
-        SELECT MIN(n.name) AS member_in_charnamed_movie
-        FROM cast_info AS ci,
-             company_name AS cn,
-             keyword AS k,
-             movie_companies AS mc,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword = "character-name-in-title"
-          AND n.name LIKE "%B%"
-          AND n.id = ci.person_id
-          AND ci.movie_id = t.id
-          AND t.id = mk.movie_id
-          AND mk.keyword_id = k.id
-          AND t.id = mc.movie_id
-          AND mc.company_id = cn.id
-          AND ci.movie_id = mc.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND mc.movie_id = mk.movie_id;
+data:
+  cast_info:
+    file: benchmark/job/data/cast_info.csv
+    lines_in_file: 36244344
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      person_id: INT NOT NULL
+      movie_id: INT NOT NULL
+      person_role_id: INT
+      note: CHAR 100
+      nr_order: INT
+      role_id: INT NOT NULL
+  company_name:
+    file: benchmark/job/data/company_name.csv
+    lines_in_file: 234997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      country_code: CHAR 6
+      imdb_id: INT
+      name_pcode_nf: CHAR 5
+      name_pcode_sf: CHAR 5
+      md5sum: CHAR 32
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  movie_companies:
+    file: benchmark/job/data/movie_companies.csv
+    lines_in_file: 2609129
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      company_id: INT NOT NULL
+      company_type_id: INT NOT NULL
+      note: CHAR 100
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  name:
+    file: benchmark/job/data/name.csv
+    lines_in_file: 4167491
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      imdb_index: CHAR 9
+      imdb_id: INT
+      gender: CHAR 1
+      name_pcode_cf: CHAR 5
+      name_pcode_nf: CHAR 5
+      surname_pcode: CHAR 5
+      md5sum: CHAR 32
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT n.name AS member_in_charnamed_american_movie,\n       n.name AS a1\n\
+        FROM cast_info AS ci,\n     company_name AS cn,\n     keyword AS k,\n    \
+        \ movie_companies AS mc,\n     movie_keyword AS mk,\n     name AS n,\n   \
+        \  title AS t\nWHERE cn.country_code = \"[us]\"\n  AND k.keyword = \"character-name-in-title\"\
+        \n  AND n.name LIKE \"B%\"\n  AND n.id = ci.person_id\n  AND ci.movie_id =\
+        \ t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id =\
+        \ mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n\
+        \  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;"
+      b: "SELECT n.name AS member_in_charnamed_movie,\n       n.name AS a1\nFROM cast_info\
+        \ AS ci,\n     company_name AS cn,\n     keyword AS k,\n     movie_companies\
+        \ AS mc,\n     movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE\
+        \ k.keyword = \"character-name-in-title\"\n  AND n.name LIKE \"Z%\"\n  AND\
+        \ n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n\
+        \  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id\
+        \ = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n\
+        \  AND mc.movie_id = mk.movie_id;"
+      c: "SELECT n.name AS member_in_charnamed_movie,\n       n.name AS a1\nFROM cast_info\
+        \ AS ci,\n     company_name AS cn,\n     keyword AS k,\n     movie_companies\
+        \ AS mc,\n     movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE\
+        \ k.keyword = \"character-name-in-title\"\n  AND n.name LIKE \"X%\"\n  AND\
+        \ n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n\
+        \  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id\
+        \ = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n\
+        \  AND mc.movie_id = mk.movie_id;"
+      d: "SELECT n.name AS member_in_charnamed_movie\nFROM cast_info AS ci,\n    \
+        \ company_name AS cn,\n     keyword AS k,\n     movie_companies AS mc,\n \
+        \    movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE k.keyword\
+        \ = \"character-name-in-title\"\n  AND n.name LIKE \"%Bert%\"\n  AND n.id\
+        \ = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND\
+        \ mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n\
+        \  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id\
+        \ = mk.movie_id;"
+      e: "SELECT n.name AS member_in_charnamed_movie\nFROM cast_info AS ci,\n    \
+        \ company_name AS cn,\n     keyword AS k,\n     movie_companies AS mc,\n \
+        \    movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE cn.country_code\
+        \ = \"[us]\"\n  AND k.keyword = \"character-name-in-title\"\n  AND n.id =\
+        \ ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND\
+        \ mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n\
+        \  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id\
+        \ = mk.movie_id;"
+      f: "SELECT n.name AS member_in_charnamed_movie\nFROM cast_info AS ci,\n    \
+        \ company_name AS cn,\n     keyword AS k,\n     movie_companies AS mc,\n \
+        \    movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE k.keyword\
+        \ = \"character-name-in-title\"\n  AND n.name LIKE \"%B%\"\n  AND n.id = ci.person_id\n\
+        \  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id =\
+        \ k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id\
+        \ = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;"

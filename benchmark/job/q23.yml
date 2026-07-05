@@ -2,127 +2,183 @@ description: Join Order Benchmark Query 23
 suite: job
 benchmark: q23
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(kt.kind) AS movie_kind,
-               MIN(t.title) AS complete_us_internet_movie
-        FROM complete_cast AS cc,
-             comp_cast_type AS cct1,
-             company_name AS cn,
-             company_type AS ct,
-             info_type AS it1,
-             keyword AS k,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cct1.kind = "complete+verified"
-          AND cn.country_code = "[us]"
-          AND it1.info = "release dates"
-          AND kt.kind IN ("movie")
-          AND mi.note LIKE "%internet%"
-          AND mi.info IS NOT NULL
-          AND (mi.info LIKE "USA:% 199%"
-               OR mi.info LIKE "USA:% 200%")
-          AND t.production_year > 2000
-          AND kt.id = t.kind_id
-          AND t.id = mi.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = mc.movie_id
-          AND t.id = cc.movie_id
-          AND mk.movie_id = mi.movie_id
-          AND mk.movie_id = mc.movie_id
-          AND mk.movie_id = cc.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND mi.movie_id = cc.movie_id
-          AND mc.movie_id = cc.movie_id
-          AND k.id = mk.keyword_id
-          AND it1.id = mi.info_type_id
-          AND cn.id = mc.company_id
-          AND ct.id = mc.company_type_id
-          AND cct1.id = cc.status_id;
-    b: |
-        SELECT MIN(kt.kind) AS movie_kind,
-               MIN(t.title) AS complete_nerdy_internet_movie
-        FROM complete_cast AS cc,
-             comp_cast_type AS cct1,
-             company_name AS cn,
-             company_type AS ct,
-             info_type AS it1,
-             keyword AS k,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cct1.kind = "complete+verified"
-          AND cn.country_code = "[us]"
-          AND it1.info = "release dates"
-          AND k.keyword IN ("nerd",
-                            "loner",
-                            "alienation",
-                            "dignity")
-          AND kt.kind IN ("movie")
-          AND mi.note LIKE "%internet%"
-          AND mi.info LIKE "USA:% 200%"
-          AND t.production_year > 2000
-          AND kt.id = t.kind_id
-          AND t.id = mi.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = mc.movie_id
-          AND t.id = cc.movie_id
-          AND mk.movie_id = mi.movie_id
-          AND mk.movie_id = mc.movie_id
-          AND mk.movie_id = cc.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND mi.movie_id = cc.movie_id
-          AND mc.movie_id = cc.movie_id
-          AND k.id = mk.keyword_id
-          AND it1.id = mi.info_type_id
-          AND cn.id = mc.company_id
-          AND ct.id = mc.company_type_id
-          AND cct1.id = cc.status_id;
-    c: |
-        SELECT MIN(kt.kind) AS movie_kind,
-               MIN(t.title) AS complete_us_internet_movie
-        FROM complete_cast AS cc,
-             comp_cast_type AS cct1,
-             company_name AS cn,
-             company_type AS ct,
-             info_type AS it1,
-             keyword AS k,
-             kind_type AS kt,
-             movie_companies AS mc,
-             movie_info AS mi,
-             movie_keyword AS mk,
-             title AS t
-        WHERE cct1.kind = "complete+verified"
-          AND cn.country_code = "[us]"
-          AND it1.info = "release dates"
-          AND kt.kind IN ("movie",
-                          "tv movie",
-                          "video movie",
-                          "video game")
-          AND mi.note LIKE "%internet%"
-          AND mi.info IS NOT NULL
-          AND (mi.info LIKE "USA:% 199%"
-               OR mi.info LIKE "USA:% 200%")
-          AND t.production_year > 1990
-          AND kt.id = t.kind_id
-          AND t.id = mi.movie_id
-          AND t.id = mk.movie_id
-          AND t.id = mc.movie_id
-          AND t.id = cc.movie_id
-          AND mk.movie_id = mi.movie_id
-          AND mk.movie_id = mc.movie_id
-          AND mk.movie_id = cc.movie_id
-          AND mi.movie_id = mc.movie_id
-          AND mi.movie_id = cc.movie_id
-          AND mc.movie_id = cc.movie_id
-          AND k.id = mk.keyword_id
-          AND it1.id = mi.info_type_id
-          AND cn.id = mc.company_id
-          AND ct.id = mc.company_type_id
-          AND cct1.id = cc.status_id;
+data:
+  complete_cast:
+    file: benchmark/job/data/complete_cast.csv
+    lines_in_file: 135086
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT
+      subject_id: INT NOT NULL
+      status_id: INT NOT NULL
+  comp_cast_type:
+    file: benchmark/job/data/comp_cast_type.csv
+    lines_in_file: 4
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 32 NOT NULL
+  company_name:
+    file: benchmark/job/data/company_name.csv
+    lines_in_file: 234997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      country_code: CHAR 6
+      imdb_id: INT
+      name_pcode_nf: CHAR 5
+      name_pcode_sf: CHAR 5
+      md5sum: CHAR 32
+  company_type:
+    file: benchmark/job/data/company_type.csv
+    lines_in_file: 4
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 32
+  info_type:
+    file: benchmark/job/data/info_type.csv
+    lines_in_file: 113
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      info: CHAR 32 NOT NULL
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  kind_type:
+    file: benchmark/job/data/kind_type.csv
+    lines_in_file: 7
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      kind: CHAR 15
+  movie_companies:
+    file: benchmark/job/data/movie_companies.csv
+    lines_in_file: 2609129
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      company_id: INT NOT NULL
+      company_type_id: INT NOT NULL
+      note: CHAR 100
+  movie_info:
+    file: benchmark/job/data/movie_info.csv
+    lines_in_file: 14835720
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 100
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT kt.kind AS movie_kind,\n       t.title AS complete_us_internet_movie\n\
+        FROM complete_cast AS cc,\n     comp_cast_type AS cct1,\n     company_name\
+        \ AS cn,\n     company_type AS ct,\n     info_type AS it1,\n     keyword AS\
+        \ k,\n     kind_type AS kt,\n     movie_companies AS mc,\n     movie_info\
+        \ AS mi,\n     movie_keyword AS mk,\n     title AS t\nWHERE cct1.kind = \"\
+        complete+verified\"\n  AND cn.country_code = \"[us]\"\n  AND it1.info = \"\
+        release dates\"\n  AND (kt.kind = \"movie\")\n  AND mi.note LIKE \"%internet%\"\
+        \n  AND mi.info != \"\"\n  AND (mi.info LIKE \"USA:% 199%\"\n       OR mi.info\
+        \ LIKE \"USA:% 200%\")\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n\
+        \  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n\
+        \  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id\
+        \ = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n\
+        \  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id\
+        \ = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n\
+        \  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;"
+      b: "SELECT kt.kind AS movie_kind,\n       t.title AS complete_nerdy_internet_movie\n\
+        FROM complete_cast AS cc,\n     comp_cast_type AS cct1,\n     company_name\
+        \ AS cn,\n     company_type AS ct,\n     info_type AS it1,\n     keyword AS\
+        \ k,\n     kind_type AS kt,\n     movie_companies AS mc,\n     movie_info\
+        \ AS mi,\n     movie_keyword AS mk,\n     title AS t\nWHERE cct1.kind = \"\
+        complete+verified\"\n  AND cn.country_code = \"[us]\"\n  AND it1.info = \"\
+        release dates\"\n  AND (k.keyword = \"nerd\" OR k.keyword = \"loner\" OR k.keyword\
+        \ = \"alienation\" OR k.keyword = \"dignity\")\n  AND (kt.kind = \"movie\"\
+        )\n  AND mi.note LIKE \"%internet%\"\n  AND mi.info LIKE \"USA:% 200%\"\n\
+        \  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n\
+        \  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n\
+        \  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id\
+        \ = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n\
+        \  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id\
+        \ = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n\
+        \  AND cct1.id = cc.status_id;"
+      c: "SELECT kt.kind AS movie_kind,\n       t.title AS complete_us_internet_movie\n\
+        FROM complete_cast AS cc,\n     comp_cast_type AS cct1,\n     company_name\
+        \ AS cn,\n     company_type AS ct,\n     info_type AS it1,\n     keyword AS\
+        \ k,\n     kind_type AS kt,\n     movie_companies AS mc,\n     movie_info\
+        \ AS mi,\n     movie_keyword AS mk,\n     title AS t\nWHERE cct1.kind = \"\
+        complete+verified\"\n  AND cn.country_code = \"[us]\"\n  AND it1.info = \"\
+        release dates\"\n  AND (kt.kind = \"movie\" OR kt.kind = \"tv movie\" OR kt.kind\
+        \ = \"video movie\" OR kt.kind = \"video game\")\n  AND mi.note LIKE \"%internet%\"\
+        \n  AND mi.info != \"\"\n  AND (mi.info LIKE \"USA:% 199%\"\n       OR mi.info\
+        \ LIKE \"USA:% 200%\")\n  AND t.production_year > 1990\n  AND kt.id = t.kind_id\n\
+        \  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n\
+        \  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id\
+        \ = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n\
+        \  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id\
+        \ = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n\
+        \  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;"

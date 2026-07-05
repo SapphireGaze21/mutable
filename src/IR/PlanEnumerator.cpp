@@ -1,6 +1,7 @@
 #include <mutable/IR/PlanEnumerator.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <cstring>
 #include <execution>
 #include <functional>
@@ -71,6 +72,9 @@ struct DPsize final : PlanEnumeratorCRTP<DPsize>
     using base_type = PlanEnumeratorCRTP<DPsize>;
     using base_type::operator();
 
+    mutable std::size_t EvaluatedCounter = 0;
+    mutable std::size_t CCPCounter = 0;
+
     template<typename PlanTable>
     void operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const CostFunction &CF) const {
         auto &sources = G.sources();
@@ -79,6 +83,7 @@ struct DPsize final : PlanEnumeratorCRTP<DPsize>
         auto &CE = Catalog::Get().get_database_in_use().cardinality_estimator();
 
         /* Process all subplans of size greater than one. */
+        auto t_start = std::chrono::high_resolution_clock::now();
         for (std::size_t s = 2; s <= n; ++s) {
             for (std::size_t s1 = 1; s1 < s; ++s1) {
                 std::size_t s2 = s - s1;
@@ -87,15 +92,22 @@ struct DPsize final : PlanEnumeratorCRTP<DPsize>
                 for (auto S1 = GospersHack::enumerate_all(s1, n); S1; ++S1) { // enumerate all subsets of size `s1`
                     if (not PT.has_plan(*S1)) continue; // subproblem S1 not connected -> skip
                     for (auto S2 = GospersHack::enumerate_all(s2, n); S2; ++S2) { // enumerate all subsets of size `s - s1`
+                        ++EvaluatedCounter;
                         if (not PT.has_plan(*S2)) continue; // subproblem S2 not connected -> skip
                         if (*S1 & *S2) continue; // subproblems not disjoint -> skip
                         if (not M.is_connected(*S1, *S2)) continue; // subproblems not connected -> skip
+                        ++CCPCounter;
                         cnf::CNF condition; // TODO use join condition
                         PT.update(G, CE, CF, *S1, *S2, condition);
                     }
                 }
             }
         }
+        auto t_end = std::chrono::high_resolution_clock::now();
+        auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
+        std::cout << "EvaluatedCounter = "<< EvaluatedCounter << '\n';
+        std::cout << "CCPCounter = "<< CCPCounter << '\n';
+        std::cout << "PlanningTime_us = " << elapsed_us << '\n';
     }
 };
 
@@ -112,6 +124,9 @@ struct DPsizeOpt final : PlanEnumeratorCRTP<DPsizeOpt>
     using base_type = PlanEnumeratorCRTP<DPsizeOpt>;
     using base_type::operator();
 
+    mutable std::size_t EvaluatedCounter = 0;
+    mutable std::size_t CCPCounter = 0;
+
     template<typename PlanTable>
     void operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const CostFunction &CF) const {
         auto &sources = G.sources();
@@ -120,6 +135,7 @@ struct DPsizeOpt final : PlanEnumeratorCRTP<DPsizeOpt>
         auto &CE = Catalog::Get().get_database_in_use().cardinality_estimator();
 
         /* Process all subplans of size greater than one. */
+        auto t_start = std::chrono::high_resolution_clock::now();
         for (std::size_t s = 2; s <= n; ++s) {
             std::size_t m = s / 2; // division with rounding down
             for (std::size_t s1 = 1; s1 <= m; ++s1) {
@@ -131,9 +147,11 @@ struct DPsizeOpt final : PlanEnumeratorCRTP<DPsizeOpt>
                         if (not PT.has_plan(*S1)) continue; // subproblem not connected -> skip
                         GospersHack S2 = GospersHack::enumerate_from(*S1, n);
                         for (++S2; S2; ++S2) { // enumerate only the subsets following S1
+                            ++EvaluatedCounter;
                             if (not PT.has_plan(*S2)) continue; // subproblem not connected -> skip
                             if (*S1 & *S2) continue; // subproblems not disjoint -> skip
                             if (not M.is_connected(*S1, *S2)) continue; // subproblems not connected -> skip
+                            ++CCPCounter;
                             /* Exploit commutativity of join. */
                             cnf::CNF condition; // TODO use join condition
                             PT.update(G, CE, CF, *S1, *S2, condition);
@@ -143,9 +161,11 @@ struct DPsizeOpt final : PlanEnumeratorCRTP<DPsizeOpt>
                     for (auto S1 = GospersHack::enumerate_all(s1, n); S1; ++S1) { // enumerate all subsets of size `s1`
                         if (not PT.has_plan(*S1)) continue; // subproblem not connected -> skip
                         for (auto S2 = GospersHack::enumerate_all(s2, n); S2; ++S2) { // enumerate all subsets of size `s2`
+                            ++EvaluatedCounter;
                             if (not PT.has_plan(*S2)) continue; // subproblem not connected -> skip
                             if (*S1 & *S2) continue; // subproblems not disjoint -> skip
                             if (not M.is_connected(*S1, *S2)) continue; // subproblems not connected -> skip
+                            ++CCPCounter;
                             /* Exploit commutativity of join. */
                             cnf::CNF condition; // TODO use join condition
                             PT.update(G, CE, CF, *S1, *S2, condition);
@@ -154,6 +174,11 @@ struct DPsizeOpt final : PlanEnumeratorCRTP<DPsizeOpt>
                 }
             }
         }
+        auto t_end = std::chrono::high_resolution_clock::now();
+        auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
+        std::cout << "EvaluatedCounter = "<< EvaluatedCounter << '\n';
+        std::cout << "CCPCounter = "<< CCPCounter << '\n';
+        std::cout << "PlanningTime_us = " << elapsed_us << '\n';
     }
 };
 
@@ -203,6 +228,9 @@ struct DPsub final : PlanEnumeratorCRTP<DPsub>
     using base_type = PlanEnumeratorCRTP<DPsub>;
     using base_type::operator();
 
+    mutable std::size_t EvaluatedCounter = 0;
+    mutable std::size_t CCPCounter = 0;
+
     template<typename PlanTable>
     void operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const CostFunction &CF) const {
         auto &sources = G.sources();
@@ -210,12 +238,13 @@ struct DPsub final : PlanEnumeratorCRTP<DPsub>
         const AdjacencyMatrix &M = G.adjacency_matrix();
         auto &CE = Catalog::Get().get_database_in_use().cardinality_estimator();
 
-        for (std::size_t i = 1, end = 1UL << n; i < end; ++i) {
+    /*  for (std::size_t i = 1, end = 1UL << n; i < end; ++i) {
             Subproblem S(i);
             if (S.size() == 1) continue; // no non-empty and strict subset of S -> skip
             if (not M.is_connected(S)) continue; // not connected -> skip
             for (Subproblem S1(least_subset(S)); S1 != S; S1 = Subproblem(next_subset(S1, S))) {
                 Subproblem S2 = S - S1;
+                std::cout << "[DPsub] Checking disjoint pair " << S1 << " and " << S2 << " to form " << S << std::endl;
                 M_insist(M.is_connected(S1, S2), "implied by S inducing a connected subgraph");
                 if (not PT.has_plan(S1)) continue; // not connected -> skip
                 if (not PT.has_plan(S2)) continue; // not connected -> skip
@@ -223,6 +252,36 @@ struct DPsub final : PlanEnumeratorCRTP<DPsub>
                 PT.update(G, CE, CF, S1, S2, condition);
             }
         }
+    } */
+
+        auto t_start = std::chrono::high_resolution_clock::now();
+        for (std::size_t i = 1, end = 1UL << n; i < end; ++i) {
+            Subproblem S(i);
+            if (S.size() == 1)
+                continue;
+            for (Subproblem S1(least_subset(S));S1 != S;S1 = Subproblem(next_subset(S1, S))){
+                Subproblem S2 = S - S1;
+                ++EvaluatedCounter;
+                if (!M.is_connected(S1))
+                    continue;
+                if (!M.is_connected(S2))
+                    continue;
+                if (!M.is_connected(S1, S2))
+                    continue;
+                ++CCPCounter;
+                if (!PT.has_plan(S1))
+                    continue;
+                if (!PT.has_plan(S2))
+                    continue;
+                cnf::CNF condition;
+                PT.update(G, CE, CF, S1, S2, condition);
+            }
+        }
+        auto t_end = std::chrono::high_resolution_clock::now();
+        auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
+        std::cout << "EvaluatedCounter = "<< EvaluatedCounter << '\n';
+        std::cout << "CCPCounter = "<< CCPCounter << '\n';
+        std::cout << "PlanningTime_us = " << elapsed_us << '\n';
     }
 };
 
@@ -279,11 +338,20 @@ void DPccp::operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const 
     const Subproblem All = SmallBitset::All(G.num_sources());
     cnf::CNF condition; // TODO use join condition
 
+    std::size_t CCPCounter = 0;
+    auto t_start = std::chrono::high_resolution_clock::now();
+
     auto handle_CSG_pair = [&](const Subproblem left, const Subproblem right) {
+        ++CCPCounter;
         PT.update(G, CE, CF, left, right, condition);
     };
 
     M.for_each_CSG_pair_undirected(All, handle_CSG_pair);
+
+    auto t_end = std::chrono::high_resolution_clock::now();
+    auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
+    std::cout << "CCPCounter = " << CCPCounter << '\n';
+    std::cout << "PlanningTime_us = " << elapsed_us << '\n';
 }
 
 

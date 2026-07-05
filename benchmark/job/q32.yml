@@ -2,39 +2,83 @@ description: Join Order Benchmark Query 32
 suite: job
 benchmark: q32
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(lt.link) AS link_type,
-               MIN(t1.title) AS first_movie,
-               MIN(t2.title) AS second_movie
-        FROM keyword AS k,
-             link_type AS lt,
-             movie_keyword AS mk,
-             movie_link AS ml,
-             title AS t1,
-             title AS t2
-        WHERE k.keyword = "10,000-mile-club"
-          AND mk.keyword_id = k.id
-          AND t1.id = mk.movie_id
-          AND ml.movie_id = t1.id
-          AND ml.linked_movie_id = t2.id
-          AND lt.id = ml.link_type_id
-          AND mk.movie_id = t1.id;
-    b: |
-        SELECT MIN(lt.link) AS link_type,
-               MIN(t1.title) AS first_movie,
-               MIN(t2.title) AS second_movie
-        FROM keyword AS k,
-             link_type AS lt,
-             movie_keyword AS mk,
-             movie_link AS ml,
-             title AS t1,
-             title AS t2
-        WHERE k.keyword = "character-name-in-title"
-          AND mk.keyword_id = k.id
-          AND t1.id = mk.movie_id
-          AND ml.movie_id = t1.id
-          AND ml.linked_movie_id = t2.id
-          AND lt.id = ml.link_type_id
-          AND mk.movie_id = t1.id;
+data:
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  link_type:
+    file: benchmark/job/data/link_type.csv
+    lines_in_file: 18
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      link: CHAR 32 NOT NULL
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  movie_link:
+    file: benchmark/job/data/movie_link.csv
+    lines_in_file: 29997
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      linked_movie_id: INT NOT NULL
+      link_type_id: INT NOT NULL
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT lt.link AS link_type,\n       t1.title AS first_movie,\n       t2.title\
+        \ AS second_movie\nFROM keyword AS k,\n     link_type AS lt,\n     movie_keyword\
+        \ AS mk,\n     movie_link AS ml,\n     title AS t1,\n     title AS t2\nWHERE\
+        \ k.keyword = \"10,000-mile-club\"\n  AND mk.keyword_id = k.id\n  AND t1.id\
+        \ = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id = t2.id\n\
+        \  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;"
+      b: "SELECT lt.link AS link_type,\n       t1.title AS first_movie,\n       t2.title\
+        \ AS second_movie\nFROM keyword AS k,\n     link_type AS lt,\n     movie_keyword\
+        \ AS mk,\n     movie_link AS ml,\n     title AS t1,\n     title AS t2\nWHERE\
+        \ k.keyword = \"character-name-in-title\"\n  AND mk.keyword_id = k.id\n  AND\
+        \ t1.id = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id\
+        \ = t2.id\n  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;"

@@ -2,56 +2,90 @@ description: Join Order Benchmark Query 4
 suite: job
 benchmark: q4
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(mi_idx.info) AS rating,
-               MIN(t.title) AS movie_title
-        FROM info_type AS it,
-             keyword AS k,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             title AS t
-        WHERE it.info = "rating"
-          AND k.keyword LIKE "%sequel%"
-          AND mi_idx.info > "5.0"
-          AND t.production_year > 2005
-          AND t.id = mi_idx.movie_id
-          AND t.id = mk.movie_id
-          AND mk.movie_id = mi_idx.movie_id
-          AND k.id = mk.keyword_id
-          AND it.id = mi_idx.info_type_id;
-    b: |
-        SELECT MIN(mi_idx.info) AS rating,
-               MIN(t.title) AS movie_title
-        FROM info_type AS it,
-             keyword AS k,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             title AS t
-        WHERE it.info = "rating"
-          AND k.keyword LIKE "%sequel%"
-          AND mi_idx.info > "9.0"
-          AND t.production_year > 2010
-          AND t.id = mi_idx.movie_id
-          AND t.id = mk.movie_id
-          AND mk.movie_id = mi_idx.movie_id
-          AND k.id = mk.keyword_id
-          AND it.id = mi_idx.info_type_id;
-    c: |
-        SELECT MIN(mi_idx.info) AS rating,
-               MIN(t.title) AS movie_title
-        FROM info_type AS it,
-             keyword AS k,
-             movie_info_idx AS mi_idx,
-             movie_keyword AS mk,
-             title AS t
-        WHERE it.info = "rating"
-          AND k.keyword LIKE "%sequel%"
-          AND mi_idx.info > "2.0"
-          AND t.production_year > 1990
-          AND t.id = mi_idx.movie_id
-          AND t.id = mk.movie_id
-          AND mk.movie_id = mi_idx.movie_id
-          AND k.id = mk.keyword_id
-          AND it.id = mi_idx.info_type_id;
+data:
+  info_type:
+    file: benchmark/job/data/info_type.csv
+    lines_in_file: 113
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      info: CHAR 32 NOT NULL
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  movie_info_idx:
+    file: benchmark/job/data/movie_info_idx.csv
+    lines_in_file: 1380035
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      info_type_id: INT NOT NULL
+      info: CHAR 100 NOT NULL
+      note: CHAR 1
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT mi_idx.info AS rating,\n       t.title AS movie_title\nFROM info_type\
+        \ AS it,\n     keyword AS k,\n     movie_info_idx AS mi_idx,\n     movie_keyword\
+        \ AS mk,\n     title AS t\nWHERE it.info = \"rating\"\n  AND k.keyword LIKE\
+        \ \"%sequel%\"\n  AND mi_idx.info > \"5.0\"\n  AND t.production_year > 2005\n\
+        \  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id\
+        \ = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;"
+      b: "SELECT mi_idx.info AS rating,\n       t.title AS movie_title\nFROM info_type\
+        \ AS it,\n     keyword AS k,\n     movie_info_idx AS mi_idx,\n     movie_keyword\
+        \ AS mk,\n     title AS t\nWHERE it.info = \"rating\"\n  AND k.keyword LIKE\
+        \ \"%sequel%\"\n  AND mi_idx.info > \"9.0\"\n  AND t.production_year > 2010\n\
+        \  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id\
+        \ = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;"
+      c: "SELECT mi_idx.info AS rating,\n       t.title AS movie_title\nFROM info_type\
+        \ AS it,\n     keyword AS k,\n     movie_info_idx AS mi_idx,\n     movie_keyword\
+        \ AS mk,\n     title AS t\nWHERE it.info = \"rating\"\n  AND k.keyword LIKE\
+        \ \"%sequel%\"\n  AND mi_idx.info > \"2.0\"\n  AND t.production_year > 1990\n\
+        \  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id\
+        \ = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;"

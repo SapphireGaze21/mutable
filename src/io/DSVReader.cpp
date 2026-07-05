@@ -41,6 +41,7 @@ void DSVReader::operator()(std::istream &in, const char *name)
     /* Declare reference to the `StackMachine` for the current `Linearization`. */
     std::unique_ptr<StackMachine> W;
     const DataLayout *layout = nullptr;
+    const void *last_addr = nullptr;
 
     /* Allocate intermediate tuple. */
     tup = Tuple(S);
@@ -126,9 +127,10 @@ void DSVReader::operator()(std::istream &in, const char *name)
             diag.e(pos) << "Expected end of row.\n";
             discard_row();
         } else {
-            if (layout != &table.layout()) {
-                /* The data layout was updated, recompile stack machine. */
+            if (true) {
+                /* The data layout was updated or the memory address changed, recompile stack machine. */
                 layout = &table.layout();
+                last_addr = store.memory().addr();
                 W = std::make_unique<StackMachine>(Interpreter::compile_store(S, store.memory().addr(), *layout,
                                                                               S, store.num_rows() - 1));
             }

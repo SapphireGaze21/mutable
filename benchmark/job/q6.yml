@@ -2,127 +2,129 @@ description: Join Order Benchmark Query 6
 suite: job
 benchmark: q6
 readonly: true
-pattern: '^Execute query:.*'
-cases:
-    a: |
-        SELECT MIN(k.keyword) AS movie_keyword,
-               MIN(n.name) AS actor_name,
-               MIN(t.title) AS marvel_movie
-        FROM cast_info AS ci,
-             keyword AS k,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword = "marvel-cinematic-universe"
-          AND n.name LIKE "%Downey%Robert%"
-          AND t.production_year > 2010
-          AND k.id = mk.keyword_id
-          AND t.id = mk.movie_id
-          AND t.id = ci.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND n.id = ci.person_id;
-    b: |
-        SELECT MIN(k.keyword) AS movie_keyword,
-               MIN(n.name) AS actor_name,
-               MIN(t.title) AS hero_movie
-        FROM cast_info AS ci,
-             keyword AS k,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword IN ("superhero",
-                            "sequel",
-                            "second-part",
-                            "marvel-comics",
-                            "based-on-comic",
-                            "tv-special",
-                            "fight",
-                            "violence")
-          AND n.name LIKE "%Downey%Robert%"
-          AND t.production_year > 2014
-          AND k.id = mk.keyword_id
-          AND t.id = mk.movie_id
-          AND t.id = ci.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND n.id = ci.person_id;
-    c: |
-        SELECT MIN(k.keyword) AS movie_keyword,
-               MIN(n.name) AS actor_name,
-               MIN(t.title) AS marvel_movie
-        FROM cast_info AS ci,
-             keyword AS k,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword = "marvel-cinematic-universe"
-          AND n.name LIKE "%Downey%Robert%"
-          AND t.production_year > 2014
-          AND k.id = mk.keyword_id
-          AND t.id = mk.movie_id
-          AND t.id = ci.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND n.id = ci.person_id;
-    d: |
-        SELECT MIN(k.keyword) AS movie_keyword,
-               MIN(n.name) AS actor_name,
-               MIN(t.title) AS hero_movie
-        FROM cast_info AS ci,
-             keyword AS k,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword IN ("superhero",
-                            "sequel",
-                            "second-part",
-                            "marvel-comics",
-                            "based-on-comic",
-                            "tv-special",
-                            "fight",
-                            "violence")
-          AND n.name LIKE "%Downey%Robert%"
-          AND t.production_year > 2000
-          AND k.id = mk.keyword_id
-          AND t.id = mk.movie_id
-          AND t.id = ci.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND n.id = ci.person_id;
-    e: |
-        SELECT MIN(k.keyword) AS movie_keyword,
-               MIN(n.name) AS actor_name,
-               MIN(t.title) AS marvel_movie
-        FROM cast_info AS ci,
-             keyword AS k,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword = "marvel-cinematic-universe"
-          AND n.name LIKE "%Downey%Robert%"
-          AND t.production_year > 2000
-          AND k.id = mk.keyword_id
-          AND t.id = mk.movie_id
-          AND t.id = ci.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND n.id = ci.person_id;
-    f: |
-        SELECT MIN(k.keyword) AS movie_keyword,
-               MIN(n.name) AS actor_name,
-               MIN(t.title) AS hero_movie
-        FROM cast_info AS ci,
-             keyword AS k,
-             movie_keyword AS mk,
-             name AS n,
-             title AS t
-        WHERE k.keyword IN ("superhero",
-                            "sequel",
-                            "second-part",
-                            "marvel-comics",
-                            "based-on-comic",
-                            "tv-special",
-                            "fight",
-                            "violence")
-          AND t.production_year > 2000
-          AND k.id = mk.keyword_id
-          AND t.id = mk.movie_id
-          AND t.id = ci.movie_id
-          AND ci.movie_id = mk.movie_id
-          AND n.id = ci.person_id;
+data:
+  cast_info:
+    file: benchmark/job/data/cast_info.csv
+    lines_in_file: 36244344
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      person_id: INT NOT NULL
+      movie_id: INT NOT NULL
+      person_role_id: INT
+      note: CHAR 100
+      nr_order: INT
+      role_id: INT NOT NULL
+  keyword:
+    file: benchmark/job/data/keyword.csv
+    lines_in_file: 134170
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      keyword: CHAR 100 NOT NULL
+      phonetic_code: CHAR 5
+  movie_keyword:
+    file: benchmark/job/data/movie_keyword.csv
+    lines_in_file: 4523930
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      movie_id: INT NOT NULL
+      keyword_id: INT NOT NULL
+  name:
+    file: benchmark/job/data/name.csv
+    lines_in_file: 4167491
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      name: CHAR 100 NOT NULL
+      imdb_index: CHAR 9
+      imdb_id: INT
+      gender: CHAR 1
+      name_pcode_cf: CHAR 5
+      name_pcode_nf: CHAR 5
+      surname_pcode: CHAR 5
+      md5sum: CHAR 32
+  title:
+    file: benchmark/job/data/title.csv
+    lines_in_file: 2528312
+    format: csv
+    delimiter: ','
+    header: 0
+    attributes:
+      id: INT NOT NULL PRIMARY KEY
+      title: CHAR 100 NOT NULL
+      imdb_index: CHAR 5
+      kind_id: INT NOT NULL
+      production_year: INT
+      imdb_id: INT
+      phonetic_code: CHAR 5
+      episode_of_id: INT
+      season_nr: INT
+      episode_nr: INT
+      series_years: CHAR 49
+      md5sum: CHAR 32
+systems:
+  mutable:
+    configurations:
+      WasmV8, PAX4M:
+        args: --backend WasmV8 --data-layout PAX4M --plan-enumerator ... --plan --physplan
+          --hash-table-initial-capacity 16384
+        pattern: ^Execute machine code:.*
+    cases:
+      a: "SELECT k.keyword AS movie_keyword,\n       n.name AS actor_name,\n     \
+        \  t.title AS marvel_movie\nFROM cast_info AS ci,\n     keyword AS k,\n  \
+        \   movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE k.keyword\
+        \ = \"marvel-cinematic-universe\"\n  AND n.name LIKE \"%Downey%Robert%\"\n\
+        \  AND t.production_year > 2010\n  AND k.id = mk.keyword_id\n  AND t.id =\
+        \ mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n\
+        \  AND n.id = ci.person_id;"
+      b: "SELECT k.keyword AS movie_keyword,\n       n.name AS actor_name,\n     \
+        \  t.title AS hero_movie\nFROM cast_info AS ci,\n     keyword AS k,\n    \
+        \ movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE (k.keyword\
+        \ = \"superhero\" OR k.keyword = \"sequel\" OR k.keyword = \"second-part\"\
+        \ OR k.keyword = \"marvel-comics\" OR k.keyword = \"based-on-comic\" OR k.keyword\
+        \ = \"tv-special\" OR k.keyword = \"fight\" OR k.keyword = \"violence\")\n\
+        \  AND n.name LIKE \"%Downey%Robert%\"\n  AND t.production_year > 2014\n \
+        \ AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n\
+        \  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;"
+      c: "SELECT k.keyword AS movie_keyword,\n       n.name AS actor_name,\n     \
+        \  t.title AS marvel_movie\nFROM cast_info AS ci,\n     keyword AS k,\n  \
+        \   movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE k.keyword\
+        \ = \"marvel-cinematic-universe\"\n  AND n.name LIKE \"%Downey%Robert%\"\n\
+        \  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id =\
+        \ mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n\
+        \  AND n.id = ci.person_id;"
+      d: "SELECT k.keyword AS movie_keyword,\n       n.name AS actor_name,\n     \
+        \  t.title AS hero_movie\nFROM cast_info AS ci,\n     keyword AS k,\n    \
+        \ movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE (k.keyword\
+        \ = \"superhero\" OR k.keyword = \"sequel\" OR k.keyword = \"second-part\"\
+        \ OR k.keyword = \"marvel-comics\" OR k.keyword = \"based-on-comic\" OR k.keyword\
+        \ = \"tv-special\" OR k.keyword = \"fight\" OR k.keyword = \"violence\")\n\
+        \  AND n.name LIKE \"%Downey%Robert%\"\n  AND t.production_year > 2000\n \
+        \ AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n\
+        \  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;"
+      e: "SELECT k.keyword AS movie_keyword,\n       n.name AS actor_name,\n     \
+        \  t.title AS marvel_movie\nFROM cast_info AS ci,\n     keyword AS k,\n  \
+        \   movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE k.keyword\
+        \ = \"marvel-cinematic-universe\"\n  AND n.name LIKE \"%Downey%Robert%\"\n\
+        \  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id =\
+        \ mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n\
+        \  AND n.id = ci.person_id;"
+      f: "SELECT k.keyword AS movie_keyword,\n       n.name AS actor_name,\n     \
+        \  t.title AS hero_movie\nFROM cast_info AS ci,\n     keyword AS k,\n    \
+        \ movie_keyword AS mk,\n     name AS n,\n     title AS t\nWHERE (k.keyword\
+        \ = \"superhero\" OR k.keyword = \"sequel\" OR k.keyword = \"second-part\"\
+        \ OR k.keyword = \"marvel-comics\" OR k.keyword = \"based-on-comic\" OR k.keyword\
+        \ = \"tv-special\" OR k.keyword = \"fight\" OR k.keyword = \"violence\")\n\
+        \  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id =\
+        \ mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n\
+        \  AND n.id = ci.person_id;"
