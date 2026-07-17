@@ -1,0 +1,224 @@
+description: TPC-DS Query 90
+suite: TPC
+benchmark: TPC-DS
+name: Q90
+readonly: true
+data:
+    HouseholdDemographics:
+        file: benchmark/tpcds/data/household_demographics.csv
+        lines_in_file: 7201
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'hd_demo_sk': 'INT NOT NULL'
+            'hd_income_band_sk': 'INT'
+            'hd_buy_potential': 'CHAR 15'
+            'hd_dep_count': 'INT'
+            'hd_vehicle_count': 'INT'
+    TimeDim:
+        file: benchmark/tpcds/data/time_dim.csv
+        lines_in_file: 86401
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            't_time_sk': 'INT NOT NULL'
+            't_time_id': 'CHAR 16 NOT NULL'
+            't_time': 'INT'
+            't_hour': 'INT'
+            't_minute': 'INT'
+            't_second': 'INT'
+            't_am_pm': 'CHAR 2'
+            't_shift': 'CHAR 20'
+            't_sub_shift': 'CHAR 20'
+            't_meal_time': 'CHAR 20'
+    WebPage:
+        file: benchmark/tpcds/data/web_page.csv
+        lines_in_file: 61
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'wp_web_page_sk': 'INT NOT NULL'
+            'wp_web_page_id': 'CHAR 16 NOT NULL'
+            'wp_rec_start_date': 'DATE'
+            'wp_rec_end_date': 'DATE'
+            'wp_creation_date_sk': 'INT'
+            'wp_access_date_sk': 'INT'
+            'wp_autogen_flag': 'CHAR 1'
+            'wp_customer_sk': 'INT'
+            'wp_url': 'CHAR 100'
+            'wp_type': 'CHAR 50'
+            'wp_char_count': 'INT'
+            'wp_link_count': 'INT'
+            'wp_image_count': 'INT'
+            'wp_max_ad_count': 'INT'
+    WebSales:
+        file: benchmark/tpcds/data/web_sales.csv
+        lines_in_file: 719385
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ws_sold_date_sk': 'INT'
+            'ws_sold_time_sk': 'INT'
+            'ws_ship_date_sk': 'INT'
+            'ws_item_sk': 'INT NOT NULL'
+            'ws_bill_customer_sk': 'INT'
+            'ws_bill_cdemo_sk': 'INT'
+            'ws_bill_hdemo_sk': 'INT'
+            'ws_bill_addr_sk': 'INT'
+            'ws_ship_customer_sk': 'INT'
+            'ws_ship_cdemo_sk': 'INT'
+            'ws_ship_hdemo_sk': 'INT'
+            'ws_ship_addr_sk': 'INT'
+            'ws_web_page_sk': 'INT'
+            'ws_web_site_sk': 'INT'
+            'ws_ship_mode_sk': 'INT'
+            'ws_warehouse_sk': 'INT'
+            'ws_promo_sk': 'INT'
+            'ws_order_number': 'INT NOT NULL'
+            'ws_quantity': 'INT'
+            'ws_wholesale_cost': 'DECIMAL 7 2'
+            'ws_list_price': 'DECIMAL 7 2'
+            'ws_sales_price': 'DECIMAL 7 2'
+            'ws_ext_discount_amt': 'DECIMAL 7 2'
+            'ws_ext_sales_price': 'DECIMAL 7 2'
+            'ws_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ws_ext_list_price': 'DECIMAL 7 2'
+            'ws_ext_tax': 'DECIMAL 7 2'
+            'ws_coupon_amt': 'DECIMAL 7 2'
+            'ws_ext_ship_cost': 'DECIMAL 7 2'
+            'ws_net_paid': 'DECIMAL 7 2'
+            'ws_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'ws_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                SELECT cast(amc AS decimal(15,4))/cast(pmc AS decimal(15,4)) am_pm_ratio
+                FROM
+                  (SELECT count(*) amc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 8 AND 8+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) AT,
+                  (SELECT count(*) pmc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 19 AND 19+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) pt
+                ORDER BY am_pm_ratio
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                SELECT cast(amc AS decimal(15,4))/cast(pmc AS decimal(15,4)) am_pm_ratio
+                FROM
+                  (SELECT count(*) amc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 8 AND 8+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) AT,
+                  (SELECT count(*) pmc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 19 AND 19+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) pt
+                ORDER BY am_pm_ratio
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                SELECT cast(amc AS decimal(15,4))/cast(pmc AS decimal(15,4)) am_pm_ratio
+                FROM
+                  (SELECT count(*) amc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 8 AND 8+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) AT,
+                  (SELECT count(*) pmc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 19 AND 19+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) pt
+                ORDER BY am_pm_ratio
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                SELECT cast(amc AS decimal(15,4))/cast(pmc AS decimal(15,4)) am_pm_ratio
+                FROM
+                  (SELECT count(*) amc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 8 AND 8+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) AT,
+                  (SELECT count(*) pmc
+                   FROM web_sales,
+                        household_demographics,
+                        time_dim,
+                        web_page
+                   WHERE ws_sold_time_sk = time_dim.t_time_sk
+                     AND ws_ship_hdemo_sk = household_demographics.hd_demo_sk
+                     AND ws_web_page_sk = web_page.wp_web_page_sk
+                     AND time_dim.t_hour BETWEEN 19 AND 19+1
+                     AND household_demographics.hd_dep_count = 6
+                     AND web_page.wp_char_count BETWEEN 5000 AND 5200) pt
+                ORDER BY am_pm_ratio
+                LIMIT 100;
+                

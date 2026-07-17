@@ -5,7 +5,6 @@ FetchContent_Populate(
     GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent.git
     GIT_TAG ${JSON_VERSION}
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third-party/json-${JSON_VERSION}"
-    SYSTEM
     EXCLUDE_FROM_ALL
 )
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/third-party/json-${JSON_VERSION}/single_include")

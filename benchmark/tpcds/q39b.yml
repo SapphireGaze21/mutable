@@ -1,0 +1,361 @@
+description: TPC-DS Query 39b
+suite: TPC
+benchmark: TPC-DS
+name: Q39b
+readonly: true
+data:
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Inventory:
+        file: benchmark/tpcds/data/inventory.csv
+        lines_in_file: 11745001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'inv_date_sk': 'INT NOT NULL'
+            'inv_item_sk': 'INT NOT NULL'
+            'inv_warehouse_sk': 'INT NOT NULL'
+            'inv_quantity_on_hand': 'INT'
+    Item:
+        file: benchmark/tpcds/data/item.csv
+        lines_in_file: 18001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'i_item_sk': 'INT NOT NULL'
+            'i_item_id': 'CHAR 16 NOT NULL'
+            'i_rec_start_date': 'DATE'
+            'i_rec_end_date': 'DATE'
+            'i_item_desc': 'CHAR 200'
+            'i_current_price': 'DECIMAL 7 2'
+            'i_wholesale_cost': 'DECIMAL 7 2'
+            'i_brand_id': 'INT'
+            'i_brand': 'CHAR 50'
+            'i_class_id': 'INT'
+            'i_class': 'CHAR 50'
+            'i_category_id': 'INT'
+            'i_category': 'CHAR 50'
+            'i_manufact_id': 'INT'
+            'i_manufact': 'CHAR 50'
+            'i_size': 'CHAR 20'
+            'i_formulation': 'CHAR 20'
+            'i_color': 'CHAR 20'
+            'i_units': 'CHAR 10'
+            'i_container': 'CHAR 10'
+            'i_manager_id': 'INT'
+            'i_product_name': 'CHAR 50'
+    Warehouse:
+        file: benchmark/tpcds/data/warehouse.csv
+        lines_in_file: 6
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'w_warehouse_sk': 'INT NOT NULL'
+            'w_warehouse_id': 'CHAR 16 NOT NULL'
+            'w_warehouse_name': 'CHAR 20'
+            'w_warehouse_sq_ft': 'INT'
+            'w_street_number': 'CHAR 10'
+            'w_street_name': 'CHAR 60'
+            'w_street_type': 'CHAR 15'
+            'w_suite_number': 'CHAR 10'
+            'w_city': 'CHAR 60'
+            'w_county': 'CHAR 30'
+            'w_state': 'CHAR 2'
+            'w_zip': 'CHAR 10'
+            'w_country': 'CHAR 20'
+            'w_gmt_offset': 'DECIMAL 5 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                WITH inv AS
+                  (SELECT w_warehouse_name,
+                          w_warehouse_sk,
+                          i_item_sk,
+                          d_moy,
+                          stdev,
+                          mean,
+                          CASE mean
+                              WHEN 0 THEN NULL
+                              ELSE stdev/mean
+                          END cov
+                   FROM
+                     (SELECT w_warehouse_name,
+                             w_warehouse_sk,
+                             i_item_sk,
+                             d_moy,
+                             stddev_samp(inv_quantity_on_hand) stdev,
+                             avg(inv_quantity_on_hand) mean
+                      FROM inventory,
+                           item,
+                           warehouse,
+                           date_dim
+                      WHERE inv_item_sk = i_item_sk
+                        AND inv_warehouse_sk = w_warehouse_sk
+                        AND inv_date_sk = d_date_sk
+                        AND d_year =2001
+                      GROUP BY w_warehouse_name,
+                               w_warehouse_sk,
+                               i_item_sk,
+                               d_moy) foo
+                   WHERE CASE mean
+                             WHEN 0 THEN 0
+                             ELSE stdev/mean
+                         END > 1)
+                SELECT inv1.w_warehouse_sk,
+                       inv1.i_item_sk,
+                       inv1.d_moy,
+                       inv1.mean,
+                       inv1.cov,
+                       inv2.w_warehouse_sk,
+                       inv2.i_item_sk,
+                       inv2.d_moy,
+                       inv2.mean,
+                       inv2.cov
+                FROM inv inv1,
+                     inv inv2
+                WHERE inv1.i_item_sk = inv2.i_item_sk
+                  AND inv1.w_warehouse_sk = inv2.w_warehouse_sk
+                  AND inv1.d_moy=1
+                  AND inv2.d_moy=1+1
+                  AND inv1.cov > 1.5
+                ORDER BY inv1.w_warehouse_sk,
+                         inv1.i_item_sk,
+                         inv1.d_moy,
+                         inv1.mean,
+                         inv1.cov,
+                         inv2.d_moy,
+                         inv2.mean,
+                         inv2.cov ;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                WITH inv AS
+                  (SELECT w_warehouse_name,
+                          w_warehouse_sk,
+                          i_item_sk,
+                          d_moy,
+                          stdev,
+                          mean,
+                          CASE mean
+                              WHEN 0 THEN NULL
+                              ELSE stdev/mean
+                          END cov
+                   FROM
+                     (SELECT w_warehouse_name,
+                             w_warehouse_sk,
+                             i_item_sk,
+                             d_moy,
+                             stddev_samp(inv_quantity_on_hand) stdev,
+                             avg(inv_quantity_on_hand) mean
+                      FROM inventory,
+                           item,
+                           warehouse,
+                           date_dim
+                      WHERE inv_item_sk = i_item_sk
+                        AND inv_warehouse_sk = w_warehouse_sk
+                        AND inv_date_sk = d_date_sk
+                        AND d_year =2001
+                      GROUP BY w_warehouse_name,
+                               w_warehouse_sk,
+                               i_item_sk,
+                               d_moy) foo
+                   WHERE CASE mean
+                             WHEN 0 THEN 0
+                             ELSE stdev/mean
+                         END > 1)
+                SELECT inv1.w_warehouse_sk,
+                       inv1.i_item_sk,
+                       inv1.d_moy,
+                       inv1.mean,
+                       inv1.cov,
+                       inv2.w_warehouse_sk,
+                       inv2.i_item_sk,
+                       inv2.d_moy,
+                       inv2.mean,
+                       inv2.cov
+                FROM inv inv1,
+                     inv inv2
+                WHERE inv1.i_item_sk = inv2.i_item_sk
+                  AND inv1.w_warehouse_sk = inv2.w_warehouse_sk
+                  AND inv1.d_moy=1
+                  AND inv2.d_moy=1+1
+                  AND inv1.cov > 1.5
+                ORDER BY inv1.w_warehouse_sk,
+                         inv1.i_item_sk,
+                         inv1.d_moy,
+                         inv1.mean,
+                         inv1.cov,
+                         inv2.d_moy,
+                         inv2.mean,
+                         inv2.cov ;
+                
+    DuckDB:
+        cases:
+            1: |
+                WITH inv AS
+                  (SELECT w_warehouse_name,
+                          w_warehouse_sk,
+                          i_item_sk,
+                          d_moy,
+                          stdev,
+                          mean,
+                          CASE mean
+                              WHEN 0 THEN NULL
+                              ELSE stdev/mean
+                          END cov
+                   FROM
+                     (SELECT w_warehouse_name,
+                             w_warehouse_sk,
+                             i_item_sk,
+                             d_moy,
+                             stddev_samp(inv_quantity_on_hand) stdev,
+                             avg(inv_quantity_on_hand) mean
+                      FROM inventory,
+                           item,
+                           warehouse,
+                           date_dim
+                      WHERE inv_item_sk = i_item_sk
+                        AND inv_warehouse_sk = w_warehouse_sk
+                        AND inv_date_sk = d_date_sk
+                        AND d_year =2001
+                      GROUP BY w_warehouse_name,
+                               w_warehouse_sk,
+                               i_item_sk,
+                               d_moy) foo
+                   WHERE CASE mean
+                             WHEN 0 THEN 0
+                             ELSE stdev/mean
+                         END > 1)
+                SELECT inv1.w_warehouse_sk,
+                       inv1.i_item_sk,
+                       inv1.d_moy,
+                       inv1.mean,
+                       inv1.cov,
+                       inv2.w_warehouse_sk,
+                       inv2.i_item_sk,
+                       inv2.d_moy,
+                       inv2.mean,
+                       inv2.cov
+                FROM inv inv1,
+                     inv inv2
+                WHERE inv1.i_item_sk = inv2.i_item_sk
+                  AND inv1.w_warehouse_sk = inv2.w_warehouse_sk
+                  AND inv1.d_moy=1
+                  AND inv2.d_moy=1+1
+                  AND inv1.cov > 1.5
+                ORDER BY inv1.w_warehouse_sk,
+                         inv1.i_item_sk,
+                         inv1.d_moy,
+                         inv1.mean,
+                         inv1.cov,
+                         inv2.d_moy,
+                         inv2.mean,
+                         inv2.cov ;
+                
+    HyPer:
+        cases:
+            1: |
+                WITH inv AS
+                  (SELECT w_warehouse_name,
+                          w_warehouse_sk,
+                          i_item_sk,
+                          d_moy,
+                          stdev,
+                          mean,
+                          CASE mean
+                              WHEN 0 THEN NULL
+                              ELSE stdev/mean
+                          END cov
+                   FROM
+                     (SELECT w_warehouse_name,
+                             w_warehouse_sk,
+                             i_item_sk,
+                             d_moy,
+                             stddev_samp(inv_quantity_on_hand) stdev,
+                             avg(inv_quantity_on_hand) mean
+                      FROM inventory,
+                           item,
+                           warehouse,
+                           date_dim
+                      WHERE inv_item_sk = i_item_sk
+                        AND inv_warehouse_sk = w_warehouse_sk
+                        AND inv_date_sk = d_date_sk
+                        AND d_year =2001
+                      GROUP BY w_warehouse_name,
+                               w_warehouse_sk,
+                               i_item_sk,
+                               d_moy) foo
+                   WHERE CASE mean
+                             WHEN 0 THEN 0
+                             ELSE stdev/mean
+                         END > 1)
+                SELECT inv1.w_warehouse_sk,
+                       inv1.i_item_sk,
+                       inv1.d_moy,
+                       inv1.mean,
+                       inv1.cov,
+                       inv2.w_warehouse_sk,
+                       inv2.i_item_sk,
+                       inv2.d_moy,
+                       inv2.mean,
+                       inv2.cov
+                FROM inv inv1,
+                     inv inv2
+                WHERE inv1.i_item_sk = inv2.i_item_sk
+                  AND inv1.w_warehouse_sk = inv2.w_warehouse_sk
+                  AND inv1.d_moy=1
+                  AND inv2.d_moy=1+1
+                  AND inv1.cov > 1.5
+                ORDER BY inv1.w_warehouse_sk,
+                         inv1.i_item_sk,
+                         inv1.d_moy,
+                         inv1.mean,
+                         inv1.cov,
+                         inv2.d_moy,
+                         inv2.mean,
+                         inv2.cov ;
+                

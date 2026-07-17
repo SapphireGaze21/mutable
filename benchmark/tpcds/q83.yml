@@ -1,0 +1,465 @@
+description: TPC-DS Query 83
+suite: TPC
+benchmark: TPC-DS
+name: Q83
+readonly: true
+data:
+    CatalogReturns:
+        file: benchmark/tpcds/data/catalog_returns.csv
+        lines_in_file: 144068
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cr_returned_date_sk': 'INT'
+            'cr_returned_time_sk': 'INT'
+            'cr_item_sk': 'INT NOT NULL'
+            'cr_refunded_customer_sk': 'INT'
+            'cr_refunded_cdemo_sk': 'INT'
+            'cr_refunded_hdemo_sk': 'INT'
+            'cr_refunded_addr_sk': 'INT'
+            'cr_returning_customer_sk': 'INT'
+            'cr_returning_cdemo_sk': 'INT'
+            'cr_returning_hdemo_sk': 'INT'
+            'cr_returning_addr_sk': 'INT'
+            'cr_call_center_sk': 'INT'
+            'cr_catalog_page_sk': 'INT'
+            'cr_ship_mode_sk': 'INT'
+            'cr_warehouse_sk': 'INT'
+            'cr_reason_sk': 'INT'
+            'cr_order_number': 'INT NOT NULL'
+            'cr_return_quantity': 'INT'
+            'cr_return_amount': 'DECIMAL 7 2'
+            'cr_return_tax': 'DECIMAL 7 2'
+            'cr_return_amt_inc_tax': 'DECIMAL 7 2'
+            'cr_fee': 'DECIMAL 7 2'
+            'cr_return_ship_cost': 'DECIMAL 7 2'
+            'cr_refunded_cash': 'DECIMAL 7 2'
+            'cr_reversed_charge': 'DECIMAL 7 2'
+            'cr_store_credit': 'DECIMAL 7 2'
+            'cr_net_loss': 'DECIMAL 7 2'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Item:
+        file: benchmark/tpcds/data/item.csv
+        lines_in_file: 18001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'i_item_sk': 'INT NOT NULL'
+            'i_item_id': 'CHAR 16 NOT NULL'
+            'i_rec_start_date': 'DATE'
+            'i_rec_end_date': 'DATE'
+            'i_item_desc': 'CHAR 200'
+            'i_current_price': 'DECIMAL 7 2'
+            'i_wholesale_cost': 'DECIMAL 7 2'
+            'i_brand_id': 'INT'
+            'i_brand': 'CHAR 50'
+            'i_class_id': 'INT'
+            'i_class': 'CHAR 50'
+            'i_category_id': 'INT'
+            'i_category': 'CHAR 50'
+            'i_manufact_id': 'INT'
+            'i_manufact': 'CHAR 50'
+            'i_size': 'CHAR 20'
+            'i_formulation': 'CHAR 20'
+            'i_color': 'CHAR 20'
+            'i_units': 'CHAR 10'
+            'i_container': 'CHAR 10'
+            'i_manager_id': 'INT'
+            'i_product_name': 'CHAR 50'
+    StoreReturns:
+        file: benchmark/tpcds/data/store_returns.csv
+        lines_in_file: 287868
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'sr_returned_date_sk': 'INT'
+            'sr_return_time_sk': 'INT'
+            'sr_item_sk': 'INT NOT NULL'
+            'sr_customer_sk': 'INT'
+            'sr_cdemo_sk': 'INT'
+            'sr_hdemo_sk': 'INT'
+            'sr_addr_sk': 'INT'
+            'sr_store_sk': 'INT'
+            'sr_reason_sk': 'INT'
+            'sr_ticket_number': 'INT NOT NULL'
+            'sr_return_quantity': 'INT'
+            'sr_return_amt': 'DECIMAL 7 2'
+            'sr_return_tax': 'DECIMAL 7 2'
+            'sr_return_amt_inc_tax': 'DECIMAL 7 2'
+            'sr_fee': 'DECIMAL 7 2'
+            'sr_return_ship_cost': 'DECIMAL 7 2'
+            'sr_refunded_cash': 'DECIMAL 7 2'
+            'sr_reversed_charge': 'DECIMAL 7 2'
+            'sr_store_credit': 'DECIMAL 7 2'
+            'sr_net_loss': 'DECIMAL 7 2'
+    WebReturns:
+        file: benchmark/tpcds/data/web_returns.csv
+        lines_in_file: 71655
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'wr_returned_date_sk': 'INT'
+            'wr_returned_time_sk': 'INT'
+            'wr_item_sk': 'INT NOT NULL'
+            'wr_refunded_customer_sk': 'INT'
+            'wr_refunded_cdemo_sk': 'INT'
+            'wr_refunded_hdemo_sk': 'INT'
+            'wr_refunded_addr_sk': 'INT'
+            'wr_returning_customer_sk': 'INT'
+            'wr_returning_cdemo_sk': 'INT'
+            'wr_returning_hdemo_sk': 'INT'
+            'wr_returning_addr_sk': 'INT'
+            'wr_web_page_sk': 'INT'
+            'wr_reason_sk': 'INT'
+            'wr_order_number': 'INT NOT NULL'
+            'wr_return_quantity': 'INT'
+            'wr_return_amt': 'DECIMAL 7 2'
+            'wr_return_tax': 'DECIMAL 7 2'
+            'wr_return_amt_inc_tax': 'DECIMAL 7 2'
+            'wr_fee': 'DECIMAL 7 2'
+            'wr_return_ship_cost': 'DECIMAL 7 2'
+            'wr_refunded_cash': 'DECIMAL 7 2'
+            'wr_reversed_charge': 'DECIMAL 7 2'
+            'wr_account_credit': 'DECIMAL 7 2'
+            'wr_net_loss': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                WITH sr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(sr_return_quantity) sr_item_qty
+                   FROM store_returns,
+                        item,
+                        date_dim
+                   WHERE sr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND sr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     cr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(cr_return_quantity) cr_item_qty
+                   FROM catalog_returns,
+                        item,
+                        date_dim
+                   WHERE cr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND cr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     wr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(wr_return_quantity) wr_item_qty
+                   FROM web_returns,
+                        item,
+                        date_dim
+                   WHERE wr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND wr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id)
+                SELECT sr_items.item_id ,
+                       sr_item_qty ,
+                       (sr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 sr_dev ,
+                       cr_item_qty ,
+                       (cr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 cr_dev ,
+                       wr_item_qty ,
+                       (wr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 wr_dev ,
+                       (sr_item_qty+cr_item_qty+wr_item_qty)/3.0 average
+                FROM sr_items ,
+                     cr_items ,
+                     wr_items
+                WHERE sr_items.item_id=cr_items.item_id
+                  AND sr_items.item_id=wr_items.item_id
+                ORDER BY sr_items.item_id ,
+                         sr_item_qty
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                WITH sr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(sr_return_quantity) sr_item_qty
+                   FROM store_returns,
+                        item,
+                        date_dim
+                   WHERE sr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND sr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     cr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(cr_return_quantity) cr_item_qty
+                   FROM catalog_returns,
+                        item,
+                        date_dim
+                   WHERE cr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND cr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     wr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(wr_return_quantity) wr_item_qty
+                   FROM web_returns,
+                        item,
+                        date_dim
+                   WHERE wr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND wr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id)
+                SELECT sr_items.item_id ,
+                       sr_item_qty ,
+                       (sr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 sr_dev ,
+                       cr_item_qty ,
+                       (cr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 cr_dev ,
+                       wr_item_qty ,
+                       (wr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 wr_dev ,
+                       (sr_item_qty+cr_item_qty+wr_item_qty)/3.0 average
+                FROM sr_items ,
+                     cr_items ,
+                     wr_items
+                WHERE sr_items.item_id=cr_items.item_id
+                  AND sr_items.item_id=wr_items.item_id
+                ORDER BY sr_items.item_id ,
+                         sr_item_qty
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                WITH sr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(sr_return_quantity) sr_item_qty
+                   FROM store_returns,
+                        item,
+                        date_dim
+                   WHERE sr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND sr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     cr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(cr_return_quantity) cr_item_qty
+                   FROM catalog_returns,
+                        item,
+                        date_dim
+                   WHERE cr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND cr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     wr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(wr_return_quantity) wr_item_qty
+                   FROM web_returns,
+                        item,
+                        date_dim
+                   WHERE wr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND wr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id)
+                SELECT sr_items.item_id ,
+                       sr_item_qty ,
+                       (sr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 sr_dev ,
+                       cr_item_qty ,
+                       (cr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 cr_dev ,
+                       wr_item_qty ,
+                       (wr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 wr_dev ,
+                       (sr_item_qty+cr_item_qty+wr_item_qty)/3.0 average
+                FROM sr_items ,
+                     cr_items ,
+                     wr_items
+                WHERE sr_items.item_id=cr_items.item_id
+                  AND sr_items.item_id=wr_items.item_id
+                ORDER BY sr_items.item_id ,
+                         sr_item_qty
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                WITH sr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(sr_return_quantity) sr_item_qty
+                   FROM store_returns,
+                        item,
+                        date_dim
+                   WHERE sr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND sr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     cr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(cr_return_quantity) cr_item_qty
+                   FROM catalog_returns,
+                        item,
+                        date_dim
+                   WHERE cr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND cr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id),
+                     wr_items AS
+                  (SELECT i_item_id item_id,
+                          sum(wr_return_quantity) wr_item_qty
+                   FROM web_returns,
+                        item,
+                        date_dim
+                   WHERE wr_item_sk = i_item_sk
+                     AND d_date IN
+                       (SELECT d_date
+                        FROM date_dim
+                        WHERE d_week_seq IN
+                            (SELECT d_week_seq
+                             FROM date_dim
+                             WHERE d_date IN ('2000-06-30',
+                                              '2000-09-27',
+                                              '2000-11-17')))
+                     AND wr_returned_date_sk = d_date_sk
+                   GROUP BY i_item_id)
+                SELECT sr_items.item_id ,
+                       sr_item_qty ,
+                       (sr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 sr_dev ,
+                       cr_item_qty ,
+                       (cr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 cr_dev ,
+                       wr_item_qty ,
+                       (wr_item_qty*1.0000)/(sr_item_qty+cr_item_qty+wr_item_qty)/3.0000 * 100 wr_dev ,
+                       (sr_item_qty+cr_item_qty+wr_item_qty)/3.0 average
+                FROM sr_items ,
+                     cr_items ,
+                     wr_items
+                WHERE sr_items.item_id=cr_items.item_id
+                  AND sr_items.item_id=wr_items.item_id
+                ORDER BY sr_items.item_id ,
+                         sr_item_qty
+                LIMIT 100;
+                

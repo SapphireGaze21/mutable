@@ -5,7 +5,6 @@ FetchContent_Populate(
     GIT_REPOSITORY "https://gitlab.com/libeigen/eigen.git"
     GIT_TAG "${EIGEN_VERSION}"
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third-party/eigen-${EIGEN_VERSION}"
-    SYSTEM
     EXCLUDE_FROM_ALL
 )
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/third-party/eigen-${EIGEN_VERSION}")

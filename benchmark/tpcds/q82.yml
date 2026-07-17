@@ -1,0 +1,226 @@
+description: TPC-DS Query 82
+suite: TPC
+benchmark: TPC-DS
+name: Q82
+readonly: true
+data:
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Inventory:
+        file: benchmark/tpcds/data/inventory.csv
+        lines_in_file: 11745001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'inv_date_sk': 'INT NOT NULL'
+            'inv_item_sk': 'INT NOT NULL'
+            'inv_warehouse_sk': 'INT NOT NULL'
+            'inv_quantity_on_hand': 'INT'
+    Item:
+        file: benchmark/tpcds/data/item.csv
+        lines_in_file: 18001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'i_item_sk': 'INT NOT NULL'
+            'i_item_id': 'CHAR 16 NOT NULL'
+            'i_rec_start_date': 'DATE'
+            'i_rec_end_date': 'DATE'
+            'i_item_desc': 'CHAR 200'
+            'i_current_price': 'DECIMAL 7 2'
+            'i_wholesale_cost': 'DECIMAL 7 2'
+            'i_brand_id': 'INT'
+            'i_brand': 'CHAR 50'
+            'i_class_id': 'INT'
+            'i_class': 'CHAR 50'
+            'i_category_id': 'INT'
+            'i_category': 'CHAR 50'
+            'i_manufact_id': 'INT'
+            'i_manufact': 'CHAR 50'
+            'i_size': 'CHAR 20'
+            'i_formulation': 'CHAR 20'
+            'i_color': 'CHAR 20'
+            'i_units': 'CHAR 10'
+            'i_container': 'CHAR 10'
+            'i_manager_id': 'INT'
+            'i_product_name': 'CHAR 50'
+    StoreSales:
+        file: benchmark/tpcds/data/store_sales.csv
+        lines_in_file: 2880405
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ss_sold_date_sk': 'INT'
+            'ss_sold_time_sk': 'INT'
+            'ss_item_sk': 'INT NOT NULL'
+            'ss_customer_sk': 'INT'
+            'ss_cdemo_sk': 'INT'
+            'ss_hdemo_sk': 'INT'
+            'ss_addr_sk': 'INT'
+            'ss_store_sk': 'INT'
+            'ss_promo_sk': 'INT'
+            'ss_ticket_number': 'INT NOT NULL'
+            'ss_quantity': 'INT'
+            'ss_wholesale_cost': 'DECIMAL 7 2'
+            'ss_list_price': 'DECIMAL 7 2'
+            'ss_sales_price': 'DECIMAL 7 2'
+            'ss_ext_discount_amt': 'DECIMAL 7 2'
+            'ss_ext_sales_price': 'DECIMAL 7 2'
+            'ss_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ss_ext_list_price': 'DECIMAL 7 2'
+            'ss_ext_tax': 'DECIMAL 7 2'
+            'ss_coupon_amt': 'DECIMAL 7 2'
+            'ss_net_paid': 'DECIMAL 7 2'
+            'ss_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ss_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                
+                SELECT i_item_id ,
+                       i_item_desc ,
+                       i_current_price
+                FROM item,
+                     inventory,
+                     date_dim,
+                     store_sales
+                WHERE i_current_price BETWEEN 62 AND 62+30
+                  AND inv_item_sk = i_item_sk
+                  AND d_date_sk=inv_date_sk
+                  AND d_date BETWEEN cast('2000-05-25' AS date) AND cast('2000-07-24' AS date)
+                  AND i_manufact_id IN (129,
+                                        270,
+                                        821,
+                                        423)
+                  AND inv_quantity_on_hand BETWEEN 100 AND 500
+                  AND ss_item_sk = i_item_sk
+                GROUP BY i_item_id,
+                         i_item_desc,
+                         i_current_price
+                ORDER BY i_item_id
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                
+                SELECT i_item_id ,
+                       i_item_desc ,
+                       i_current_price
+                FROM item,
+                     inventory,
+                     date_dim,
+                     store_sales
+                WHERE i_current_price BETWEEN 62 AND 62+30
+                  AND inv_item_sk = i_item_sk
+                  AND d_date_sk=inv_date_sk
+                  AND d_date BETWEEN cast('2000-05-25' AS date) AND cast('2000-07-24' AS date)
+                  AND i_manufact_id IN (129,
+                                        270,
+                                        821,
+                                        423)
+                  AND inv_quantity_on_hand BETWEEN 100 AND 500
+                  AND ss_item_sk = i_item_sk
+                GROUP BY i_item_id,
+                         i_item_desc,
+                         i_current_price
+                ORDER BY i_item_id
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                
+                SELECT i_item_id ,
+                       i_item_desc ,
+                       i_current_price
+                FROM item,
+                     inventory,
+                     date_dim,
+                     store_sales
+                WHERE i_current_price BETWEEN 62 AND 62+30
+                  AND inv_item_sk = i_item_sk
+                  AND d_date_sk=inv_date_sk
+                  AND d_date BETWEEN cast('2000-05-25' AS date) AND cast('2000-07-24' AS date)
+                  AND i_manufact_id IN (129,
+                                        270,
+                                        821,
+                                        423)
+                  AND inv_quantity_on_hand BETWEEN 100 AND 500
+                  AND ss_item_sk = i_item_sk
+                GROUP BY i_item_id,
+                         i_item_desc,
+                         i_current_price
+                ORDER BY i_item_id
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                
+                SELECT i_item_id ,
+                       i_item_desc ,
+                       i_current_price
+                FROM item,
+                     inventory,
+                     date_dim,
+                     store_sales
+                WHERE i_current_price BETWEEN 62 AND 62+30
+                  AND inv_item_sk = i_item_sk
+                  AND d_date_sk=inv_date_sk
+                  AND d_date BETWEEN cast('2000-05-25' AS date) AND cast('2000-07-24' AS date)
+                  AND i_manufact_id IN (129,
+                                        270,
+                                        821,
+                                        423)
+                  AND inv_quantity_on_hand BETWEEN 100 AND 500
+                  AND ss_item_sk = i_item_sk
+                GROUP BY i_item_id,
+                         i_item_desc,
+                         i_current_price
+                ORDER BY i_item_id
+                LIMIT 100;
+                

@@ -1,0 +1,351 @@
+description: TPC-DS Query 63
+suite: TPC
+benchmark: TPC-DS
+name: Q63
+readonly: true
+data:
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Item:
+        file: benchmark/tpcds/data/item.csv
+        lines_in_file: 18001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'i_item_sk': 'INT NOT NULL'
+            'i_item_id': 'CHAR 16 NOT NULL'
+            'i_rec_start_date': 'DATE'
+            'i_rec_end_date': 'DATE'
+            'i_item_desc': 'CHAR 200'
+            'i_current_price': 'DECIMAL 7 2'
+            'i_wholesale_cost': 'DECIMAL 7 2'
+            'i_brand_id': 'INT'
+            'i_brand': 'CHAR 50'
+            'i_class_id': 'INT'
+            'i_class': 'CHAR 50'
+            'i_category_id': 'INT'
+            'i_category': 'CHAR 50'
+            'i_manufact_id': 'INT'
+            'i_manufact': 'CHAR 50'
+            'i_size': 'CHAR 20'
+            'i_formulation': 'CHAR 20'
+            'i_color': 'CHAR 20'
+            'i_units': 'CHAR 10'
+            'i_container': 'CHAR 10'
+            'i_manager_id': 'INT'
+            'i_product_name': 'CHAR 50'
+    Store:
+        file: benchmark/tpcds/data/store.csv
+        lines_in_file: 13
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            's_store_sk': 'INT NOT NULL'
+            's_store_id': 'CHAR 16 NOT NULL'
+            's_rec_start_date': 'DATE'
+            's_rec_end_date': 'DATE'
+            's_closed_date_sk': 'INT'
+            's_store_name': 'CHAR 50'
+            's_number_employees': 'INT'
+            's_floor_space': 'INT'
+            's_hours': 'CHAR 20'
+            's_manager': 'CHAR 40'
+            's_market_id': 'INT'
+            's_geography_class': 'CHAR 100'
+            's_market_desc': 'CHAR 100'
+            's_market_manager': 'CHAR 40'
+            's_division_id': 'INT'
+            's_division_name': 'CHAR 50'
+            's_company_id': 'INT'
+            's_company_name': 'CHAR 50'
+            's_street_number': 'CHAR 10'
+            's_street_name': 'CHAR 60'
+            's_street_type': 'CHAR 15'
+            's_suite_number': 'CHAR 10'
+            's_city': 'CHAR 60'
+            's_county': 'CHAR 30'
+            's_state': 'CHAR 2'
+            's_zip': 'CHAR 10'
+            's_country': 'CHAR 20'
+            's_gmt_offset': 'DECIMAL 5 2'
+            's_tax_precentage': 'DECIMAL 5 2'
+    StoreSales:
+        file: benchmark/tpcds/data/store_sales.csv
+        lines_in_file: 2880405
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ss_sold_date_sk': 'INT'
+            'ss_sold_time_sk': 'INT'
+            'ss_item_sk': 'INT NOT NULL'
+            'ss_customer_sk': 'INT'
+            'ss_cdemo_sk': 'INT'
+            'ss_hdemo_sk': 'INT'
+            'ss_addr_sk': 'INT'
+            'ss_store_sk': 'INT'
+            'ss_promo_sk': 'INT'
+            'ss_ticket_number': 'INT NOT NULL'
+            'ss_quantity': 'INT'
+            'ss_wholesale_cost': 'DECIMAL 7 2'
+            'ss_list_price': 'DECIMAL 7 2'
+            'ss_sales_price': 'DECIMAL 7 2'
+            'ss_ext_discount_amt': 'DECIMAL 7 2'
+            'ss_ext_sales_price': 'DECIMAL 7 2'
+            'ss_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ss_ext_list_price': 'DECIMAL 7 2'
+            'ss_ext_tax': 'DECIMAL 7 2'
+            'ss_coupon_amt': 'DECIMAL 7 2'
+            'ss_net_paid': 'DECIMAL 7 2'
+            'ss_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ss_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                
+                SELECT *
+                FROM
+                  (SELECT i_manager_id,
+                          sum(ss_sales_price) sum_sales,
+                          avg(sum(ss_sales_price)) OVER (PARTITION BY i_manager_id) avg_monthly_sales
+                   FROM item,
+                        store_sales,
+                        date_dim,
+                        store
+                   WHERE ss_item_sk = i_item_sk
+                     AND ss_sold_date_sk = d_date_sk
+                     AND ss_store_sk = s_store_sk
+                     AND d_month_seq IN (1200,
+                                         1200+1,
+                                         1200+2,
+                                         1200+3,
+                                         1200+4,
+                                         1200+5,
+                                         1200+6,
+                                         1200+7,
+                                         1200+8,
+                                         1200+9,
+                                         1200+10,
+                                         1200+11)
+                     AND ((i_category IN ('Books',
+                                          'Children',
+                                          'Electronics')
+                           AND i_class IN ('personal',
+                                           'portable',
+                                           'reference',
+                                           'self-help')
+                           AND i_brand IN ('scholaramalgamalg #14',
+                                           'scholaramalgamalg #7',
+                                           'exportiunivamalg #9',
+                                           'scholaramalgamalg #9')) or(i_category IN ('Women','Music','Men')
+                                                                       AND i_class IN ('accessories','classical','fragrances','pants')
+                                                                       AND i_brand IN ('amalgimporto #1','edu packscholar #1','exportiimporto #1', 'importoamalg #1')))
+                   GROUP BY i_manager_id,
+                            d_moy) tmp1
+                WHERE CASE
+                          WHEN avg_monthly_sales > 0 THEN ABS (sum_sales - avg_monthly_sales) / avg_monthly_sales
+                          ELSE NULL
+                      END > 0.1
+                ORDER BY i_manager_id,
+                         avg_monthly_sales,
+                         sum_sales
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                
+                SELECT *
+                FROM
+                  (SELECT i_manager_id,
+                          sum(ss_sales_price) sum_sales,
+                          avg(sum(ss_sales_price)) OVER (PARTITION BY i_manager_id) avg_monthly_sales
+                   FROM item,
+                        store_sales,
+                        date_dim,
+                        store
+                   WHERE ss_item_sk = i_item_sk
+                     AND ss_sold_date_sk = d_date_sk
+                     AND ss_store_sk = s_store_sk
+                     AND d_month_seq IN (1200,
+                                         1200+1,
+                                         1200+2,
+                                         1200+3,
+                                         1200+4,
+                                         1200+5,
+                                         1200+6,
+                                         1200+7,
+                                         1200+8,
+                                         1200+9,
+                                         1200+10,
+                                         1200+11)
+                     AND ((i_category IN ('Books',
+                                          'Children',
+                                          'Electronics')
+                           AND i_class IN ('personal',
+                                           'portable',
+                                           'reference',
+                                           'self-help')
+                           AND i_brand IN ('scholaramalgamalg #14',
+                                           'scholaramalgamalg #7',
+                                           'exportiunivamalg #9',
+                                           'scholaramalgamalg #9')) or(i_category IN ('Women','Music','Men')
+                                                                       AND i_class IN ('accessories','classical','fragrances','pants')
+                                                                       AND i_brand IN ('amalgimporto #1','edu packscholar #1','exportiimporto #1', 'importoamalg #1')))
+                   GROUP BY i_manager_id,
+                            d_moy) tmp1
+                WHERE CASE
+                          WHEN avg_monthly_sales > 0 THEN ABS (sum_sales - avg_monthly_sales) / avg_monthly_sales
+                          ELSE NULL
+                      END > 0.1
+                ORDER BY i_manager_id,
+                         avg_monthly_sales,
+                         sum_sales
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                
+                SELECT *
+                FROM
+                  (SELECT i_manager_id,
+                          sum(ss_sales_price) sum_sales,
+                          avg(sum(ss_sales_price)) OVER (PARTITION BY i_manager_id) avg_monthly_sales
+                   FROM item,
+                        store_sales,
+                        date_dim,
+                        store
+                   WHERE ss_item_sk = i_item_sk
+                     AND ss_sold_date_sk = d_date_sk
+                     AND ss_store_sk = s_store_sk
+                     AND d_month_seq IN (1200,
+                                         1200+1,
+                                         1200+2,
+                                         1200+3,
+                                         1200+4,
+                                         1200+5,
+                                         1200+6,
+                                         1200+7,
+                                         1200+8,
+                                         1200+9,
+                                         1200+10,
+                                         1200+11)
+                     AND ((i_category IN ('Books',
+                                          'Children',
+                                          'Electronics')
+                           AND i_class IN ('personal',
+                                           'portable',
+                                           'reference',
+                                           'self-help')
+                           AND i_brand IN ('scholaramalgamalg #14',
+                                           'scholaramalgamalg #7',
+                                           'exportiunivamalg #9',
+                                           'scholaramalgamalg #9')) or(i_category IN ('Women','Music','Men')
+                                                                       AND i_class IN ('accessories','classical','fragrances','pants')
+                                                                       AND i_brand IN ('amalgimporto #1','edu packscholar #1','exportiimporto #1', 'importoamalg #1')))
+                   GROUP BY i_manager_id,
+                            d_moy) tmp1
+                WHERE CASE
+                          WHEN avg_monthly_sales > 0 THEN ABS (sum_sales - avg_monthly_sales) / avg_monthly_sales
+                          ELSE NULL
+                      END > 0.1
+                ORDER BY i_manager_id,
+                         avg_monthly_sales,
+                         sum_sales
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                
+                SELECT *
+                FROM
+                  (SELECT i_manager_id,
+                          sum(ss_sales_price) sum_sales,
+                          avg(sum(ss_sales_price)) OVER (PARTITION BY i_manager_id) avg_monthly_sales
+                   FROM item,
+                        store_sales,
+                        date_dim,
+                        store
+                   WHERE ss_item_sk = i_item_sk
+                     AND ss_sold_date_sk = d_date_sk
+                     AND ss_store_sk = s_store_sk
+                     AND d_month_seq IN (1200,
+                                         1200+1,
+                                         1200+2,
+                                         1200+3,
+                                         1200+4,
+                                         1200+5,
+                                         1200+6,
+                                         1200+7,
+                                         1200+8,
+                                         1200+9,
+                                         1200+10,
+                                         1200+11)
+                     AND ((i_category IN ('Books',
+                                          'Children',
+                                          'Electronics')
+                           AND i_class IN ('personal',
+                                           'portable',
+                                           'reference',
+                                           'self-help')
+                           AND i_brand IN ('scholaramalgamalg #14',
+                                           'scholaramalgamalg #7',
+                                           'exportiunivamalg #9',
+                                           'scholaramalgamalg #9')) or(i_category IN ('Women','Music','Men')
+                                                                       AND i_class IN ('accessories','classical','fragrances','pants')
+                                                                       AND i_brand IN ('amalgimporto #1','edu packscholar #1','exportiimporto #1', 'importoamalg #1')))
+                   GROUP BY i_manager_id,
+                            d_moy) tmp1
+                WHERE CASE
+                          WHEN avg_monthly_sales > 0 THEN ABS (sum_sales - avg_monthly_sales) / avg_monthly_sales
+                          ELSE NULL
+                      END > 0.1
+                ORDER BY i_manager_id,
+                         avg_monthly_sales,
+                         sum_sales
+                LIMIT 100;
+                

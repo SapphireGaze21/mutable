@@ -8,7 +8,6 @@ FetchContent_Populate(
     GIT_REPOSITORY "https://chromium.googlesource.com/chromium/tools/depot_tools.git"
     GIT_TAG "${DEPOT_TOOLS_VERSION}"
     SOURCE_DIR "${DEPOT_TOOLS_PATH}"
-    SYSTEM
     EXCLUDE_FROM_ALL
 )
 find_program(DEPOT_TOOLS_FETCH fetch PATHS "${DEPOT_TOOLS_PATH}" REQUIRED)

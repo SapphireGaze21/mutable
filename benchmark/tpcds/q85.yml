@@ -1,0 +1,431 @@
+description: TPC-DS Query 85
+suite: TPC
+benchmark: TPC-DS
+name: Q85
+readonly: true
+data:
+    CustomerAddress:
+        file: benchmark/tpcds/data/customer_address.csv
+        lines_in_file: 50001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ca_address_sk': 'INT NOT NULL'
+            'ca_address_id': 'CHAR 16 NOT NULL'
+            'ca_street_number': 'CHAR 10'
+            'ca_street_name': 'CHAR 60'
+            'ca_street_type': 'CHAR 15'
+            'ca_suite_number': 'CHAR 10'
+            'ca_city': 'CHAR 60'
+            'ca_county': 'CHAR 30'
+            'ca_state': 'CHAR 2'
+            'ca_zip': 'CHAR 10'
+            'ca_country': 'CHAR 20'
+            'ca_gmt_offset': 'DECIMAL 5 2'
+            'ca_location_type': 'CHAR 20'
+    CustomerDemographics:
+        file: benchmark/tpcds/data/customer_demographics.csv
+        lines_in_file: 1920801
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cd_demo_sk': 'INT NOT NULL'
+            'cd_gender': 'CHAR 1'
+            'cd_marital_status': 'CHAR 1'
+            'cd_education_status': 'CHAR 20'
+            'cd_purchase_estimate': 'INT'
+            'cd_credit_rating': 'CHAR 10'
+            'cd_dep_count': 'INT'
+            'cd_dep_employed_count': 'INT'
+            'cd_dep_college_count': 'INT'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Reason:
+        file: benchmark/tpcds/data/reason.csv
+        lines_in_file: 36
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'r_reason_sk': 'INT NOT NULL'
+            'r_reason_id': 'CHAR 16 NOT NULL'
+            'r_reason_desc': 'CHAR 100'
+    WebPage:
+        file: benchmark/tpcds/data/web_page.csv
+        lines_in_file: 61
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'wp_web_page_sk': 'INT NOT NULL'
+            'wp_web_page_id': 'CHAR 16 NOT NULL'
+            'wp_rec_start_date': 'DATE'
+            'wp_rec_end_date': 'DATE'
+            'wp_creation_date_sk': 'INT'
+            'wp_access_date_sk': 'INT'
+            'wp_autogen_flag': 'CHAR 1'
+            'wp_customer_sk': 'INT'
+            'wp_url': 'CHAR 100'
+            'wp_type': 'CHAR 50'
+            'wp_char_count': 'INT'
+            'wp_link_count': 'INT'
+            'wp_image_count': 'INT'
+            'wp_max_ad_count': 'INT'
+    WebReturns:
+        file: benchmark/tpcds/data/web_returns.csv
+        lines_in_file: 71655
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'wr_returned_date_sk': 'INT'
+            'wr_returned_time_sk': 'INT'
+            'wr_item_sk': 'INT NOT NULL'
+            'wr_refunded_customer_sk': 'INT'
+            'wr_refunded_cdemo_sk': 'INT'
+            'wr_refunded_hdemo_sk': 'INT'
+            'wr_refunded_addr_sk': 'INT'
+            'wr_returning_customer_sk': 'INT'
+            'wr_returning_cdemo_sk': 'INT'
+            'wr_returning_hdemo_sk': 'INT'
+            'wr_returning_addr_sk': 'INT'
+            'wr_web_page_sk': 'INT'
+            'wr_reason_sk': 'INT'
+            'wr_order_number': 'INT NOT NULL'
+            'wr_return_quantity': 'INT'
+            'wr_return_amt': 'DECIMAL 7 2'
+            'wr_return_tax': 'DECIMAL 7 2'
+            'wr_return_amt_inc_tax': 'DECIMAL 7 2'
+            'wr_fee': 'DECIMAL 7 2'
+            'wr_return_ship_cost': 'DECIMAL 7 2'
+            'wr_refunded_cash': 'DECIMAL 7 2'
+            'wr_reversed_charge': 'DECIMAL 7 2'
+            'wr_account_credit': 'DECIMAL 7 2'
+            'wr_net_loss': 'DECIMAL 7 2'
+    WebSales:
+        file: benchmark/tpcds/data/web_sales.csv
+        lines_in_file: 719385
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ws_sold_date_sk': 'INT'
+            'ws_sold_time_sk': 'INT'
+            'ws_ship_date_sk': 'INT'
+            'ws_item_sk': 'INT NOT NULL'
+            'ws_bill_customer_sk': 'INT'
+            'ws_bill_cdemo_sk': 'INT'
+            'ws_bill_hdemo_sk': 'INT'
+            'ws_bill_addr_sk': 'INT'
+            'ws_ship_customer_sk': 'INT'
+            'ws_ship_cdemo_sk': 'INT'
+            'ws_ship_hdemo_sk': 'INT'
+            'ws_ship_addr_sk': 'INT'
+            'ws_web_page_sk': 'INT'
+            'ws_web_site_sk': 'INT'
+            'ws_ship_mode_sk': 'INT'
+            'ws_warehouse_sk': 'INT'
+            'ws_promo_sk': 'INT'
+            'ws_order_number': 'INT NOT NULL'
+            'ws_quantity': 'INT'
+            'ws_wholesale_cost': 'DECIMAL 7 2'
+            'ws_list_price': 'DECIMAL 7 2'
+            'ws_sales_price': 'DECIMAL 7 2'
+            'ws_ext_discount_amt': 'DECIMAL 7 2'
+            'ws_ext_sales_price': 'DECIMAL 7 2'
+            'ws_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ws_ext_list_price': 'DECIMAL 7 2'
+            'ws_ext_tax': 'DECIMAL 7 2'
+            'ws_coupon_amt': 'DECIMAL 7 2'
+            'ws_ext_ship_cost': 'DECIMAL 7 2'
+            'ws_net_paid': 'DECIMAL 7 2'
+            'ws_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'ws_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                
+                SELECT SUBSTRING(r_reason_desc,1,20) ,
+                       avg(ws_quantity) ,
+                       avg(wr_refunded_cash) ,
+                       avg(wr_fee)
+                FROM web_sales,
+                     web_returns,
+                     web_page,
+                     customer_demographics cd1,
+                     customer_demographics cd2,
+                     customer_address,
+                     date_dim,
+                     reason
+                WHERE ws_web_page_sk = wp_web_page_sk
+                  AND ws_item_sk = wr_item_sk
+                  AND ws_order_number = wr_order_number
+                  AND ws_sold_date_sk = d_date_sk
+                  AND d_year = 2000
+                  AND cd1.cd_demo_sk = wr_refunded_cdemo_sk
+                  AND cd2.cd_demo_sk = wr_returning_cdemo_sk
+                  AND ca_address_sk = wr_refunded_addr_sk
+                  AND r_reason_sk = wr_reason_sk
+                  AND ( ( cd1.cd_marital_status = 'M'
+                         AND cd1.cd_marital_status = cd2.cd_marital_status
+                         AND cd1.cd_education_status = 'Advanced Degree'
+                         AND cd1.cd_education_status = cd2.cd_education_status
+                         AND ws_sales_price BETWEEN 100.00 AND 150.00 )
+                       OR ( cd1.cd_marital_status = 'S'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = 'College'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 50.00 AND 100.00 )
+                       OR ( cd1.cd_marital_status = 'W'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = '2 yr Degree'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 150.00 AND 200.00 ) )
+                  AND ( ( ca_country = 'United States'
+                         AND ca_state IN ('IN',
+                                          'OH',
+                                          'NJ')
+                         AND ws_net_profit BETWEEN 100 AND 200)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('WI',
+                                            'CT',
+                                            'KY')
+                           AND ws_net_profit BETWEEN 150 AND 300)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('LA',
+                                            'IA',
+                                            'AR')
+                           AND ws_net_profit BETWEEN 50 AND 250) )
+                GROUP BY r_reason_desc
+                ORDER BY SUBSTRING(r_reason_desc,1,20) ,
+                         avg(ws_quantity) ,
+                         avg(wr_refunded_cash) ,
+                         avg(wr_fee)
+                LIMIT 100;
+    PostgreSQL:
+        cases:
+            1: |
+                
+                SELECT SUBSTRING(r_reason_desc,1,20) ,
+                       avg(ws_quantity) ,
+                       avg(wr_refunded_cash) ,
+                       avg(wr_fee)
+                FROM web_sales,
+                     web_returns,
+                     web_page,
+                     customer_demographics cd1,
+                     customer_demographics cd2,
+                     customer_address,
+                     date_dim,
+                     reason
+                WHERE ws_web_page_sk = wp_web_page_sk
+                  AND ws_item_sk = wr_item_sk
+                  AND ws_order_number = wr_order_number
+                  AND ws_sold_date_sk = d_date_sk
+                  AND d_year = 2000
+                  AND cd1.cd_demo_sk = wr_refunded_cdemo_sk
+                  AND cd2.cd_demo_sk = wr_returning_cdemo_sk
+                  AND ca_address_sk = wr_refunded_addr_sk
+                  AND r_reason_sk = wr_reason_sk
+                  AND ( ( cd1.cd_marital_status = 'M'
+                         AND cd1.cd_marital_status = cd2.cd_marital_status
+                         AND cd1.cd_education_status = 'Advanced Degree'
+                         AND cd1.cd_education_status = cd2.cd_education_status
+                         AND ws_sales_price BETWEEN 100.00 AND 150.00 )
+                       OR ( cd1.cd_marital_status = 'S'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = 'College'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 50.00 AND 100.00 )
+                       OR ( cd1.cd_marital_status = 'W'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = '2 yr Degree'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 150.00 AND 200.00 ) )
+                  AND ( ( ca_country = 'United States'
+                         AND ca_state IN ('IN',
+                                          'OH',
+                                          'NJ')
+                         AND ws_net_profit BETWEEN 100 AND 200)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('WI',
+                                            'CT',
+                                            'KY')
+                           AND ws_net_profit BETWEEN 150 AND 300)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('LA',
+                                            'IA',
+                                            'AR')
+                           AND ws_net_profit BETWEEN 50 AND 250) )
+                GROUP BY r_reason_desc
+                ORDER BY SUBSTRING(r_reason_desc,1,20) ,
+                         avg(ws_quantity) ,
+                         avg(wr_refunded_cash) ,
+                         avg(wr_fee)
+                LIMIT 100;
+    DuckDB:
+        cases:
+            1: |
+                
+                SELECT SUBSTRING(r_reason_desc,1,20) ,
+                       avg(ws_quantity) ,
+                       avg(wr_refunded_cash) ,
+                       avg(wr_fee)
+                FROM web_sales,
+                     web_returns,
+                     web_page,
+                     customer_demographics cd1,
+                     customer_demographics cd2,
+                     customer_address,
+                     date_dim,
+                     reason
+                WHERE ws_web_page_sk = wp_web_page_sk
+                  AND ws_item_sk = wr_item_sk
+                  AND ws_order_number = wr_order_number
+                  AND ws_sold_date_sk = d_date_sk
+                  AND d_year = 2000
+                  AND cd1.cd_demo_sk = wr_refunded_cdemo_sk
+                  AND cd2.cd_demo_sk = wr_returning_cdemo_sk
+                  AND ca_address_sk = wr_refunded_addr_sk
+                  AND r_reason_sk = wr_reason_sk
+                  AND ( ( cd1.cd_marital_status = 'M'
+                         AND cd1.cd_marital_status = cd2.cd_marital_status
+                         AND cd1.cd_education_status = 'Advanced Degree'
+                         AND cd1.cd_education_status = cd2.cd_education_status
+                         AND ws_sales_price BETWEEN 100.00 AND 150.00 )
+                       OR ( cd1.cd_marital_status = 'S'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = 'College'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 50.00 AND 100.00 )
+                       OR ( cd1.cd_marital_status = 'W'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = '2 yr Degree'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 150.00 AND 200.00 ) )
+                  AND ( ( ca_country = 'United States'
+                         AND ca_state IN ('IN',
+                                          'OH',
+                                          'NJ')
+                         AND ws_net_profit BETWEEN 100 AND 200)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('WI',
+                                            'CT',
+                                            'KY')
+                           AND ws_net_profit BETWEEN 150 AND 300)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('LA',
+                                            'IA',
+                                            'AR')
+                           AND ws_net_profit BETWEEN 50 AND 250) )
+                GROUP BY r_reason_desc
+                ORDER BY SUBSTRING(r_reason_desc,1,20) ,
+                         avg(ws_quantity) ,
+                         avg(wr_refunded_cash) ,
+                         avg(wr_fee)
+                LIMIT 100;
+    HyPer:
+        cases:
+            1: |
+                
+                SELECT SUBSTRING(r_reason_desc,1,20) ,
+                       avg(ws_quantity) ,
+                       avg(wr_refunded_cash) ,
+                       avg(wr_fee)
+                FROM web_sales,
+                     web_returns,
+                     web_page,
+                     customer_demographics cd1,
+                     customer_demographics cd2,
+                     customer_address,
+                     date_dim,
+                     reason
+                WHERE ws_web_page_sk = wp_web_page_sk
+                  AND ws_item_sk = wr_item_sk
+                  AND ws_order_number = wr_order_number
+                  AND ws_sold_date_sk = d_date_sk
+                  AND d_year = 2000
+                  AND cd1.cd_demo_sk = wr_refunded_cdemo_sk
+                  AND cd2.cd_demo_sk = wr_returning_cdemo_sk
+                  AND ca_address_sk = wr_refunded_addr_sk
+                  AND r_reason_sk = wr_reason_sk
+                  AND ( ( cd1.cd_marital_status = 'M'
+                         AND cd1.cd_marital_status = cd2.cd_marital_status
+                         AND cd1.cd_education_status = 'Advanced Degree'
+                         AND cd1.cd_education_status = cd2.cd_education_status
+                         AND ws_sales_price BETWEEN 100.00 AND 150.00 )
+                       OR ( cd1.cd_marital_status = 'S'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = 'College'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 50.00 AND 100.00 )
+                       OR ( cd1.cd_marital_status = 'W'
+                           AND cd1.cd_marital_status = cd2.cd_marital_status
+                           AND cd1.cd_education_status = '2 yr Degree'
+                           AND cd1.cd_education_status = cd2.cd_education_status
+                           AND ws_sales_price BETWEEN 150.00 AND 200.00 ) )
+                  AND ( ( ca_country = 'United States'
+                         AND ca_state IN ('IN',
+                                          'OH',
+                                          'NJ')
+                         AND ws_net_profit BETWEEN 100 AND 200)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('WI',
+                                            'CT',
+                                            'KY')
+                           AND ws_net_profit BETWEEN 150 AND 300)
+                       OR ( ca_country = 'United States'
+                           AND ca_state IN ('LA',
+                                            'IA',
+                                            'AR')
+                           AND ws_net_profit BETWEEN 50 AND 250) )
+                GROUP BY r_reason_desc
+                ORDER BY SUBSTRING(r_reason_desc,1,20) ,
+                         avg(ws_quantity) ,
+                         avg(wr_refunded_cash) ,
+                         avg(wr_fee)
+                LIMIT 100;

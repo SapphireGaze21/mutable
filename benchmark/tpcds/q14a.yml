@@ -1,0 +1,973 @@
+description: TPC-DS Query 14a
+suite: TPC
+benchmark: TPC-DS
+name: Q14a
+readonly: true
+data:
+    CatalogSales:
+        file: benchmark/tpcds/data/catalog_sales.csv
+        lines_in_file: 1441549
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cs_sold_date_sk': 'INT'
+            'cs_sold_time_sk': 'INT'
+            'cs_ship_date_sk': 'INT'
+            'cs_bill_customer_sk': 'INT'
+            'cs_bill_cdemo_sk': 'INT'
+            'cs_bill_hdemo_sk': 'INT'
+            'cs_bill_addr_sk': 'INT'
+            'cs_ship_customer_sk': 'INT'
+            'cs_ship_cdemo_sk': 'INT'
+            'cs_ship_hdemo_sk': 'INT'
+            'cs_ship_addr_sk': 'INT'
+            'cs_call_center_sk': 'INT'
+            'cs_catalog_page_sk': 'INT'
+            'cs_ship_mode_sk': 'INT'
+            'cs_warehouse_sk': 'INT'
+            'cs_item_sk': 'INT NOT NULL'
+            'cs_promo_sk': 'INT'
+            'cs_order_number': 'INT NOT NULL'
+            'cs_quantity': 'INT'
+            'cs_wholesale_cost': 'DECIMAL 7 2'
+            'cs_list_price': 'DECIMAL 7 2'
+            'cs_sales_price': 'DECIMAL 7 2'
+            'cs_ext_discount_amt': 'DECIMAL 7 2'
+            'cs_ext_sales_price': 'DECIMAL 7 2'
+            'cs_ext_wholesale_cost': 'DECIMAL 7 2'
+            'cs_ext_list_price': 'DECIMAL 7 2'
+            'cs_ext_tax': 'DECIMAL 7 2'
+            'cs_coupon_amt': 'DECIMAL 7 2'
+            'cs_ext_ship_cost': 'DECIMAL 7 2'
+            'cs_net_paid': 'DECIMAL 7 2'
+            'cs_net_paid_inc_tax': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'cs_net_profit': 'DECIMAL 7 2'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Item:
+        file: benchmark/tpcds/data/item.csv
+        lines_in_file: 18001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'i_item_sk': 'INT NOT NULL'
+            'i_item_id': 'CHAR 16 NOT NULL'
+            'i_rec_start_date': 'DATE'
+            'i_rec_end_date': 'DATE'
+            'i_item_desc': 'CHAR 200'
+            'i_current_price': 'DECIMAL 7 2'
+            'i_wholesale_cost': 'DECIMAL 7 2'
+            'i_brand_id': 'INT'
+            'i_brand': 'CHAR 50'
+            'i_class_id': 'INT'
+            'i_class': 'CHAR 50'
+            'i_category_id': 'INT'
+            'i_category': 'CHAR 50'
+            'i_manufact_id': 'INT'
+            'i_manufact': 'CHAR 50'
+            'i_size': 'CHAR 20'
+            'i_formulation': 'CHAR 20'
+            'i_color': 'CHAR 20'
+            'i_units': 'CHAR 10'
+            'i_container': 'CHAR 10'
+            'i_manager_id': 'INT'
+            'i_product_name': 'CHAR 50'
+    Store:
+        file: benchmark/tpcds/data/store.csv
+        lines_in_file: 13
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            's_store_sk': 'INT NOT NULL'
+            's_store_id': 'CHAR 16 NOT NULL'
+            's_rec_start_date': 'DATE'
+            's_rec_end_date': 'DATE'
+            's_closed_date_sk': 'INT'
+            's_store_name': 'CHAR 50'
+            's_number_employees': 'INT'
+            's_floor_space': 'INT'
+            's_hours': 'CHAR 20'
+            's_manager': 'CHAR 40'
+            's_market_id': 'INT'
+            's_geography_class': 'CHAR 100'
+            's_market_desc': 'CHAR 100'
+            's_market_manager': 'CHAR 40'
+            's_division_id': 'INT'
+            's_division_name': 'CHAR 50'
+            's_company_id': 'INT'
+            's_company_name': 'CHAR 50'
+            's_street_number': 'CHAR 10'
+            's_street_name': 'CHAR 60'
+            's_street_type': 'CHAR 15'
+            's_suite_number': 'CHAR 10'
+            's_city': 'CHAR 60'
+            's_county': 'CHAR 30'
+            's_state': 'CHAR 2'
+            's_zip': 'CHAR 10'
+            's_country': 'CHAR 20'
+            's_gmt_offset': 'DECIMAL 5 2'
+            's_tax_precentage': 'DECIMAL 5 2'
+    StoreSales:
+        file: benchmark/tpcds/data/store_sales.csv
+        lines_in_file: 2880405
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ss_sold_date_sk': 'INT'
+            'ss_sold_time_sk': 'INT'
+            'ss_item_sk': 'INT NOT NULL'
+            'ss_customer_sk': 'INT'
+            'ss_cdemo_sk': 'INT'
+            'ss_hdemo_sk': 'INT'
+            'ss_addr_sk': 'INT'
+            'ss_store_sk': 'INT'
+            'ss_promo_sk': 'INT'
+            'ss_ticket_number': 'INT NOT NULL'
+            'ss_quantity': 'INT'
+            'ss_wholesale_cost': 'DECIMAL 7 2'
+            'ss_list_price': 'DECIMAL 7 2'
+            'ss_sales_price': 'DECIMAL 7 2'
+            'ss_ext_discount_amt': 'DECIMAL 7 2'
+            'ss_ext_sales_price': 'DECIMAL 7 2'
+            'ss_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ss_ext_list_price': 'DECIMAL 7 2'
+            'ss_ext_tax': 'DECIMAL 7 2'
+            'ss_coupon_amt': 'DECIMAL 7 2'
+            'ss_net_paid': 'DECIMAL 7 2'
+            'ss_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ss_net_profit': 'DECIMAL 7 2'
+    WebSales:
+        file: benchmark/tpcds/data/web_sales.csv
+        lines_in_file: 719385
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ws_sold_date_sk': 'INT'
+            'ws_sold_time_sk': 'INT'
+            'ws_ship_date_sk': 'INT'
+            'ws_item_sk': 'INT NOT NULL'
+            'ws_bill_customer_sk': 'INT'
+            'ws_bill_cdemo_sk': 'INT'
+            'ws_bill_hdemo_sk': 'INT'
+            'ws_bill_addr_sk': 'INT'
+            'ws_ship_customer_sk': 'INT'
+            'ws_ship_cdemo_sk': 'INT'
+            'ws_ship_hdemo_sk': 'INT'
+            'ws_ship_addr_sk': 'INT'
+            'ws_web_page_sk': 'INT'
+            'ws_web_site_sk': 'INT'
+            'ws_ship_mode_sk': 'INT'
+            'ws_warehouse_sk': 'INT'
+            'ws_promo_sk': 'INT'
+            'ws_order_number': 'INT NOT NULL'
+            'ws_quantity': 'INT'
+            'ws_wholesale_cost': 'DECIMAL 7 2'
+            'ws_list_price': 'DECIMAL 7 2'
+            'ws_sales_price': 'DECIMAL 7 2'
+            'ws_ext_discount_amt': 'DECIMAL 7 2'
+            'ws_ext_sales_price': 'DECIMAL 7 2'
+            'ws_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ws_ext_list_price': 'DECIMAL 7 2'
+            'ws_ext_tax': 'DECIMAL 7 2'
+            'ws_coupon_amt': 'DECIMAL 7 2'
+            'ws_ext_ship_cost': 'DECIMAL 7 2'
+            'ws_net_paid': 'DECIMAL 7 2'
+            'ws_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'ws_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                WITH cross_items AS
+                  (SELECT i_item_sk ss_item_sk
+                   FROM item,
+                     (SELECT iss.i_brand_id brand_id ,
+                             iss.i_class_id class_id ,
+                             iss.i_category_id category_id
+                      FROM store_sales ,
+                           item iss ,
+                           date_dim d1
+                      WHERE ss_item_sk = iss.i_item_sk
+                        AND ss_sold_date_sk = d1.d_date_sk
+                        AND d1.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT ics.i_brand_id ,
+                               ics.i_class_id ,
+                               ics.i_category_id
+                        FROM catalog_sales ,
+                             item ics ,
+                             date_dim d2 WHERE cs_item_sk = ics.i_item_sk
+                        AND cs_sold_date_sk = d2.d_date_sk
+                        AND d2.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT iws.i_brand_id ,
+                               iws.i_class_id ,
+                               iws.i_category_id
+                        FROM web_sales ,
+                             item iws ,
+                             date_dim d3 WHERE ws_item_sk = iws.i_item_sk
+                        AND ws_sold_date_sk = d3.d_date_sk
+                        AND d3.d_year BETWEEN 1999 AND 1999 + 2) x
+                   WHERE i_brand_id = brand_id
+                     AND i_class_id = class_id
+                     AND i_category_id = category_id ),
+                     avg_sales AS
+                  (SELECT avg(quantity*list_price) average_sales
+                   FROM
+                     (SELECT ss_quantity quantity ,
+                             ss_list_price list_price
+                      FROM store_sales ,
+                           date_dim
+                      WHERE ss_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 2001
+                      UNION ALL SELECT cs_quantity quantity,
+                                       cs_list_price list_price
+                      FROM catalog_sales ,
+                           date_dim
+                      WHERE cs_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2
+                      UNION ALL SELECT ws_quantity quantity ,
+                                       ws_list_price list_price
+                      FROM web_sales ,
+                           date_dim
+                      WHERE ws_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2) x),
+                     results AS
+                  (SELECT channel,
+                          i_brand_id,
+                          i_class_id,
+                          i_category_id,
+                          sum(sales) sum_sales,
+                          sum(number_sales) number_sales
+                   FROM
+                     ( SELECT 'store' channel,
+                                      i_brand_id,
+                                      i_class_id ,
+                                      i_category_id,
+                                      sum(ss_quantity*ss_list_price) sales ,
+                                      count(*) number_sales
+                      FROM store_sales ,
+                           item ,
+                           date_dim
+                      WHERE ss_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ss_item_sk = i_item_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ss_quantity*ss_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'catalog' channel,
+                                                 i_brand_id,
+                                                 i_class_id,
+                                                 i_category_id,
+                                                 sum(cs_quantity*cs_list_price) sales,
+                                                 count(*) number_sales
+                      FROM catalog_sales ,
+                           item ,
+                           date_dim
+                      WHERE cs_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND cs_item_sk = i_item_sk
+                        AND cs_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(cs_quantity*cs_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'web' channel,
+                                             i_brand_id,
+                                             i_class_id,
+                                             i_category_id,
+                                             sum(ws_quantity*ws_list_price) sales,
+                                             count(*) number_sales
+                      FROM web_sales ,
+                           item ,
+                           date_dim
+                      WHERE ws_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ws_item_sk = i_item_sk
+                        AND ws_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ws_quantity*ws_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales) ) y
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id,
+                            i_category_id)
+                SELECT channel,
+                       i_brand_id,
+                       i_class_id,
+                       i_category_id,
+                       sum_sales,
+                       number_sales
+                FROM
+                  ( SELECT channel,
+                           i_brand_id,
+                           i_class_id,
+                           i_category_id,
+                           sum_sales,
+                           number_sales
+                   FROM results
+                   UNION SELECT channel,
+                                i_brand_id,
+                                i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id
+                   UNION SELECT channel,
+                                i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id
+                   UNION SELECT channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel
+                   UNION SELECT NULL AS channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results) z
+                ORDER BY channel,
+                         i_brand_id,
+                         i_class_id,
+                         i_category_id
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                WITH cross_items AS
+                  (SELECT i_item_sk ss_item_sk
+                   FROM item,
+                     (SELECT iss.i_brand_id brand_id ,
+                             iss.i_class_id class_id ,
+                             iss.i_category_id category_id
+                      FROM store_sales ,
+                           item iss ,
+                           date_dim d1
+                      WHERE ss_item_sk = iss.i_item_sk
+                        AND ss_sold_date_sk = d1.d_date_sk
+                        AND d1.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT ics.i_brand_id ,
+                               ics.i_class_id ,
+                               ics.i_category_id
+                        FROM catalog_sales ,
+                             item ics ,
+                             date_dim d2 WHERE cs_item_sk = ics.i_item_sk
+                        AND cs_sold_date_sk = d2.d_date_sk
+                        AND d2.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT iws.i_brand_id ,
+                               iws.i_class_id ,
+                               iws.i_category_id
+                        FROM web_sales ,
+                             item iws ,
+                             date_dim d3 WHERE ws_item_sk = iws.i_item_sk
+                        AND ws_sold_date_sk = d3.d_date_sk
+                        AND d3.d_year BETWEEN 1999 AND 1999 + 2) x
+                   WHERE i_brand_id = brand_id
+                     AND i_class_id = class_id
+                     AND i_category_id = category_id ),
+                     avg_sales AS
+                  (SELECT avg(quantity*list_price) average_sales
+                   FROM
+                     (SELECT ss_quantity quantity ,
+                             ss_list_price list_price
+                      FROM store_sales ,
+                           date_dim
+                      WHERE ss_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 2001
+                      UNION ALL SELECT cs_quantity quantity,
+                                       cs_list_price list_price
+                      FROM catalog_sales ,
+                           date_dim
+                      WHERE cs_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2
+                      UNION ALL SELECT ws_quantity quantity ,
+                                       ws_list_price list_price
+                      FROM web_sales ,
+                           date_dim
+                      WHERE ws_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2) x),
+                     results AS
+                  (SELECT channel,
+                          i_brand_id,
+                          i_class_id,
+                          i_category_id,
+                          sum(sales) sum_sales,
+                          sum(number_sales) number_sales
+                   FROM
+                     ( SELECT 'store' channel,
+                                      i_brand_id,
+                                      i_class_id ,
+                                      i_category_id,
+                                      sum(ss_quantity*ss_list_price) sales ,
+                                      count(*) number_sales
+                      FROM store_sales ,
+                           item ,
+                           date_dim
+                      WHERE ss_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ss_item_sk = i_item_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ss_quantity*ss_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'catalog' channel,
+                                                 i_brand_id,
+                                                 i_class_id,
+                                                 i_category_id,
+                                                 sum(cs_quantity*cs_list_price) sales,
+                                                 count(*) number_sales
+                      FROM catalog_sales ,
+                           item ,
+                           date_dim
+                      WHERE cs_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND cs_item_sk = i_item_sk
+                        AND cs_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(cs_quantity*cs_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'web' channel,
+                                             i_brand_id,
+                                             i_class_id,
+                                             i_category_id,
+                                             sum(ws_quantity*ws_list_price) sales,
+                                             count(*) number_sales
+                      FROM web_sales ,
+                           item ,
+                           date_dim
+                      WHERE ws_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ws_item_sk = i_item_sk
+                        AND ws_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ws_quantity*ws_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales) ) y
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id,
+                            i_category_id)
+                SELECT channel,
+                       i_brand_id,
+                       i_class_id,
+                       i_category_id,
+                       sum_sales,
+                       number_sales
+                FROM
+                  ( SELECT channel,
+                           i_brand_id,
+                           i_class_id,
+                           i_category_id,
+                           sum_sales,
+                           number_sales
+                   FROM results
+                   UNION SELECT channel,
+                                i_brand_id,
+                                i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id
+                   UNION SELECT channel,
+                                i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id
+                   UNION SELECT channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel
+                   UNION SELECT NULL AS channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results) z
+                ORDER BY channel,
+                         i_brand_id,
+                         i_class_id,
+                         i_category_id
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                WITH cross_items AS
+                  (SELECT i_item_sk ss_item_sk
+                   FROM item,
+                     (SELECT iss.i_brand_id brand_id ,
+                             iss.i_class_id class_id ,
+                             iss.i_category_id category_id
+                      FROM store_sales ,
+                           item iss ,
+                           date_dim d1
+                      WHERE ss_item_sk = iss.i_item_sk
+                        AND ss_sold_date_sk = d1.d_date_sk
+                        AND d1.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT ics.i_brand_id ,
+                               ics.i_class_id ,
+                               ics.i_category_id
+                        FROM catalog_sales ,
+                             item ics ,
+                             date_dim d2 WHERE cs_item_sk = ics.i_item_sk
+                        AND cs_sold_date_sk = d2.d_date_sk
+                        AND d2.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT iws.i_brand_id ,
+                               iws.i_class_id ,
+                               iws.i_category_id
+                        FROM web_sales ,
+                             item iws ,
+                             date_dim d3 WHERE ws_item_sk = iws.i_item_sk
+                        AND ws_sold_date_sk = d3.d_date_sk
+                        AND d3.d_year BETWEEN 1999 AND 1999 + 2) x
+                   WHERE i_brand_id = brand_id
+                     AND i_class_id = class_id
+                     AND i_category_id = category_id ),
+                     avg_sales AS
+                  (SELECT avg(quantity*list_price) average_sales
+                   FROM
+                     (SELECT ss_quantity quantity ,
+                             ss_list_price list_price
+                      FROM store_sales ,
+                           date_dim
+                      WHERE ss_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 2001
+                      UNION ALL SELECT cs_quantity quantity,
+                                       cs_list_price list_price
+                      FROM catalog_sales ,
+                           date_dim
+                      WHERE cs_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2
+                      UNION ALL SELECT ws_quantity quantity ,
+                                       ws_list_price list_price
+                      FROM web_sales ,
+                           date_dim
+                      WHERE ws_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2) x),
+                     results AS
+                  (SELECT channel,
+                          i_brand_id,
+                          i_class_id,
+                          i_category_id,
+                          sum(sales) sum_sales,
+                          sum(number_sales) number_sales
+                   FROM
+                     ( SELECT 'store' channel,
+                                      i_brand_id,
+                                      i_class_id ,
+                                      i_category_id,
+                                      sum(ss_quantity*ss_list_price) sales ,
+                                      count(*) number_sales
+                      FROM store_sales ,
+                           item ,
+                           date_dim
+                      WHERE ss_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ss_item_sk = i_item_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ss_quantity*ss_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'catalog' channel,
+                                                 i_brand_id,
+                                                 i_class_id,
+                                                 i_category_id,
+                                                 sum(cs_quantity*cs_list_price) sales,
+                                                 count(*) number_sales
+                      FROM catalog_sales ,
+                           item ,
+                           date_dim
+                      WHERE cs_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND cs_item_sk = i_item_sk
+                        AND cs_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(cs_quantity*cs_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'web' channel,
+                                             i_brand_id,
+                                             i_class_id,
+                                             i_category_id,
+                                             sum(ws_quantity*ws_list_price) sales,
+                                             count(*) number_sales
+                      FROM web_sales ,
+                           item ,
+                           date_dim
+                      WHERE ws_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ws_item_sk = i_item_sk
+                        AND ws_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ws_quantity*ws_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales) ) y
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id,
+                            i_category_id)
+                SELECT channel,
+                       i_brand_id,
+                       i_class_id,
+                       i_category_id,
+                       sum_sales,
+                       number_sales
+                FROM
+                  ( SELECT channel,
+                           i_brand_id,
+                           i_class_id,
+                           i_category_id,
+                           sum_sales,
+                           number_sales
+                   FROM results
+                   UNION SELECT channel,
+                                i_brand_id,
+                                i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id
+                   UNION SELECT channel,
+                                i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id
+                   UNION SELECT channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel
+                   UNION SELECT NULL AS channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results) z
+                ORDER BY channel,
+                         i_brand_id,
+                         i_class_id,
+                         i_category_id
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                WITH cross_items AS
+                  (SELECT i_item_sk ss_item_sk
+                   FROM item,
+                     (SELECT iss.i_brand_id brand_id ,
+                             iss.i_class_id class_id ,
+                             iss.i_category_id category_id
+                      FROM store_sales ,
+                           item iss ,
+                           date_dim d1
+                      WHERE ss_item_sk = iss.i_item_sk
+                        AND ss_sold_date_sk = d1.d_date_sk
+                        AND d1.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT ics.i_brand_id ,
+                               ics.i_class_id ,
+                               ics.i_category_id
+                        FROM catalog_sales ,
+                             item ics ,
+                             date_dim d2 WHERE cs_item_sk = ics.i_item_sk
+                        AND cs_sold_date_sk = d2.d_date_sk
+                        AND d2.d_year BETWEEN 1999 AND 1999 + 2 INTERSECT
+                        SELECT iws.i_brand_id ,
+                               iws.i_class_id ,
+                               iws.i_category_id
+                        FROM web_sales ,
+                             item iws ,
+                             date_dim d3 WHERE ws_item_sk = iws.i_item_sk
+                        AND ws_sold_date_sk = d3.d_date_sk
+                        AND d3.d_year BETWEEN 1999 AND 1999 + 2) x
+                   WHERE i_brand_id = brand_id
+                     AND i_class_id = class_id
+                     AND i_category_id = category_id ),
+                     avg_sales AS
+                  (SELECT avg(quantity*list_price) average_sales
+                   FROM
+                     (SELECT ss_quantity quantity ,
+                             ss_list_price list_price
+                      FROM store_sales ,
+                           date_dim
+                      WHERE ss_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 2001
+                      UNION ALL SELECT cs_quantity quantity,
+                                       cs_list_price list_price
+                      FROM catalog_sales ,
+                           date_dim
+                      WHERE cs_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2
+                      UNION ALL SELECT ws_quantity quantity ,
+                                       ws_list_price list_price
+                      FROM web_sales ,
+                           date_dim
+                      WHERE ws_sold_date_sk = d_date_sk
+                        AND d_year BETWEEN 1999 AND 1999 + 2) x),
+                     results AS
+                  (SELECT channel,
+                          i_brand_id,
+                          i_class_id,
+                          i_category_id,
+                          sum(sales) sum_sales,
+                          sum(number_sales) number_sales
+                   FROM
+                     ( SELECT 'store' channel,
+                                      i_brand_id,
+                                      i_class_id ,
+                                      i_category_id,
+                                      sum(ss_quantity*ss_list_price) sales ,
+                                      count(*) number_sales
+                      FROM store_sales ,
+                           item ,
+                           date_dim
+                      WHERE ss_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ss_item_sk = i_item_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ss_quantity*ss_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'catalog' channel,
+                                                 i_brand_id,
+                                                 i_class_id,
+                                                 i_category_id,
+                                                 sum(cs_quantity*cs_list_price) sales,
+                                                 count(*) number_sales
+                      FROM catalog_sales ,
+                           item ,
+                           date_dim
+                      WHERE cs_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND cs_item_sk = i_item_sk
+                        AND cs_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(cs_quantity*cs_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales)
+                      UNION ALL SELECT 'web' channel,
+                                             i_brand_id,
+                                             i_class_id,
+                                             i_category_id,
+                                             sum(ws_quantity*ws_list_price) sales,
+                                             count(*) number_sales
+                      FROM web_sales ,
+                           item ,
+                           date_dim
+                      WHERE ws_item_sk IN
+                          (SELECT ss_item_sk
+                           FROM cross_items)
+                        AND ws_item_sk = i_item_sk
+                        AND ws_sold_date_sk = d_date_sk
+                        AND d_year = 1999+2
+                        AND d_moy = 11
+                      GROUP BY i_brand_id,
+                               i_class_id,
+                               i_category_id
+                      HAVING sum(ws_quantity*ws_list_price) >
+                        (SELECT average_sales
+                         FROM avg_sales) ) y
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id,
+                            i_category_id)
+                SELECT channel,
+                       i_brand_id,
+                       i_class_id,
+                       i_category_id,
+                       sum_sales,
+                       number_sales
+                FROM
+                  ( SELECT channel,
+                           i_brand_id,
+                           i_class_id,
+                           i_category_id,
+                           sum_sales,
+                           number_sales
+                   FROM results
+                   UNION SELECT channel,
+                                i_brand_id,
+                                i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id,
+                            i_class_id
+                   UNION SELECT channel,
+                                i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel,
+                            i_brand_id
+                   UNION SELECT channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results
+                   GROUP BY channel
+                   UNION SELECT NULL AS channel,
+                                NULL AS i_brand_id,
+                                NULL AS i_class_id,
+                                NULL AS i_category_id,
+                                sum(sum_sales),
+                                sum(number_sales)
+                   FROM results) z
+                ORDER BY channel,
+                         i_brand_id,
+                         i_class_id,
+                         i_category_id
+                LIMIT 100;
+                

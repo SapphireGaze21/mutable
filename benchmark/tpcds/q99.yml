@@ -1,0 +1,353 @@
+description: TPC-DS Query 99
+suite: TPC
+benchmark: TPC-DS
+name: Q99
+readonly: true
+data:
+    CallCenter:
+        file: benchmark/tpcds/data/call_center.csv
+        lines_in_file: 7
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cc_call_center_sk': 'INT NOT NULL'
+            'cc_call_center_id': 'CHAR 16 NOT NULL'
+            'cc_rec_start_date': 'DATE'
+            'cc_rec_end_date': 'DATE'
+            'cc_closed_date_sk': 'INT'
+            'cc_open_date_sk': 'INT'
+            'cc_name': 'CHAR 50'
+            'cc_class': 'CHAR 50'
+            'cc_employees': 'INT'
+            'cc_sq_ft': 'INT'
+            'cc_hours': 'CHAR 20'
+            'cc_manager': 'CHAR 40'
+            'cc_mkt_id': 'INT'
+            'cc_mkt_class': 'CHAR 50'
+            'cc_mkt_desc': 'CHAR 100'
+            'cc_market_manager': 'CHAR 40'
+            'cc_division': 'INT'
+            'cc_division_name': 'CHAR 50'
+            'cc_company': 'INT'
+            'cc_company_name': 'CHAR 50'
+            'cc_street_number': 'CHAR 10'
+            'cc_street_name': 'CHAR 60'
+            'cc_street_type': 'CHAR 15'
+            'cc_suite_number': 'CHAR 10'
+            'cc_city': 'CHAR 60'
+            'cc_county': 'CHAR 30'
+            'cc_state': 'CHAR 2'
+            'cc_zip': 'CHAR 10'
+            'cc_country': 'CHAR 20'
+            'cc_gmt_offset': 'DECIMAL 5 2'
+            'cc_tax_percentage': 'DECIMAL 5 2'
+    CatalogSales:
+        file: benchmark/tpcds/data/catalog_sales.csv
+        lines_in_file: 1441549
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cs_sold_date_sk': 'INT'
+            'cs_sold_time_sk': 'INT'
+            'cs_ship_date_sk': 'INT'
+            'cs_bill_customer_sk': 'INT'
+            'cs_bill_cdemo_sk': 'INT'
+            'cs_bill_hdemo_sk': 'INT'
+            'cs_bill_addr_sk': 'INT'
+            'cs_ship_customer_sk': 'INT'
+            'cs_ship_cdemo_sk': 'INT'
+            'cs_ship_hdemo_sk': 'INT'
+            'cs_ship_addr_sk': 'INT'
+            'cs_call_center_sk': 'INT'
+            'cs_catalog_page_sk': 'INT'
+            'cs_ship_mode_sk': 'INT'
+            'cs_warehouse_sk': 'INT'
+            'cs_item_sk': 'INT NOT NULL'
+            'cs_promo_sk': 'INT'
+            'cs_order_number': 'INT NOT NULL'
+            'cs_quantity': 'INT'
+            'cs_wholesale_cost': 'DECIMAL 7 2'
+            'cs_list_price': 'DECIMAL 7 2'
+            'cs_sales_price': 'DECIMAL 7 2'
+            'cs_ext_discount_amt': 'DECIMAL 7 2'
+            'cs_ext_sales_price': 'DECIMAL 7 2'
+            'cs_ext_wholesale_cost': 'DECIMAL 7 2'
+            'cs_ext_list_price': 'DECIMAL 7 2'
+            'cs_ext_tax': 'DECIMAL 7 2'
+            'cs_coupon_amt': 'DECIMAL 7 2'
+            'cs_ext_ship_cost': 'DECIMAL 7 2'
+            'cs_net_paid': 'DECIMAL 7 2'
+            'cs_net_paid_inc_tax': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'cs_net_profit': 'DECIMAL 7 2'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    ShipMode:
+        file: benchmark/tpcds/data/ship_mode.csv
+        lines_in_file: 21
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'sm_ship_mode_sk': 'INT NOT NULL'
+            'sm_ship_mode_id': 'CHAR 16 NOT NULL'
+            'sm_type': 'CHAR 30'
+            'sm_code': 'CHAR 10'
+            'sm_carrier': 'CHAR 20'
+            'sm_contract': 'CHAR 20'
+    Warehouse:
+        file: benchmark/tpcds/data/warehouse.csv
+        lines_in_file: 6
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'w_warehouse_sk': 'INT NOT NULL'
+            'w_warehouse_id': 'CHAR 16 NOT NULL'
+            'w_warehouse_name': 'CHAR 20'
+            'w_warehouse_sq_ft': 'INT'
+            'w_street_number': 'CHAR 10'
+            'w_street_name': 'CHAR 60'
+            'w_street_type': 'CHAR 15'
+            'w_suite_number': 'CHAR 10'
+            'w_city': 'CHAR 60'
+            'w_county': 'CHAR 30'
+            'w_state': 'CHAR 2'
+            'w_zip': 'CHAR 10'
+            'w_country': 'CHAR 20'
+            'w_gmt_offset': 'DECIMAL 5 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                SELECT w_substr ,
+                       sm_type ,
+                       LOWER(cc_name) cc_name_lower ,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS 30 days,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 30)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS 31-60 days,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 60)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS 61-90 days,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 90)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS 91-120 days,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS >120 days
+                FROM catalog_sales ,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr, *
+                   FROM warehouse) AS sq1 ,
+                     ship_mode ,
+                     call_center ,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND cs_ship_date_sk = d_date_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_ship_mode_sk = sm_ship_mode_sk
+                  AND cs_call_center_sk = cc_call_center_sk
+                GROUP BY w_substr ,
+                         sm_type ,
+                         cc_name
+                ORDER BY w_substr ,
+                         sm_type ,
+                        cc_name_lower
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                SELECT w_substr ,
+                       sm_type ,
+                       LOWER(cc_name) cc_name_lower ,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS "30 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 30)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS "31-60 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 60)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS "61-90 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 90)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS "91-120 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS ">120 days"
+                FROM catalog_sales ,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr, *
+                   FROM warehouse) AS sq1 ,
+                     ship_mode ,
+                     call_center ,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND cs_ship_date_sk = d_date_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_ship_mode_sk = sm_ship_mode_sk
+                  AND cs_call_center_sk = cc_call_center_sk
+                GROUP BY w_substr ,
+                         sm_type ,
+                         cc_name
+                ORDER BY w_substr ,
+                         sm_type ,
+                        cc_name_lower
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                SELECT w_substr ,
+                       sm_type ,
+                       LOWER(cc_name) cc_name_lower ,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS "30 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 30)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS "31-60 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 60)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS "61-90 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 90)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS "91-120 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS ">120 days"
+                FROM catalog_sales ,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr, *
+                   FROM warehouse) AS sq1 ,
+                     ship_mode ,
+                     call_center ,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND cs_ship_date_sk = d_date_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_ship_mode_sk = sm_ship_mode_sk
+                  AND cs_call_center_sk = cc_call_center_sk
+                GROUP BY w_substr ,
+                         sm_type ,
+                         cc_name
+                ORDER BY w_substr ,
+                         sm_type ,
+                        cc_name_lower
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                SELECT w_substr ,
+                       sm_type ,
+                       LOWER(cc_name) cc_name_lower ,
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS "30 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 30)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS "31-60 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 60)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS "61-90 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 90)
+                                    AND (cs_ship_date_sk - cs_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS "91-120 days",
+                       sum(CASE
+                               WHEN (cs_ship_date_sk - cs_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS ">120 days"
+                FROM catalog_sales ,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr, *
+                   FROM warehouse) AS sq1 ,
+                     ship_mode ,
+                     call_center ,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND cs_ship_date_sk = d_date_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_ship_mode_sk = sm_ship_mode_sk
+                  AND cs_call_center_sk = cc_call_center_sk
+                GROUP BY w_substr ,
+                         sm_type ,
+                         cc_name
+                ORDER BY w_substr ,
+                         sm_type ,
+                        cc_name_lower
+                LIMIT 100;
+                

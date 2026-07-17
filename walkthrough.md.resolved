@@ -1,0 +1,43 @@
+# Walkthrough - JOB Query Upgrades and Plan Enumerator Plotting
+
+We have successfully executed the target JOB queries (`q3`, `q1`, `q32`, `q8`, `q25`, `q19`, `q22`, `q24`, `q33`) across four plan enumeration algorithms (`DPsize`, `DPsub`, `DPccp`, and `DPsizeOpt`) and plotted their join-pair counters.
+
+## Completed Tasks
+
+1. **SQL Rewriting Fixes**:
+   - Fixed the `IN` clause regex parser to handle nested parenthesized strings (e.g. `'(writer)'` containing inner parenthesis) which previously broke queries `q19`, `q24`, `q25`, and `q33`.
+   - Translated `IS NULL` to `= ""` and `IS NOT NULL` to `!= ""` since `mutable`'s parser does not natively support SQL `IS NULL` / `IS NOT NULL`.
+   - Replaced `BETWEEN val1 AND val2` with `(col >= val1 AND col <= val2)` as `BETWEEN` is not supported in `mutable`.
+   - Dispatched the final transformation to upgrade all 33 queries in the benchmark.
+
+2. **Automated Running & Plotting Script**:
+   - Developed `Plot_Join_Pair_Counters.py` to run the 9 target queries across the 4 plan enumerators.
+   - Directed the script to load data from `data2` (lightweight mock tables) to prevent performance timeouts on massive tables like `cast_info` (36M rows) while ensuring the plan enumeration state space counters remain structurally identical.
+   - Collected `EvaluatedCounter` (or `CCPCounter` for `DPccp`) for each query.
+   - Plotted the results on a logarithmic grouped bar chart using `matplotlib` and saved it to `join_pair_counters.png`.
+
+---
+
+## Join-Pair Counter Comparison Table
+
+Below is the summary table of the join-pair counters collected from executing the queries:
+
+| Query (Tables Joined) | DPsize (Evaluated) | DPsub (Evaluated) | DPccp (CCP) | DPsizeOpt (Evaluated) |
+|:----------------------|:-------------------|:------------------|:------------|:----------------------|
+| **q3** (4 tables)     | 108                | 50                | 15          | 54                    |
+| **q1** (5 tables)     | 365                | 180               | 32          | 203                   |
+| **q32** (6 tables)    | 959                | 602               | 44          | 601                   |
+| **q8** (7 tables)     | 4,235              | 1,932             | 177         | 2,319                 |
+| **q25** (9 tables)    | 49,983             | 18,660            | 992         | 27,507                |
+| **q19** (10 tables)   | 170,451            | 57,002            | 1,785       | 84,429                |
+| **q22** (11 tables)   | 474,892            | 173,052           | 3,272       | 244,082               |
+| **q24** (12 tables)   | 1,997,348          | 523,250           | 8,133       | 978,553               |
+| **q33** (14 tables)   | 12,885,986         | 4,750,202         | 14,355      | 6,055,880             |
+
+---
+
+## Plan Enumerator Comparison Plot
+
+Here is the generated log-scale grouped bar chart comparing the join-pair counters:
+
+![Join-Pair Counter Comparison](/home/yashwanth/.gemini/antigravity/brain/44e552d9-3bf7-4f56-a7a0-96f2844c5972/join_pair_counters.png)

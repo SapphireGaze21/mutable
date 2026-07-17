@@ -1,0 +1,289 @@
+description: TPC-DS Query 94
+suite: TPC
+benchmark: TPC-DS
+name: Q94
+readonly: true
+data:
+    CustomerAddress:
+        file: benchmark/tpcds/data/customer_address.csv
+        lines_in_file: 50001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ca_address_sk': 'INT NOT NULL'
+            'ca_address_id': 'CHAR 16 NOT NULL'
+            'ca_street_number': 'CHAR 10'
+            'ca_street_name': 'CHAR 60'
+            'ca_street_type': 'CHAR 15'
+            'ca_suite_number': 'CHAR 10'
+            'ca_city': 'CHAR 60'
+            'ca_county': 'CHAR 30'
+            'ca_state': 'CHAR 2'
+            'ca_zip': 'CHAR 10'
+            'ca_country': 'CHAR 20'
+            'ca_gmt_offset': 'DECIMAL 5 2'
+            'ca_location_type': 'CHAR 20'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    WebReturns:
+        file: benchmark/tpcds/data/web_returns.csv
+        lines_in_file: 71655
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'wr_returned_date_sk': 'INT'
+            'wr_returned_time_sk': 'INT'
+            'wr_item_sk': 'INT NOT NULL'
+            'wr_refunded_customer_sk': 'INT'
+            'wr_refunded_cdemo_sk': 'INT'
+            'wr_refunded_hdemo_sk': 'INT'
+            'wr_refunded_addr_sk': 'INT'
+            'wr_returning_customer_sk': 'INT'
+            'wr_returning_cdemo_sk': 'INT'
+            'wr_returning_hdemo_sk': 'INT'
+            'wr_returning_addr_sk': 'INT'
+            'wr_web_page_sk': 'INT'
+            'wr_reason_sk': 'INT'
+            'wr_order_number': 'INT NOT NULL'
+            'wr_return_quantity': 'INT'
+            'wr_return_amt': 'DECIMAL 7 2'
+            'wr_return_tax': 'DECIMAL 7 2'
+            'wr_return_amt_inc_tax': 'DECIMAL 7 2'
+            'wr_fee': 'DECIMAL 7 2'
+            'wr_return_ship_cost': 'DECIMAL 7 2'
+            'wr_refunded_cash': 'DECIMAL 7 2'
+            'wr_reversed_charge': 'DECIMAL 7 2'
+            'wr_account_credit': 'DECIMAL 7 2'
+            'wr_net_loss': 'DECIMAL 7 2'
+    WebSales:
+        file: benchmark/tpcds/data/web_sales.csv
+        lines_in_file: 719385
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ws_sold_date_sk': 'INT'
+            'ws_sold_time_sk': 'INT'
+            'ws_ship_date_sk': 'INT'
+            'ws_item_sk': 'INT NOT NULL'
+            'ws_bill_customer_sk': 'INT'
+            'ws_bill_cdemo_sk': 'INT'
+            'ws_bill_hdemo_sk': 'INT'
+            'ws_bill_addr_sk': 'INT'
+            'ws_ship_customer_sk': 'INT'
+            'ws_ship_cdemo_sk': 'INT'
+            'ws_ship_hdemo_sk': 'INT'
+            'ws_ship_addr_sk': 'INT'
+            'ws_web_page_sk': 'INT'
+            'ws_web_site_sk': 'INT'
+            'ws_ship_mode_sk': 'INT'
+            'ws_warehouse_sk': 'INT'
+            'ws_promo_sk': 'INT'
+            'ws_order_number': 'INT NOT NULL'
+            'ws_quantity': 'INT'
+            'ws_wholesale_cost': 'DECIMAL 7 2'
+            'ws_list_price': 'DECIMAL 7 2'
+            'ws_sales_price': 'DECIMAL 7 2'
+            'ws_ext_discount_amt': 'DECIMAL 7 2'
+            'ws_ext_sales_price': 'DECIMAL 7 2'
+            'ws_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ws_ext_list_price': 'DECIMAL 7 2'
+            'ws_ext_tax': 'DECIMAL 7 2'
+            'ws_coupon_amt': 'DECIMAL 7 2'
+            'ws_ext_ship_cost': 'DECIMAL 7 2'
+            'ws_net_paid': 'DECIMAL 7 2'
+            'ws_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'ws_net_profit': 'DECIMAL 7 2'
+    WebSite:
+        file: benchmark/tpcds/data/web_site.csv
+        lines_in_file: 31
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'web_site_sk': 'INT NOT NULL'
+            'web_site_id': 'CHAR 16 NOT NULL'
+            'web_rec_start_date': 'DATE'
+            'web_rec_end_date': 'DATE'
+            'web_name': 'CHAR 50'
+            'web_open_date_sk': 'INT'
+            'web_close_date_sk': 'INT'
+            'web_class': 'CHAR 50'
+            'web_manager': 'CHAR 40'
+            'web_mkt_id': 'INT'
+            'web_mkt_class': 'CHAR 50'
+            'web_mkt_desc': 'CHAR 100'
+            'web_market_manager': 'CHAR 40'
+            'web_company_id': 'INT'
+            'web_company_name': 'CHAR 50'
+            'web_street_number': 'CHAR 10'
+            'web_street_name': 'CHAR 60'
+            'web_street_type': 'CHAR 15'
+            'web_suite_number': 'CHAR 10'
+            'web_city': 'CHAR 60'
+            'web_county': 'CHAR 30'
+            'web_state': 'CHAR 2'
+            'web_zip': 'CHAR 10'
+            'web_country': 'CHAR 20'
+            'web_gmt_offset': 'DECIMAL 5 2'
+            'web_tax_percentage': 'DECIMAL 5 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                
+                SELECT count(DISTINCT ws_order_number) AS order count ,
+                       sum(ws_ext_ship_cost) AS total shipping cost ,
+                       sum(ws_net_profit) AS total net profit
+                FROM web_sales ws1 ,
+                     date_dim ,
+                     customer_address ,
+                     web_site
+                WHERE d_date BETWEEN '1999-02-01' AND cast('1999-04-02' AS date)
+                  AND ws1.ws_ship_date_sk = d_date_sk
+                  AND ws1.ws_ship_addr_sk = ca_address_sk
+                  AND ca_state = 'IL'
+                  AND ws1.ws_web_site_sk = web_site_sk
+                  AND web_company_name = 'pri'
+                  AND EXISTS
+                    (SELECT *
+                     FROM web_sales ws2
+                     WHERE ws1.ws_order_number = ws2.ws_order_number
+                       AND ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk)
+                  AND NOT exists
+                    (SELECT *
+                     FROM web_returns wr1
+                     WHERE ws1.ws_order_number = wr1.wr_order_number)
+                ORDER BY count(DISTINCT ws_order_number)
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                
+                SELECT count(DISTINCT ws_order_number) AS "order count" ,
+                       sum(ws_ext_ship_cost) AS "total shipping cost" ,
+                       sum(ws_net_profit) AS "total net profit"
+                FROM web_sales ws1 ,
+                     date_dim ,
+                     customer_address ,
+                     web_site
+                WHERE d_date BETWEEN '1999-02-01' AND cast('1999-04-02' AS date)
+                  AND ws1.ws_ship_date_sk = d_date_sk
+                  AND ws1.ws_ship_addr_sk = ca_address_sk
+                  AND ca_state = 'IL'
+                  AND ws1.ws_web_site_sk = web_site_sk
+                  AND web_company_name = 'pri'
+                  AND EXISTS
+                    (SELECT *
+                     FROM web_sales ws2
+                     WHERE ws1.ws_order_number = ws2.ws_order_number
+                       AND ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk)
+                  AND NOT exists
+                    (SELECT *
+                     FROM web_returns wr1
+                     WHERE ws1.ws_order_number = wr1.wr_order_number)
+                ORDER BY count(DISTINCT ws_order_number)
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                
+                SELECT count(DISTINCT ws_order_number) AS "order count" ,
+                       sum(ws_ext_ship_cost) AS "total shipping cost" ,
+                       sum(ws_net_profit) AS "total net profit"
+                FROM web_sales ws1 ,
+                     date_dim ,
+                     customer_address ,
+                     web_site
+                WHERE d_date BETWEEN '1999-02-01' AND cast('1999-04-02' AS date)
+                  AND ws1.ws_ship_date_sk = d_date_sk
+                  AND ws1.ws_ship_addr_sk = ca_address_sk
+                  AND ca_state = 'IL'
+                  AND ws1.ws_web_site_sk = web_site_sk
+                  AND web_company_name = 'pri'
+                  AND EXISTS
+                    (SELECT *
+                     FROM web_sales ws2
+                     WHERE ws1.ws_order_number = ws2.ws_order_number
+                       AND ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk)
+                  AND NOT exists
+                    (SELECT *
+                     FROM web_returns wr1
+                     WHERE ws1.ws_order_number = wr1.wr_order_number)
+                ORDER BY count(DISTINCT ws_order_number)
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                
+                SELECT count(DISTINCT ws_order_number) AS "order count" ,
+                       sum(ws_ext_ship_cost) AS "total shipping cost" ,
+                       sum(ws_net_profit) AS "total net profit"
+                FROM web_sales ws1 ,
+                     date_dim ,
+                     customer_address ,
+                     web_site
+                WHERE d_date BETWEEN '1999-02-01' AND cast('1999-04-02' AS date)
+                  AND ws1.ws_ship_date_sk = d_date_sk
+                  AND ws1.ws_ship_addr_sk = ca_address_sk
+                  AND ca_state = 'IL'
+                  AND ws1.ws_web_site_sk = web_site_sk
+                  AND web_company_name = 'pri'
+                  AND EXISTS
+                    (SELECT *
+                     FROM web_sales ws2
+                     WHERE ws1.ws_order_number = ws2.ws_order_number
+                       AND ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk)
+                  AND NOT exists
+                    (SELECT *
+                     FROM web_returns wr1
+                     WHERE ws1.ws_order_number = wr1.wr_order_number)
+                ORDER BY count(DISTINCT ws_order_number)
+                LIMIT 100;
+                

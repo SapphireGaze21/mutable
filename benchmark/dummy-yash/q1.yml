@@ -1,0 +1,32 @@
+description: Query 1 for dummy-yash benchmark
+suite: dummy-yash
+benchmark: dummy-yash
+name: Q1
+readonly: true
+data:
+    Students:
+        file: 'benchmark/dummy-yash/data/students.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 50 NOT NULL'
+            'mentor_code': 'CHAR 1 NOT NULL'
+    Mentors:
+        file: 'benchmark/dummy-yash/data/mentors.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 50 NOT NULL'
+            'mentor_code': 'CHAR 1 NOT NULL'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: --backend WasmV8 --data-layout PAX4M --plan-enumerator DPsize --plan --physplan
+                pattern: '^Execute query:.*'
+        cases:
+            'Q1': SELECT Students.name, Mentors.name FROM Students, Mentors WHERE Students.mentor_code = Mentors.mentor_code;

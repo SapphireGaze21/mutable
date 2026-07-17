@@ -64,11 +64,11 @@ ExternalProject_Add(
     COMMAND        cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" && env DEPOT_TOOLS_UPDATE=0 "${DEPOT_TOOLS_GCLIENT}" sync -D -f
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory "${V8_BINARY_DIR}" &&
                       cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" &&
-                      PATH=${DEPOT_TOOLS_PATH}:$ENV{PATH} third_party/depot_tools/gn gen "${V8_BINARY_DIR}" --root=${CMAKE_SOURCE_DIR}/third-party/v8/v8 --args=${V8_BUILD_ARGS}
+                      ${CMAKE_COMMAND} -E env "PATH=${DEPOT_TOOLS_PATH}:$ENV{PATH}" third_party/depot_tools/gn gen "${V8_BINARY_DIR}" --root=${CMAKE_SOURCE_DIR}/third-party/v8/v8 --args=${V8_BUILD_ARGS}
     CONFIGURE_HANDLED_BY_BUILD true
     BUILD_BYPRODUCTS ${V8_BUILD_BYPRODUCTS}
     BUILD_COMMAND cd "${CMAKE_SOURCE_DIR}/third-party/v8/v8/" &&
-                  PATH=${DEPOT_TOOLS_PATH}:$ENV{PATH} ninja -C "${V8_BINARY_DIR}" ${V8_LIBRARIES}
+                  ${CMAKE_COMMAND} -E env "PATH=${DEPOT_TOOLS_PATH}:$ENV{PATH}" ninja -C "${V8_BINARY_DIR}" ${V8_LIBRARIES}
     INSTALL_COMMAND ""
 )
 include_directories(SYSTEM third-party/v8/v8/include)

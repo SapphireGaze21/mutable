@@ -1,0 +1,352 @@
+description: TPC-DS Query 62
+suite: TPC
+benchmark: TPC-DS
+name: Q62
+readonly: true
+data:
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    ShipMode:
+        file: benchmark/tpcds/data/ship_mode.csv
+        lines_in_file: 21
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'sm_ship_mode_sk': 'INT NOT NULL'
+            'sm_ship_mode_id': 'CHAR 16 NOT NULL'
+            'sm_type': 'CHAR 30'
+            'sm_code': 'CHAR 10'
+            'sm_carrier': 'CHAR 20'
+            'sm_contract': 'CHAR 20'
+    Warehouse:
+        file: benchmark/tpcds/data/warehouse.csv
+        lines_in_file: 6
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'w_warehouse_sk': 'INT NOT NULL'
+            'w_warehouse_id': 'CHAR 16 NOT NULL'
+            'w_warehouse_name': 'CHAR 20'
+            'w_warehouse_sq_ft': 'INT'
+            'w_street_number': 'CHAR 10'
+            'w_street_name': 'CHAR 60'
+            'w_street_type': 'CHAR 15'
+            'w_suite_number': 'CHAR 10'
+            'w_city': 'CHAR 60'
+            'w_county': 'CHAR 30'
+            'w_state': 'CHAR 2'
+            'w_zip': 'CHAR 10'
+            'w_country': 'CHAR 20'
+            'w_gmt_offset': 'DECIMAL 5 2'
+    WebSales:
+        file: benchmark/tpcds/data/web_sales.csv
+        lines_in_file: 719385
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ws_sold_date_sk': 'INT'
+            'ws_sold_time_sk': 'INT'
+            'ws_ship_date_sk': 'INT'
+            'ws_item_sk': 'INT NOT NULL'
+            'ws_bill_customer_sk': 'INT'
+            'ws_bill_cdemo_sk': 'INT'
+            'ws_bill_hdemo_sk': 'INT'
+            'ws_bill_addr_sk': 'INT'
+            'ws_ship_customer_sk': 'INT'
+            'ws_ship_cdemo_sk': 'INT'
+            'ws_ship_hdemo_sk': 'INT'
+            'ws_ship_addr_sk': 'INT'
+            'ws_web_page_sk': 'INT'
+            'ws_web_site_sk': 'INT'
+            'ws_ship_mode_sk': 'INT'
+            'ws_warehouse_sk': 'INT'
+            'ws_promo_sk': 'INT'
+            'ws_order_number': 'INT NOT NULL'
+            'ws_quantity': 'INT'
+            'ws_wholesale_cost': 'DECIMAL 7 2'
+            'ws_list_price': 'DECIMAL 7 2'
+            'ws_sales_price': 'DECIMAL 7 2'
+            'ws_ext_discount_amt': 'DECIMAL 7 2'
+            'ws_ext_sales_price': 'DECIMAL 7 2'
+            'ws_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ws_ext_list_price': 'DECIMAL 7 2'
+            'ws_ext_tax': 'DECIMAL 7 2'
+            'ws_coupon_amt': 'DECIMAL 7 2'
+            'ws_ext_ship_cost': 'DECIMAL 7 2'
+            'ws_net_paid': 'DECIMAL 7 2'
+            'ws_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'ws_net_profit': 'DECIMAL 7 2'
+    WebSite:
+        file: benchmark/tpcds/data/web_site.csv
+        lines_in_file: 31
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'web_site_sk': 'INT NOT NULL'
+            'web_site_id': 'CHAR 16 NOT NULL'
+            'web_rec_start_date': 'DATE'
+            'web_rec_end_date': 'DATE'
+            'web_name': 'CHAR 50'
+            'web_open_date_sk': 'INT'
+            'web_close_date_sk': 'INT'
+            'web_class': 'CHAR 50'
+            'web_manager': 'CHAR 40'
+            'web_mkt_id': 'INT'
+            'web_mkt_class': 'CHAR 50'
+            'web_mkt_desc': 'CHAR 100'
+            'web_market_manager': 'CHAR 40'
+            'web_company_id': 'INT'
+            'web_company_name': 'CHAR 50'
+            'web_street_number': 'CHAR 10'
+            'web_street_name': 'CHAR 60'
+            'web_street_type': 'CHAR 15'
+            'web_suite_number': 'CHAR 10'
+            'web_city': 'CHAR 60'
+            'web_county': 'CHAR 30'
+            'web_state': 'CHAR 2'
+            'web_zip': 'CHAR 10'
+            'web_country': 'CHAR 20'
+            'web_gmt_offset': 'DECIMAL 5 2'
+            'web_tax_percentage': 'DECIMAL 5 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                SELECT w_substr,
+                       sm_type,
+                       web_name,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS 30 days,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 30)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS 31-60 days,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 60)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS 61-90 days,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 90)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS 91-120 days,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS >120 days
+                FROM web_sales,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr,
+                          *
+                   FROM warehouse) sq1,
+                     ship_mode,
+                     web_site,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND ws_ship_date_sk = d_date_sk
+                  AND ws_warehouse_sk = w_warehouse_sk
+                  AND ws_ship_mode_sk = sm_ship_mode_sk
+                  AND ws_web_site_sk = web_site_sk
+                GROUP BY w_substr,
+                         sm_type,
+                         web_name
+                ORDER BY 1,
+                         2,
+                         3
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                SELECT w_substr,
+                       sm_type,
+                       web_name,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS "30 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 30)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS "31-60 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 60)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS "61-90 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 90)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS "91-120 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS ">120 days"
+                FROM web_sales,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr,
+                          *
+                   FROM warehouse) sq1,
+                     ship_mode,
+                     web_site,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND ws_ship_date_sk = d_date_sk
+                  AND ws_warehouse_sk = w_warehouse_sk
+                  AND ws_ship_mode_sk = sm_ship_mode_sk
+                  AND ws_web_site_sk = web_site_sk
+                GROUP BY w_substr,
+                         sm_type,
+                         web_name
+                ORDER BY 1,
+                         2,
+                         3
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                SELECT w_substr,
+                       sm_type,
+                       web_name,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS "30 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 30)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS "31-60 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 60)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS "61-90 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 90)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS "91-120 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS ">120 days"
+                FROM web_sales,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr,
+                          *
+                   FROM warehouse) sq1,
+                     ship_mode,
+                     web_site,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND ws_ship_date_sk = d_date_sk
+                  AND ws_warehouse_sk = w_warehouse_sk
+                  AND ws_ship_mode_sk = sm_ship_mode_sk
+                  AND ws_web_site_sk = web_site_sk
+                GROUP BY w_substr,
+                         sm_type,
+                         web_name
+                ORDER BY 1,
+                         2,
+                         3
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                SELECT w_substr,
+                       sm_type,
+                       web_name,
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk <= 30) THEN 1
+                               ELSE 0
+                           END) AS "30 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 30)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 60) THEN 1
+                               ELSE 0
+                           END) AS "31-60 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 60)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 90) THEN 1
+                               ELSE 0
+                           END) AS "61-90 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 90)
+                                    AND (ws_ship_date_sk - ws_sold_date_sk <= 120) THEN 1
+                               ELSE 0
+                           END) AS "91-120 days",
+                       sum(CASE
+                               WHEN (ws_ship_date_sk - ws_sold_date_sk > 120) THEN 1
+                               ELSE 0
+                           END) AS ">120 days"
+                FROM web_sales,
+                  (SELECT SUBSTRING(w_warehouse_name,1,20) w_substr,
+                          *
+                   FROM warehouse) sq1,
+                     ship_mode,
+                     web_site,
+                     date_dim
+                WHERE d_month_seq BETWEEN 1200 AND 1200 + 11
+                  AND ws_ship_date_sk = d_date_sk
+                  AND ws_warehouse_sk = w_warehouse_sk
+                  AND ws_ship_mode_sk = sm_ship_mode_sk
+                  AND ws_web_site_sk = web_site_sk
+                GROUP BY w_substr,
+                         sm_type,
+                         web_name
+                ORDER BY 1,
+                         2,
+                         3
+                LIMIT 100;
+                

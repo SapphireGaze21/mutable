@@ -1,0 +1,289 @@
+description: TPC-DS Query 40
+suite: TPC
+benchmark: TPC-DS
+name: Q40
+readonly: true
+data:
+    CatalogReturns:
+        file: benchmark/tpcds/data/catalog_returns.csv
+        lines_in_file: 144068
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cr_returned_date_sk': 'INT'
+            'cr_returned_time_sk': 'INT'
+            'cr_item_sk': 'INT NOT NULL'
+            'cr_refunded_customer_sk': 'INT'
+            'cr_refunded_cdemo_sk': 'INT'
+            'cr_refunded_hdemo_sk': 'INT'
+            'cr_refunded_addr_sk': 'INT'
+            'cr_returning_customer_sk': 'INT'
+            'cr_returning_cdemo_sk': 'INT'
+            'cr_returning_hdemo_sk': 'INT'
+            'cr_returning_addr_sk': 'INT'
+            'cr_call_center_sk': 'INT'
+            'cr_catalog_page_sk': 'INT'
+            'cr_ship_mode_sk': 'INT'
+            'cr_warehouse_sk': 'INT'
+            'cr_reason_sk': 'INT'
+            'cr_order_number': 'INT NOT NULL'
+            'cr_return_quantity': 'INT'
+            'cr_return_amount': 'DECIMAL 7 2'
+            'cr_return_tax': 'DECIMAL 7 2'
+            'cr_return_amt_inc_tax': 'DECIMAL 7 2'
+            'cr_fee': 'DECIMAL 7 2'
+            'cr_return_ship_cost': 'DECIMAL 7 2'
+            'cr_refunded_cash': 'DECIMAL 7 2'
+            'cr_reversed_charge': 'DECIMAL 7 2'
+            'cr_store_credit': 'DECIMAL 7 2'
+            'cr_net_loss': 'DECIMAL 7 2'
+    CatalogSales:
+        file: benchmark/tpcds/data/catalog_sales.csv
+        lines_in_file: 1441549
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cs_sold_date_sk': 'INT'
+            'cs_sold_time_sk': 'INT'
+            'cs_ship_date_sk': 'INT'
+            'cs_bill_customer_sk': 'INT'
+            'cs_bill_cdemo_sk': 'INT'
+            'cs_bill_hdemo_sk': 'INT'
+            'cs_bill_addr_sk': 'INT'
+            'cs_ship_customer_sk': 'INT'
+            'cs_ship_cdemo_sk': 'INT'
+            'cs_ship_hdemo_sk': 'INT'
+            'cs_ship_addr_sk': 'INT'
+            'cs_call_center_sk': 'INT'
+            'cs_catalog_page_sk': 'INT'
+            'cs_ship_mode_sk': 'INT'
+            'cs_warehouse_sk': 'INT'
+            'cs_item_sk': 'INT NOT NULL'
+            'cs_promo_sk': 'INT'
+            'cs_order_number': 'INT NOT NULL'
+            'cs_quantity': 'INT'
+            'cs_wholesale_cost': 'DECIMAL 7 2'
+            'cs_list_price': 'DECIMAL 7 2'
+            'cs_sales_price': 'DECIMAL 7 2'
+            'cs_ext_discount_amt': 'DECIMAL 7 2'
+            'cs_ext_sales_price': 'DECIMAL 7 2'
+            'cs_ext_wholesale_cost': 'DECIMAL 7 2'
+            'cs_ext_list_price': 'DECIMAL 7 2'
+            'cs_ext_tax': 'DECIMAL 7 2'
+            'cs_coupon_amt': 'DECIMAL 7 2'
+            'cs_ext_ship_cost': 'DECIMAL 7 2'
+            'cs_net_paid': 'DECIMAL 7 2'
+            'cs_net_paid_inc_tax': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'cs_net_profit': 'DECIMAL 7 2'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Item:
+        file: benchmark/tpcds/data/item.csv
+        lines_in_file: 18001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'i_item_sk': 'INT NOT NULL'
+            'i_item_id': 'CHAR 16 NOT NULL'
+            'i_rec_start_date': 'DATE'
+            'i_rec_end_date': 'DATE'
+            'i_item_desc': 'CHAR 200'
+            'i_current_price': 'DECIMAL 7 2'
+            'i_wholesale_cost': 'DECIMAL 7 2'
+            'i_brand_id': 'INT'
+            'i_brand': 'CHAR 50'
+            'i_class_id': 'INT'
+            'i_class': 'CHAR 50'
+            'i_category_id': 'INT'
+            'i_category': 'CHAR 50'
+            'i_manufact_id': 'INT'
+            'i_manufact': 'CHAR 50'
+            'i_size': 'CHAR 20'
+            'i_formulation': 'CHAR 20'
+            'i_color': 'CHAR 20'
+            'i_units': 'CHAR 10'
+            'i_container': 'CHAR 10'
+            'i_manager_id': 'INT'
+            'i_product_name': 'CHAR 50'
+    Warehouse:
+        file: benchmark/tpcds/data/warehouse.csv
+        lines_in_file: 6
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'w_warehouse_sk': 'INT NOT NULL'
+            'w_warehouse_id': 'CHAR 16 NOT NULL'
+            'w_warehouse_name': 'CHAR 20'
+            'w_warehouse_sq_ft': 'INT'
+            'w_street_number': 'CHAR 10'
+            'w_street_name': 'CHAR 60'
+            'w_street_type': 'CHAR 15'
+            'w_suite_number': 'CHAR 10'
+            'w_city': 'CHAR 60'
+            'w_county': 'CHAR 30'
+            'w_state': 'CHAR 2'
+            'w_zip': 'CHAR 10'
+            'w_country': 'CHAR 20'
+            'w_gmt_offset': 'DECIMAL 5 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                SELECT w_state,
+                       i_item_id,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) < CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_before,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) >= CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_after
+                FROM catalog_sales
+                LEFT OUTER JOIN catalog_returns ON (cs_order_number = cr_order_number
+                                                    AND cs_item_sk = cr_item_sk) ,warehouse,
+                                                                                  item,
+                                                                                  date_dim
+                WHERE i_current_price BETWEEN 0.99 AND 1.49
+                  AND i_item_sk = cs_item_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_sold_date_sk = d_date_sk
+                  AND d_date BETWEEN CAST ('2000-02-10' AS date) AND CAST ('2000-04-10' AS date)
+                GROUP BY w_state,
+                         i_item_id
+                ORDER BY w_state,
+                         i_item_id
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                SELECT w_state,
+                       i_item_id,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) < CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_before,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) >= CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_after
+                FROM catalog_sales
+                LEFT OUTER JOIN catalog_returns ON (cs_order_number = cr_order_number
+                                                    AND cs_item_sk = cr_item_sk) ,warehouse,
+                                                                                  item,
+                                                                                  date_dim
+                WHERE i_current_price BETWEEN 0.99 AND 1.49
+                  AND i_item_sk = cs_item_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_sold_date_sk = d_date_sk
+                  AND d_date BETWEEN CAST ('2000-02-10' AS date) AND CAST ('2000-04-10' AS date)
+                GROUP BY w_state,
+                         i_item_id
+                ORDER BY w_state,
+                         i_item_id
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                SELECT w_state,
+                       i_item_id,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) < CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_before,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) >= CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_after
+                FROM catalog_sales
+                LEFT OUTER JOIN catalog_returns ON (cs_order_number = cr_order_number
+                                                    AND cs_item_sk = cr_item_sk) ,warehouse,
+                                                                                  item,
+                                                                                  date_dim
+                WHERE i_current_price BETWEEN 0.99 AND 1.49
+                  AND i_item_sk = cs_item_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_sold_date_sk = d_date_sk
+                  AND d_date BETWEEN CAST ('2000-02-10' AS date) AND CAST ('2000-04-10' AS date)
+                GROUP BY w_state,
+                         i_item_id
+                ORDER BY w_state,
+                         i_item_id
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                SELECT w_state,
+                       i_item_id,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) < CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_before,
+                       sum(CASE
+                               WHEN (cast(d_date AS date) >= CAST ('2000-03-11' AS date)) THEN cs_sales_price - coalesce(cr_refunded_cash,0)
+                               ELSE 0
+                           END) AS sales_after
+                FROM catalog_sales
+                LEFT OUTER JOIN catalog_returns ON (cs_order_number = cr_order_number
+                                                    AND cs_item_sk = cr_item_sk) ,warehouse,
+                                                                                  item,
+                                                                                  date_dim
+                WHERE i_current_price BETWEEN 0.99 AND 1.49
+                  AND i_item_sk = cs_item_sk
+                  AND cs_warehouse_sk = w_warehouse_sk
+                  AND cs_sold_date_sk = d_date_sk
+                  AND d_date BETWEEN CAST ('2000-02-10' AS date) AND CAST ('2000-04-10' AS date)
+                GROUP BY w_state,
+                         i_item_id
+                ORDER BY w_state,
+                         i_item_id
+                LIMIT 100;
+                

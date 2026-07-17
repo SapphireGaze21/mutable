@@ -1,0 +1,271 @@
+description: TPC-DS Query 97
+suite: TPC
+benchmark: TPC-DS
+name: Q97
+readonly: true
+data:
+    CatalogSales:
+        file: benchmark/tpcds/data/catalog_sales.csv
+        lines_in_file: 1441549
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cs_sold_date_sk': 'INT'
+            'cs_sold_time_sk': 'INT'
+            'cs_ship_date_sk': 'INT'
+            'cs_bill_customer_sk': 'INT'
+            'cs_bill_cdemo_sk': 'INT'
+            'cs_bill_hdemo_sk': 'INT'
+            'cs_bill_addr_sk': 'INT'
+            'cs_ship_customer_sk': 'INT'
+            'cs_ship_cdemo_sk': 'INT'
+            'cs_ship_hdemo_sk': 'INT'
+            'cs_ship_addr_sk': 'INT'
+            'cs_call_center_sk': 'INT'
+            'cs_catalog_page_sk': 'INT'
+            'cs_ship_mode_sk': 'INT'
+            'cs_warehouse_sk': 'INT'
+            'cs_item_sk': 'INT NOT NULL'
+            'cs_promo_sk': 'INT'
+            'cs_order_number': 'INT NOT NULL'
+            'cs_quantity': 'INT'
+            'cs_wholesale_cost': 'DECIMAL 7 2'
+            'cs_list_price': 'DECIMAL 7 2'
+            'cs_sales_price': 'DECIMAL 7 2'
+            'cs_ext_discount_amt': 'DECIMAL 7 2'
+            'cs_ext_sales_price': 'DECIMAL 7 2'
+            'cs_ext_wholesale_cost': 'DECIMAL 7 2'
+            'cs_ext_list_price': 'DECIMAL 7 2'
+            'cs_ext_tax': 'DECIMAL 7 2'
+            'cs_coupon_amt': 'DECIMAL 7 2'
+            'cs_ext_ship_cost': 'DECIMAL 7 2'
+            'cs_net_paid': 'DECIMAL 7 2'
+            'cs_net_paid_inc_tax': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'cs_net_profit': 'DECIMAL 7 2'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    StoreSales:
+        file: benchmark/tpcds/data/store_sales.csv
+        lines_in_file: 2880405
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ss_sold_date_sk': 'INT'
+            'ss_sold_time_sk': 'INT'
+            'ss_item_sk': 'INT NOT NULL'
+            'ss_customer_sk': 'INT'
+            'ss_cdemo_sk': 'INT'
+            'ss_hdemo_sk': 'INT'
+            'ss_addr_sk': 'INT'
+            'ss_store_sk': 'INT'
+            'ss_promo_sk': 'INT'
+            'ss_ticket_number': 'INT NOT NULL'
+            'ss_quantity': 'INT'
+            'ss_wholesale_cost': 'DECIMAL 7 2'
+            'ss_list_price': 'DECIMAL 7 2'
+            'ss_sales_price': 'DECIMAL 7 2'
+            'ss_ext_discount_amt': 'DECIMAL 7 2'
+            'ss_ext_sales_price': 'DECIMAL 7 2'
+            'ss_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ss_ext_list_price': 'DECIMAL 7 2'
+            'ss_ext_tax': 'DECIMAL 7 2'
+            'ss_coupon_amt': 'DECIMAL 7 2'
+            'ss_net_paid': 'DECIMAL 7 2'
+            'ss_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ss_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                WITH ssci AS
+                  (SELECT ss_customer_sk customer_sk ,
+                          ss_item_sk item_sk
+                   FROM store_sales,
+                        date_dim
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY ss_customer_sk ,
+                            ss_item_sk),
+                     csci as
+                  ( SELECT cs_bill_customer_sk customer_sk ,cs_item_sk item_sk
+                   FROM catalog_sales,date_dim
+                   WHERE cs_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY cs_bill_customer_sk ,cs_item_sk)
+                SELECT sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NULL THEN 1
+                               ELSE 0
+                           END) store_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) catalog_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) store_and_catalog
+                FROM ssci
+                FULL OUTER JOIN csci ON (ssci.customer_sk=csci.customer_sk
+                                         AND ssci.item_sk = csci.item_sk)
+                LIMIT 100;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                WITH ssci AS
+                  (SELECT ss_customer_sk customer_sk ,
+                          ss_item_sk item_sk
+                   FROM store_sales,
+                        date_dim
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY ss_customer_sk ,
+                            ss_item_sk),
+                     csci as
+                  ( SELECT cs_bill_customer_sk customer_sk ,cs_item_sk item_sk
+                   FROM catalog_sales,date_dim
+                   WHERE cs_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY cs_bill_customer_sk ,cs_item_sk)
+                SELECT sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NULL THEN 1
+                               ELSE 0
+                           END) store_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) catalog_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) store_and_catalog
+                FROM ssci
+                FULL OUTER JOIN csci ON (ssci.customer_sk=csci.customer_sk
+                                         AND ssci.item_sk = csci.item_sk)
+                LIMIT 100;
+                
+    DuckDB:
+        cases:
+            1: |
+                WITH ssci AS
+                  (SELECT ss_customer_sk customer_sk ,
+                          ss_item_sk item_sk
+                   FROM store_sales,
+                        date_dim
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY ss_customer_sk ,
+                            ss_item_sk),
+                     csci as
+                  ( SELECT cs_bill_customer_sk customer_sk ,cs_item_sk item_sk
+                   FROM catalog_sales,date_dim
+                   WHERE cs_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY cs_bill_customer_sk ,cs_item_sk)
+                SELECT sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NULL THEN 1
+                               ELSE 0
+                           END) store_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) catalog_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) store_and_catalog
+                FROM ssci
+                FULL OUTER JOIN csci ON (ssci.customer_sk=csci.customer_sk
+                                         AND ssci.item_sk = csci.item_sk)
+                LIMIT 100;
+                
+    HyPer:
+        cases:
+            1: |
+                WITH ssci AS
+                  (SELECT ss_customer_sk customer_sk ,
+                          ss_item_sk item_sk
+                   FROM store_sales,
+                        date_dim
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY ss_customer_sk ,
+                            ss_item_sk),
+                     csci as
+                  ( SELECT cs_bill_customer_sk customer_sk ,cs_item_sk item_sk
+                   FROM catalog_sales,date_dim
+                   WHERE cs_sold_date_sk = d_date_sk
+                     AND d_month_seq BETWEEN 1200 AND 1200 + 11
+                   GROUP BY cs_bill_customer_sk ,cs_item_sk)
+                SELECT sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NULL THEN 1
+                               ELSE 0
+                           END) store_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) catalog_only ,
+                       sum(CASE
+                               WHEN ssci.customer_sk IS NOT NULL
+                                    AND csci.customer_sk IS NOT NULL THEN 1
+                               ELSE 0
+                           END) store_and_catalog
+                FROM ssci
+                FULL OUTER JOIN csci ON (ssci.customer_sk=csci.customer_sk
+                                         AND ssci.item_sk = csci.item_sk)
+                LIMIT 100;
+                

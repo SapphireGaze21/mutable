@@ -29,7 +29,6 @@ ExternalProject_Add(
     PREFIX third-party
     URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
     URL_MD5 893b5203b862eb9bbd08553e24ff146a
-    DOWNLOAD_EXTRACT_TIMESTAMP ON
     CONFIGURE_COMMAND ./bootstrap.sh --with-toolset=clang --libdir="${CMAKE_BINARY_DIR}/third-party/src/Boost-build" --with-libraries=${BOOST_LIBRARIES_ARGS_STRING}
     CONFIGURE_HANDLED_BY_BUILD true
     BUILD_IN_SOURCE ON

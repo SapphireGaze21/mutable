@@ -11,3 +11,11 @@ include/mutable/gitversion.tbl
 
 # cmake export macros
 include/mutable/mutable-config.hpp
+
+# Ignore database files
+*.db
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+

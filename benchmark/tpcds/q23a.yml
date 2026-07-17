@@ -1,0 +1,486 @@
+description: TPC-DS Query 23a
+suite: TPC
+benchmark: TPC-DS
+name: Q23a
+readonly: true
+data:
+    CatalogSales:
+        file: benchmark/tpcds/data/catalog_sales.csv
+        lines_in_file: 1441549
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cs_sold_date_sk': 'INT'
+            'cs_sold_time_sk': 'INT'
+            'cs_ship_date_sk': 'INT'
+            'cs_bill_customer_sk': 'INT'
+            'cs_bill_cdemo_sk': 'INT'
+            'cs_bill_hdemo_sk': 'INT'
+            'cs_bill_addr_sk': 'INT'
+            'cs_ship_customer_sk': 'INT'
+            'cs_ship_cdemo_sk': 'INT'
+            'cs_ship_hdemo_sk': 'INT'
+            'cs_ship_addr_sk': 'INT'
+            'cs_call_center_sk': 'INT'
+            'cs_catalog_page_sk': 'INT'
+            'cs_ship_mode_sk': 'INT'
+            'cs_warehouse_sk': 'INT'
+            'cs_item_sk': 'INT NOT NULL'
+            'cs_promo_sk': 'INT'
+            'cs_order_number': 'INT NOT NULL'
+            'cs_quantity': 'INT'
+            'cs_wholesale_cost': 'DECIMAL 7 2'
+            'cs_list_price': 'DECIMAL 7 2'
+            'cs_sales_price': 'DECIMAL 7 2'
+            'cs_ext_discount_amt': 'DECIMAL 7 2'
+            'cs_ext_sales_price': 'DECIMAL 7 2'
+            'cs_ext_wholesale_cost': 'DECIMAL 7 2'
+            'cs_ext_list_price': 'DECIMAL 7 2'
+            'cs_ext_tax': 'DECIMAL 7 2'
+            'cs_coupon_amt': 'DECIMAL 7 2'
+            'cs_ext_ship_cost': 'DECIMAL 7 2'
+            'cs_net_paid': 'DECIMAL 7 2'
+            'cs_net_paid_inc_tax': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship': 'DECIMAL 7 2'
+            'cs_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'cs_net_profit': 'DECIMAL 7 2'
+    Customer:
+        file: benchmark/tpcds/data/customer.csv
+        lines_in_file: 100001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'c_customer_sk': 'INT NOT NULL'
+            'c_customer_id': 'CHAR 16 NOT NULL'
+            'c_current_cdemo_sk': 'INT'
+            'c_current_hdemo_sk': 'INT'
+            'c_current_addr_sk': 'INT'
+            'c_first_shipto_date_sk': 'INT'
+            'c_first_sales_date_sk': 'INT'
+            'c_salutation': 'CHAR 10'
+            'c_first_name': 'CHAR 20'
+            'c_last_name': 'CHAR 30'
+            'c_preferred_cust_flag': 'CHAR 1'
+            'c_birth_day': 'INT'
+            'c_birth_month': 'INT'
+            'c_birth_year': 'INT'
+            'c_birth_country': 'CHAR 20'
+            'c_login': 'CHAR 13'
+            'c_email_address': 'CHAR 50'
+            'c_last_review_date_sk': 'INT'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    Item:
+        file: benchmark/tpcds/data/item.csv
+        lines_in_file: 18001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'i_item_sk': 'INT NOT NULL'
+            'i_item_id': 'CHAR 16 NOT NULL'
+            'i_rec_start_date': 'DATE'
+            'i_rec_end_date': 'DATE'
+            'i_item_desc': 'CHAR 200'
+            'i_current_price': 'DECIMAL 7 2'
+            'i_wholesale_cost': 'DECIMAL 7 2'
+            'i_brand_id': 'INT'
+            'i_brand': 'CHAR 50'
+            'i_class_id': 'INT'
+            'i_class': 'CHAR 50'
+            'i_category_id': 'INT'
+            'i_category': 'CHAR 50'
+            'i_manufact_id': 'INT'
+            'i_manufact': 'CHAR 50'
+            'i_size': 'CHAR 20'
+            'i_formulation': 'CHAR 20'
+            'i_color': 'CHAR 20'
+            'i_units': 'CHAR 10'
+            'i_container': 'CHAR 10'
+            'i_manager_id': 'INT'
+            'i_product_name': 'CHAR 50'
+    StoreSales:
+        file: benchmark/tpcds/data/store_sales.csv
+        lines_in_file: 2880405
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ss_sold_date_sk': 'INT'
+            'ss_sold_time_sk': 'INT'
+            'ss_item_sk': 'INT NOT NULL'
+            'ss_customer_sk': 'INT'
+            'ss_cdemo_sk': 'INT'
+            'ss_hdemo_sk': 'INT'
+            'ss_addr_sk': 'INT'
+            'ss_store_sk': 'INT'
+            'ss_promo_sk': 'INT'
+            'ss_ticket_number': 'INT NOT NULL'
+            'ss_quantity': 'INT'
+            'ss_wholesale_cost': 'DECIMAL 7 2'
+            'ss_list_price': 'DECIMAL 7 2'
+            'ss_sales_price': 'DECIMAL 7 2'
+            'ss_ext_discount_amt': 'DECIMAL 7 2'
+            'ss_ext_sales_price': 'DECIMAL 7 2'
+            'ss_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ss_ext_list_price': 'DECIMAL 7 2'
+            'ss_ext_tax': 'DECIMAL 7 2'
+            'ss_coupon_amt': 'DECIMAL 7 2'
+            'ss_net_paid': 'DECIMAL 7 2'
+            'ss_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ss_net_profit': 'DECIMAL 7 2'
+    WebSales:
+        file: benchmark/tpcds/data/web_sales.csv
+        lines_in_file: 719385
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ws_sold_date_sk': 'INT'
+            'ws_sold_time_sk': 'INT'
+            'ws_ship_date_sk': 'INT'
+            'ws_item_sk': 'INT NOT NULL'
+            'ws_bill_customer_sk': 'INT'
+            'ws_bill_cdemo_sk': 'INT'
+            'ws_bill_hdemo_sk': 'INT'
+            'ws_bill_addr_sk': 'INT'
+            'ws_ship_customer_sk': 'INT'
+            'ws_ship_cdemo_sk': 'INT'
+            'ws_ship_hdemo_sk': 'INT'
+            'ws_ship_addr_sk': 'INT'
+            'ws_web_page_sk': 'INT'
+            'ws_web_site_sk': 'INT'
+            'ws_ship_mode_sk': 'INT'
+            'ws_warehouse_sk': 'INT'
+            'ws_promo_sk': 'INT'
+            'ws_order_number': 'INT NOT NULL'
+            'ws_quantity': 'INT'
+            'ws_wholesale_cost': 'DECIMAL 7 2'
+            'ws_list_price': 'DECIMAL 7 2'
+            'ws_sales_price': 'DECIMAL 7 2'
+            'ws_ext_discount_amt': 'DECIMAL 7 2'
+            'ws_ext_sales_price': 'DECIMAL 7 2'
+            'ws_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ws_ext_list_price': 'DECIMAL 7 2'
+            'ws_ext_tax': 'DECIMAL 7 2'
+            'ws_coupon_amt': 'DECIMAL 7 2'
+            'ws_ext_ship_cost': 'DECIMAL 7 2'
+            'ws_net_paid': 'DECIMAL 7 2'
+            'ws_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship': 'DECIMAL 7 2'
+            'ws_net_paid_inc_ship_tax': 'DECIMAL 7 2'
+            'ws_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                WITH frequent_ss_items AS
+                  (SELECT itemdesc,
+                          i_item_sk item_sk,
+                          d_date solddate,
+                          count(*) cnt
+                   FROM store_sales,
+                        date_dim,
+                     (SELECT SUBSTRING(i_item_desc, 1, 30) itemdesc, * FROM item) sq1
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND ss_item_sk = i_item_sk
+                     AND d_year IN (2000,
+                                    2000+1,
+                                    2000+2,
+                                    2000+3)
+                   GROUP BY itemdesc,
+                            i_item_sk,
+                            d_date
+                   HAVING count(*) >4),
+                      max_store_sales AS
+                  (SELECT max(csales) tpcds_cmax
+                   FROM
+                     (SELECT c_customer_sk,
+                             sum(ss_quantity*ss_sales_price) csales
+                      FROM store_sales,
+                           customer,
+                           date_dim
+                      WHERE ss_customer_sk = c_customer_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year IN (2000,
+                                       2000+1,
+                                       2000+2,
+                                       2000+3)
+                      GROUP BY c_customer_sk) sq2),
+                      best_ss_customer AS
+                  (SELECT c_customer_sk,
+                          sum(ss_quantity*ss_sales_price) ssales
+                   FROM store_sales,
+                        customer,
+                        max_store_sales
+                   WHERE ss_customer_sk = c_customer_sk
+                   GROUP BY c_customer_sk
+                   HAVING sum(ss_quantity*ss_sales_price) > (50/100.0) * max(tpcds_cmax))
+                SELECT sum(sales)
+                FROM
+                  (SELECT cs_quantity*cs_list_price sales
+                   FROM catalog_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND cs_sold_date_sk = d_date_sk
+                     AND cs_item_sk = item_sk
+                     AND cs_bill_customer_sk = c_customer_sk
+                   UNION ALL SELECT ws_quantity*ws_list_price sales
+                   FROM web_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND ws_sold_date_sk = d_date_sk
+                     AND ws_item_sk = item_sk
+                     AND ws_bill_customer_sk = c_customer_sk) sq3
+                LIMIT 100;
+    PostgreSQL:
+        cases:
+            1: |
+                WITH frequent_ss_items AS
+                  (SELECT itemdesc,
+                          i_item_sk item_sk,
+                          d_date solddate,
+                          count(*) cnt
+                   FROM store_sales,
+                        date_dim,
+                     (SELECT SUBSTRING(i_item_desc, 1, 30) itemdesc, * FROM item) sq1
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND ss_item_sk = i_item_sk
+                     AND d_year IN (2000,
+                                    2000+1,
+                                    2000+2,
+                                    2000+3)
+                   GROUP BY itemdesc,
+                            i_item_sk,
+                            d_date
+                   HAVING count(*) >4),
+                      max_store_sales AS
+                  (SELECT max(csales) tpcds_cmax
+                   FROM
+                     (SELECT c_customer_sk,
+                             sum(ss_quantity*ss_sales_price) csales
+                      FROM store_sales,
+                           customer,
+                           date_dim
+                      WHERE ss_customer_sk = c_customer_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year IN (2000,
+                                       2000+1,
+                                       2000+2,
+                                       2000+3)
+                      GROUP BY c_customer_sk) sq2),
+                      best_ss_customer AS
+                  (SELECT c_customer_sk,
+                          sum(ss_quantity*ss_sales_price) ssales
+                   FROM store_sales,
+                        customer,
+                        max_store_sales
+                   WHERE ss_customer_sk = c_customer_sk
+                   GROUP BY c_customer_sk
+                   HAVING sum(ss_quantity*ss_sales_price) > (50/100.0) * max(tpcds_cmax))
+                SELECT sum(sales)
+                FROM
+                  (SELECT cs_quantity*cs_list_price sales
+                   FROM catalog_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND cs_sold_date_sk = d_date_sk
+                     AND cs_item_sk = item_sk
+                     AND cs_bill_customer_sk = c_customer_sk
+                   UNION ALL SELECT ws_quantity*ws_list_price sales
+                   FROM web_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND ws_sold_date_sk = d_date_sk
+                     AND ws_item_sk = item_sk
+                     AND ws_bill_customer_sk = c_customer_sk) sq3
+                LIMIT 100;
+    DuckDB:
+        cases:
+            1: |
+                WITH frequent_ss_items AS
+                  (SELECT itemdesc,
+                          i_item_sk item_sk,
+                          d_date solddate,
+                          count(*) cnt
+                   FROM store_sales,
+                        date_dim,
+                     (SELECT SUBSTRING(i_item_desc, 1, 30) itemdesc, * FROM item) sq1
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND ss_item_sk = i_item_sk
+                     AND d_year IN (2000,
+                                    2000+1,
+                                    2000+2,
+                                    2000+3)
+                   GROUP BY itemdesc,
+                            i_item_sk,
+                            d_date
+                   HAVING count(*) >4),
+                      max_store_sales AS
+                  (SELECT max(csales) tpcds_cmax
+                   FROM
+                     (SELECT c_customer_sk,
+                             sum(ss_quantity*ss_sales_price) csales
+                      FROM store_sales,
+                           customer,
+                           date_dim
+                      WHERE ss_customer_sk = c_customer_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year IN (2000,
+                                       2000+1,
+                                       2000+2,
+                                       2000+3)
+                      GROUP BY c_customer_sk) sq2),
+                      best_ss_customer AS
+                  (SELECT c_customer_sk,
+                          sum(ss_quantity*ss_sales_price) ssales
+                   FROM store_sales,
+                        customer,
+                        max_store_sales
+                   WHERE ss_customer_sk = c_customer_sk
+                   GROUP BY c_customer_sk
+                   HAVING sum(ss_quantity*ss_sales_price) > (50/100.0) * max(tpcds_cmax))
+                SELECT sum(sales)
+                FROM
+                  (SELECT cs_quantity*cs_list_price sales
+                   FROM catalog_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND cs_sold_date_sk = d_date_sk
+                     AND cs_item_sk = item_sk
+                     AND cs_bill_customer_sk = c_customer_sk
+                   UNION ALL SELECT ws_quantity*ws_list_price sales
+                   FROM web_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND ws_sold_date_sk = d_date_sk
+                     AND ws_item_sk = item_sk
+                     AND ws_bill_customer_sk = c_customer_sk) sq3
+                LIMIT 100;
+    HyPer:
+        cases:
+            1: |
+                WITH frequent_ss_items AS
+                  (SELECT itemdesc,
+                          i_item_sk item_sk,
+                          d_date solddate,
+                          count(*) cnt
+                   FROM store_sales,
+                        date_dim,
+                     (SELECT SUBSTRING(i_item_desc, 1, 30) itemdesc, * FROM item) sq1
+                   WHERE ss_sold_date_sk = d_date_sk
+                     AND ss_item_sk = i_item_sk
+                     AND d_year IN (2000,
+                                    2000+1,
+                                    2000+2,
+                                    2000+3)
+                   GROUP BY itemdesc,
+                            i_item_sk,
+                            d_date
+                   HAVING count(*) >4),
+                      max_store_sales AS
+                  (SELECT max(csales) tpcds_cmax
+                   FROM
+                     (SELECT c_customer_sk,
+                             sum(ss_quantity*ss_sales_price) csales
+                      FROM store_sales,
+                           customer,
+                           date_dim
+                      WHERE ss_customer_sk = c_customer_sk
+                        AND ss_sold_date_sk = d_date_sk
+                        AND d_year IN (2000,
+                                       2000+1,
+                                       2000+2,
+                                       2000+3)
+                      GROUP BY c_customer_sk) sq2),
+                      best_ss_customer AS
+                  (SELECT c_customer_sk,
+                          sum(ss_quantity*ss_sales_price) ssales
+                   FROM store_sales,
+                        customer,
+                        max_store_sales
+                   WHERE ss_customer_sk = c_customer_sk
+                   GROUP BY c_customer_sk
+                   HAVING sum(ss_quantity*ss_sales_price) > (50/100.0) * max(tpcds_cmax))
+                SELECT sum(sales)
+                FROM
+                  (SELECT cs_quantity*cs_list_price sales
+                   FROM catalog_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND cs_sold_date_sk = d_date_sk
+                     AND cs_item_sk = item_sk
+                     AND cs_bill_customer_sk = c_customer_sk
+                   UNION ALL SELECT ws_quantity*ws_list_price sales
+                   FROM web_sales,
+                        date_dim,
+                        frequent_ss_items,
+                        best_ss_customer
+                   WHERE d_year = 2000
+                     AND d_moy = 2
+                     AND ws_sold_date_sk = d_date_sk
+                     AND ws_item_sk = item_sk
+                     AND ws_bill_customer_sk = c_customer_sk) sq3
+                LIMIT 100;

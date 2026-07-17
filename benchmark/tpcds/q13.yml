@@ -1,0 +1,346 @@
+description: TPC-DS Query 13
+suite: TPC
+benchmark: TPC-DS
+name: Q13
+readonly: true
+data:
+    CustomerAddress:
+        file: benchmark/tpcds/data/customer_address.csv
+        lines_in_file: 50001
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ca_address_sk': 'INT NOT NULL'
+            'ca_address_id': 'CHAR 16 NOT NULL'
+            'ca_street_number': 'CHAR 10'
+            'ca_street_name': 'CHAR 60'
+            'ca_street_type': 'CHAR 15'
+            'ca_suite_number': 'CHAR 10'
+            'ca_city': 'CHAR 60'
+            'ca_county': 'CHAR 30'
+            'ca_state': 'CHAR 2'
+            'ca_zip': 'CHAR 10'
+            'ca_country': 'CHAR 20'
+            'ca_gmt_offset': 'DECIMAL 5 2'
+            'ca_location_type': 'CHAR 20'
+    CustomerDemographics:
+        file: benchmark/tpcds/data/customer_demographics.csv
+        lines_in_file: 1920801
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'cd_demo_sk': 'INT NOT NULL'
+            'cd_gender': 'CHAR 1'
+            'cd_marital_status': 'CHAR 1'
+            'cd_education_status': 'CHAR 20'
+            'cd_purchase_estimate': 'INT'
+            'cd_credit_rating': 'CHAR 10'
+            'cd_dep_count': 'INT'
+            'cd_dep_employed_count': 'INT'
+            'cd_dep_college_count': 'INT'
+    DateDim:
+        file: benchmark/tpcds/data/date_dim.csv
+        lines_in_file: 73050
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'd_date_sk': 'INT NOT NULL'
+            'd_date_id': 'CHAR 16 NOT NULL'
+            'd_date': 'DATE'
+            'd_month_seq': 'INT'
+            'd_week_seq': 'INT'
+            'd_quarter_seq': 'INT'
+            'd_year': 'INT'
+            'd_dow': 'INT'
+            'd_moy': 'INT'
+            'd_dom': 'INT'
+            'd_qoy': 'INT'
+            'd_fy_year': 'INT'
+            'd_fy_quarter_seq': 'INT'
+            'd_fy_week_seq': 'INT'
+            'd_day_name': 'CHAR 9'
+            'd_quarter_name': 'CHAR 6'
+            'd_holiday': 'CHAR 1'
+            'd_weekend': 'CHAR 1'
+            'd_following_holiday': 'CHAR 1'
+            'd_first_dom': 'INT'
+            'd_last_dom': 'INT'
+            'd_same_day_ly': 'INT'
+            'd_same_day_lq': 'INT'
+            'd_current_day': 'CHAR 1'
+            'd_current_week': 'CHAR 1'
+            'd_current_month': 'CHAR 1'
+            'd_current_quarter': 'CHAR 1'
+            'd_current_year': 'CHAR 1'
+    HouseholdDemographics:
+        file: benchmark/tpcds/data/household_demographics.csv
+        lines_in_file: 7201
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'hd_demo_sk': 'INT NOT NULL'
+            'hd_income_band_sk': 'INT'
+            'hd_buy_potential': 'CHAR 15'
+            'hd_dep_count': 'INT'
+            'hd_vehicle_count': 'INT'
+    Store:
+        file: benchmark/tpcds/data/store.csv
+        lines_in_file: 13
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            's_store_sk': 'INT NOT NULL'
+            's_store_id': 'CHAR 16 NOT NULL'
+            's_rec_start_date': 'DATE'
+            's_rec_end_date': 'DATE'
+            's_closed_date_sk': 'INT'
+            's_store_name': 'CHAR 50'
+            's_number_employees': 'INT'
+            's_floor_space': 'INT'
+            's_hours': 'CHAR 20'
+            's_manager': 'CHAR 40'
+            's_market_id': 'INT'
+            's_geography_class': 'CHAR 100'
+            's_market_desc': 'CHAR 100'
+            's_market_manager': 'CHAR 40'
+            's_division_id': 'INT'
+            's_division_name': 'CHAR 50'
+            's_company_id': 'INT'
+            's_company_name': 'CHAR 50'
+            's_street_number': 'CHAR 10'
+            's_street_name': 'CHAR 60'
+            's_street_type': 'CHAR 15'
+            's_suite_number': 'CHAR 10'
+            's_city': 'CHAR 60'
+            's_county': 'CHAR 30'
+            's_state': 'CHAR 2'
+            's_zip': 'CHAR 10'
+            's_country': 'CHAR 20'
+            's_gmt_offset': 'DECIMAL 5 2'
+            's_tax_precentage': 'DECIMAL 5 2'
+    StoreSales:
+        file: benchmark/tpcds/data/store_sales.csv
+        lines_in_file: 2880405
+        format: 'CSV'
+        delimiter: ','
+        header: 1
+        attributes:
+            'ss_sold_date_sk': 'INT'
+            'ss_sold_time_sk': 'INT'
+            'ss_item_sk': 'INT NOT NULL'
+            'ss_customer_sk': 'INT'
+            'ss_cdemo_sk': 'INT'
+            'ss_hdemo_sk': 'INT'
+            'ss_addr_sk': 'INT'
+            'ss_store_sk': 'INT'
+            'ss_promo_sk': 'INT'
+            'ss_ticket_number': 'INT NOT NULL'
+            'ss_quantity': 'INT'
+            'ss_wholesale_cost': 'DECIMAL 7 2'
+            'ss_list_price': 'DECIMAL 7 2'
+            'ss_sales_price': 'DECIMAL 7 2'
+            'ss_ext_discount_amt': 'DECIMAL 7 2'
+            'ss_ext_sales_price': 'DECIMAL 7 2'
+            'ss_ext_wholesale_cost': 'DECIMAL 7 2'
+            'ss_ext_list_price': 'DECIMAL 7 2'
+            'ss_ext_tax': 'DECIMAL 7 2'
+            'ss_coupon_amt': 'DECIMAL 7 2'
+            'ss_net_paid': 'DECIMAL 7 2'
+            'ss_net_paid_inc_tax': 'DECIMAL 7 2'
+            'ss_net_profit': 'DECIMAL 7 2'
+systems:
+    mutable:
+        configurations:
+            'WasmV8, PAX4M':
+                args: >-
+                    --backend WasmV8
+                    --data-layout PAX4M
+                pattern: '^Execute machine code:.*'
+        cases:
+            1: |
+                
+                SELECT avg(ss_quantity) ,
+                       avg(ss_ext_sales_price) ,
+                       avg(ss_ext_wholesale_cost) ,
+                       sum(ss_ext_wholesale_cost)
+                FROM store_sales ,
+                     store ,
+                     customer_demographics ,
+                     household_demographics ,
+                     customer_address ,
+                     date_dim
+                WHERE s_store_sk = ss_store_sk
+                  AND ss_sold_date_sk = d_date_sk
+                  AND d_year = 2001 and((ss_hdemo_sk=hd_demo_sk
+                                         AND cd_demo_sk = ss_cdemo_sk
+                                         AND cd_marital_status = 'M'
+                                         AND cd_education_status = 'Advanced Degree'
+                                         AND ss_sales_price BETWEEN 100.00 AND 150.00
+                                         AND hd_dep_count = 3)
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'S'
+                                            AND cd_education_status = 'College'
+                                            AND ss_sales_price BETWEEN 50.00 AND 100.00
+                                            AND hd_dep_count = 1 )
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'W'
+                                            AND cd_education_status = '2 yr Degree'
+                                            AND ss_sales_price BETWEEN 150.00 AND 200.00
+                                            AND hd_dep_count = 1)) and((ss_addr_sk = ca_address_sk
+                                                                        AND ca_country = 'United States'
+                                                                        AND ca_state IN ('TX', 'OH', 'TX')
+                                                                        AND ss_net_profit BETWEEN 100 AND 200)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('OR', 'NM', 'KY')
+                                                                           AND ss_net_profit BETWEEN 150 AND 300)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('VA', 'TX', 'MS')
+                                                                           AND ss_net_profit BETWEEN 50 AND 250)) ;
+                
+    PostgreSQL:
+        cases:
+            1: |
+                
+                SELECT avg(ss_quantity) ,
+                       avg(ss_ext_sales_price) ,
+                       avg(ss_ext_wholesale_cost) ,
+                       sum(ss_ext_wholesale_cost)
+                FROM store_sales ,
+                     store ,
+                     customer_demographics ,
+                     household_demographics ,
+                     customer_address ,
+                     date_dim
+                WHERE s_store_sk = ss_store_sk
+                  AND ss_sold_date_sk = d_date_sk
+                  AND d_year = 2001 and((ss_hdemo_sk=hd_demo_sk
+                                         AND cd_demo_sk = ss_cdemo_sk
+                                         AND cd_marital_status = 'M'
+                                         AND cd_education_status = 'Advanced Degree'
+                                         AND ss_sales_price BETWEEN 100.00 AND 150.00
+                                         AND hd_dep_count = 3)
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'S'
+                                            AND cd_education_status = 'College'
+                                            AND ss_sales_price BETWEEN 50.00 AND 100.00
+                                            AND hd_dep_count = 1 )
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'W'
+                                            AND cd_education_status = '2 yr Degree'
+                                            AND ss_sales_price BETWEEN 150.00 AND 200.00
+                                            AND hd_dep_count = 1)) and((ss_addr_sk = ca_address_sk
+                                                                        AND ca_country = 'United States'
+                                                                        AND ca_state IN ('TX', 'OH', 'TX')
+                                                                        AND ss_net_profit BETWEEN 100 AND 200)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('OR', 'NM', 'KY')
+                                                                           AND ss_net_profit BETWEEN 150 AND 300)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('VA', 'TX', 'MS')
+                                                                           AND ss_net_profit BETWEEN 50 AND 250)) ;
+                
+    DuckDB:
+        cases:
+            1: |
+                
+                SELECT avg(ss_quantity) ,
+                       avg(ss_ext_sales_price) ,
+                       avg(ss_ext_wholesale_cost) ,
+                       sum(ss_ext_wholesale_cost)
+                FROM store_sales ,
+                     store ,
+                     customer_demographics ,
+                     household_demographics ,
+                     customer_address ,
+                     date_dim
+                WHERE s_store_sk = ss_store_sk
+                  AND ss_sold_date_sk = d_date_sk
+                  AND d_year = 2001 and((ss_hdemo_sk=hd_demo_sk
+                                         AND cd_demo_sk = ss_cdemo_sk
+                                         AND cd_marital_status = 'M'
+                                         AND cd_education_status = 'Advanced Degree'
+                                         AND ss_sales_price BETWEEN 100.00 AND 150.00
+                                         AND hd_dep_count = 3)
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'S'
+                                            AND cd_education_status = 'College'
+                                            AND ss_sales_price BETWEEN 50.00 AND 100.00
+                                            AND hd_dep_count = 1 )
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'W'
+                                            AND cd_education_status = '2 yr Degree'
+                                            AND ss_sales_price BETWEEN 150.00 AND 200.00
+                                            AND hd_dep_count = 1)) and((ss_addr_sk = ca_address_sk
+                                                                        AND ca_country = 'United States'
+                                                                        AND ca_state IN ('TX', 'OH', 'TX')
+                                                                        AND ss_net_profit BETWEEN 100 AND 200)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('OR', 'NM', 'KY')
+                                                                           AND ss_net_profit BETWEEN 150 AND 300)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('VA', 'TX', 'MS')
+                                                                           AND ss_net_profit BETWEEN 50 AND 250)) ;
+                
+    HyPer:
+        cases:
+            1: |
+                
+                SELECT avg(ss_quantity) ,
+                       avg(ss_ext_sales_price) ,
+                       avg(ss_ext_wholesale_cost) ,
+                       sum(ss_ext_wholesale_cost)
+                FROM store_sales ,
+                     store ,
+                     customer_demographics ,
+                     household_demographics ,
+                     customer_address ,
+                     date_dim
+                WHERE s_store_sk = ss_store_sk
+                  AND ss_sold_date_sk = d_date_sk
+                  AND d_year = 2001 and((ss_hdemo_sk=hd_demo_sk
+                                         AND cd_demo_sk = ss_cdemo_sk
+                                         AND cd_marital_status = 'M'
+                                         AND cd_education_status = 'Advanced Degree'
+                                         AND ss_sales_price BETWEEN 100.00 AND 150.00
+                                         AND hd_dep_count = 3)
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'S'
+                                            AND cd_education_status = 'College'
+                                            AND ss_sales_price BETWEEN 50.00 AND 100.00
+                                            AND hd_dep_count = 1 )
+                                        OR (ss_hdemo_sk=hd_demo_sk
+                                            AND cd_demo_sk = ss_cdemo_sk
+                                            AND cd_marital_status = 'W'
+                                            AND cd_education_status = '2 yr Degree'
+                                            AND ss_sales_price BETWEEN 150.00 AND 200.00
+                                            AND hd_dep_count = 1)) and((ss_addr_sk = ca_address_sk
+                                                                        AND ca_country = 'United States'
+                                                                        AND ca_state IN ('TX', 'OH', 'TX')
+                                                                        AND ss_net_profit BETWEEN 100 AND 200)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('OR', 'NM', 'KY')
+                                                                           AND ss_net_profit BETWEEN 150 AND 300)
+                                                                       OR (ss_addr_sk = ca_address_sk
+                                                                           AND ca_country = 'United States'
+                                                                           AND ca_state IN ('VA', 'TX', 'MS')
+                                                                           AND ss_net_profit BETWEEN 50 AND 250)) ;
+                
