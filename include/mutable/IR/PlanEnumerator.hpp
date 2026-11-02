@@ -54,6 +54,16 @@ struct M_EXPORT DPccp final : PlanEnumeratorCRTP<DPccp>
     void operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const CostFunction &CF) const;
 };
 
+/** Computes a join order minimizing the maximum estimated intermediate cardinality using subset convolution. */
+struct M_EXPORT DPconv final : PlanEnumeratorCRTP<DPconv>
+{
+    using base_type = PlanEnumeratorCRTP<DPconv>;
+    using base_type::operator();
+
+    template<typename PlanTable>
+    void operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const CostFunction &CF) const;
+};
+
 /** Greedy operator ordering. */
 struct M_EXPORT GOO : PlanEnumeratorCRTP<GOO>
 {

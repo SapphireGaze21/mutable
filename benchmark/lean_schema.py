@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-Generate a lean Mutable schema with ALL integer columns per table
-(dropping CHAR/VARCHAR columns which cause StackMachine misaligned-store crash).
-Only emit tables that are actually used by the target queries.
+Generate a mutable_schema.sql and clean CSVs retaining ALL columns natively.
 """
 import re
 import csv as csv_mod
 import glob
+import os
 
 QUERY_DIR = "benchmark/tpcds/query_templates_flat"
 TARGET_QUERIES = [
@@ -15,12 +14,15 @@ TARGET_QUERIES = [
     "query23.sql", "query25.sql", "query77.sql"
 ]
 
-# Collect all tables referenced in target queries
 used_tables = set()
 for qf in TARGET_QUERIES:
+    if not os.path.exists(f"{QUERY_DIR}/{qf}"):
+        continue
     with open(f"{QUERY_DIR}/{qf}") as f:
         sql = f.read().upper()
     from_part = re.search(r'FROM\s+(.*?)\s+WHERE', sql, re.DOTALL)
+    if not from_part:
+        from_part = re.search(r'FROM\s+(.*?)\s*;', sql, re.DOTALL)
     if not from_part:
         continue
     for ref in from_part.group(1).split(','):
@@ -29,28 +31,40 @@ for qf in TARGET_QUERIES:
 
 print(f"Tables used in queries: {sorted(used_tables)}")
 
-# Read original schema
 with open("benchmark/tpcds/data/csvs/schema.sql") as f:
     orig_schema = f.read()
 
-def is_char_type(col_type):
-    col_type = col_type.strip().upper()
-    return 'VARCHAR' in col_type or ('CHAR' in col_type and 'DECIMAL' not in col_type)
+def map_mutable_type(ctype):
+    ctype = ctype.strip().upper()
+    if 'INT' in ctype:
+        return 'INT(4)', 'int'
+    if 'DECIMAL' in ctype or 'NUMERIC' in ctype:
+        m = re.search(r'\((\d+),\s*(\d+)\)', ctype)
+        if m:
+            return f"DECIMAL({m.group(1)}, {m.group(2)})", 'decimal'
+        return 'DECIMAL(10, 2)', 'decimal'
+    if 'CHAR' in ctype:
+        return 'VARCHAR(255)', 'string'
+    if ctype == 'DATE':
+        return 'DATE', 'date'
+    if 'TIME' in ctype:
+        return 'DATETIME', 'date'
+    return 'INT(4)', 'int'
 
-# Parse original schema
 table_schemas = {}
 for match in re.finditer(r'CREATE TABLE (\w+)\s*\(([^)]+)\)', orig_schema, re.DOTALL):
     tname = match.group(1).lower()
     cols_str = match.group(2)
     cols = {}
-    for col_match in re.finditer(r'\b(\w+)\s+([\w()]+)', cols_str):
+    for col_match in re.finditer(r'\b([a-zA-Z_]\w*)\s+([a-zA-Z_][\w(),\s]+?)(?=(?:,|\n|$))', cols_str):
         cname = col_match.group(1).lower()
-        ctype = col_match.group(2)
+        ctype = col_match.group(2).strip()
         if cname not in ('primary', 'unique', 'foreign', 'key', 'constraint', 'not', 'null', 'default'):
-            cols[cname] = ctype
+            # only add if not already in cols
+            if cname not in cols:
+                cols[cname] = ctype
     table_schemas[tname] = cols
 
-# Build schema DDL + lean CSVs
 ddl_lines = ["CREATE DATABASE tpcds_eval;", "USE tpcds_eval;", ""]
 import_lines = []
 
@@ -61,53 +75,58 @@ for tname in sorted(used_tables):
 
     orig_cols = table_schemas[tname]
     csv_path = f"benchmark/tpcds/data/csvs/{tname}.csv"
+    if not os.path.exists(csv_path):
+        continue
 
-    # Read CSV header to know available columns
     with open(csv_path, 'r', newline='') as fin:
         reader = csv_mod.reader(fin)
         full_header = [h.strip().lower() for h in next(reader)]
 
-    # Keep only integer columns (those that exist in both schema and CSV)
-    int_cols = []  # (col_name, csv_idx)
-    for cname, ctype in orig_cols.items():
-        if not is_char_type(ctype) and cname in full_header:
-            int_cols.append((cname, full_header.index(cname)))
+    # Map columns based on CSV header
+    mapped_cols = []
+    col_types = []
+    for cname in full_header:
+        if cname in orig_cols:
+            m_type, type_class = map_mutable_type(orig_cols[cname])
+            mapped_cols.append(f"{cname} {m_type}")
+            col_types.append(type_class)
+        else:
+            mapped_cols.append(f"{cname} VARCHAR(255)")
+            col_types.append('string')
 
-    if not int_cols:
-        print(f"  Skipping {tname} — no integer columns found")
-        continue
-
-    # Write lean CSV with only integer columns
     lean_csv = f"benchmark/tpcds/data/csvs/lean_{tname}.csv"
-    lean_header = [c for c, _ in int_cols]
-    lean_indices = [i for _, i in int_cols]
-
     with open(csv_path, 'r', newline='') as fin, open(lean_csv, 'w', newline='') as fout:
         reader = csv_mod.reader(fin)
         next(reader)  # skip original header
         writer = csv_mod.writer(fout, lineterminator='\n')
-        writer.writerow(lean_header)
+        writer.writerow(full_header)
         for row_num, row in enumerate(reader):
-            if row_num >= 10000:  # sample: fast import, real relative sizes
+            if row_num >= 10000:
                 break
             lean_row = []
-            for idx in lean_indices:
-                v = row[idx].strip() if idx < len(row) else ''
+            for idx, v in enumerate(row):
+                v = v.strip()
+                tclass = col_types[idx]
                 if not v:
-                    lean_row.append('0')
+                    if tclass == 'int': lean_row.append('0')
+                    elif tclass == 'decimal': lean_row.append('0.0')
+                    elif tclass == 'string': lean_row.append('')
+                    elif tclass == 'date': lean_row.append('1970-01-01')
+                    else: lean_row.append('0')
                 else:
-                    try:
-                        lean_row.append(str(abs(int(float(v)))))
-                    except ValueError:
-                        lean_row.append('0')
+                    if tclass == 'date':
+                        # mutable expects YYYY-MM-DD
+                        lean_row.append(v)
+                    else:
+                        lean_row.append(v)
             writer.writerow(lean_row)
 
-    col_defs = ', '.join(f"{c} INT(4)" for c in lean_header)
+    col_defs = ', '.join(mapped_cols)
     ddl_lines.append(f"CREATE TABLE {tname}({col_defs});")
     import_lines.append(
         f'IMPORT INTO {tname} DSV "benchmark/tpcds/data/csvs/lean_{tname}.csv" DELIMITER "," HAS HEADER SKIP HEADER;'
     )
-    print(f"  {tname}: {len(lean_header)} int cols")
+    print(f"  {tname}: {len(mapped_cols)} cols")
 
 final_sql = "\n".join(ddl_lines) + "\n\n" + "\n".join(import_lines)
 with open("benchmark/tpcds/data/csvs/mutable_schema.sql", "w") as f:

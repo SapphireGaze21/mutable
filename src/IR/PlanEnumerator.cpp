@@ -1,12 +1,14 @@
 #include <mutable/IR/PlanEnumerator.hpp>
 
 #include <algorithm>
+#include <bit>
 #include <chrono>
 #include <cstring>
 #include <execution>
 #include <functional>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <memory>
 #include <mutable/catalog/Catalog.hpp>
 #include <mutable/catalog/CostFunction.hpp>
@@ -16,6 +18,7 @@
 #include <mutable/util/malloc_allocator.hpp>
 #include <queue>
 #include <set>
+#include <stdexcept>
 #include <type_traits>
 #ifdef __BMI2__
 #include <x86intrin.h>
@@ -351,6 +354,163 @@ void DPccp::operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const 
     auto t_end = std::chrono::high_resolution_clock::now();
     auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
     std::cout << "CCPCounter = " << CCPCounter << '\n';
+    std::cout << "PlanningTime_us = " << elapsed_us << '\n';
+}
+
+
+/*======================================================================================================================
+ * DPconv
+ *====================================================================================================================*/
+
+/**
+ * DPconv's Cmax algorithm is a thresholded Boolean subset-convolution DP.  For a threshold W, a subset is feasible iff
+ * it is connected, its estimated cardinality is at most W, and it can be split into two feasible disjoint subsets.
+ * Ranked zeta transforms and Möbius inversion compute all such splits in O(n^2 2^n), rather than enumerating every
+ * connected-subgraph complement pair.  We use Mutable's plan table to cache the estimator's DataModel for each subset,
+ * and materialize only the winning join tree back into the plan table.
+ *
+ * This initial implementation intentionally limits n to 20: Mutable's estimators return polymorphic models, while the
+ * convolution itself also needs O(n 2^n) temporary storage.  The upstream implementation uses specialized packed
+ * containers and additional optimizations for larger n.
+ */
+template<typename PlanTable>
+void DPconv::operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const CostFunction &CF) const
+{
+    const auto t_start = std::chrono::high_resolution_clock::now();
+    const std::size_t n = G.num_sources();
+    if (n > 20)
+        throw std::invalid_argument("DPconv currently supports at most 20 data sources");
+    if (n == 0)
+        throw std::invalid_argument("DPconv requires at least one data source");
+
+    const std::size_t N = std::size_t{1} << n;
+    const auto &M = G.adjacency_matrix();
+    auto &CE = Catalog::Get().get_database_in_use().cardinality_estimator();
+    const std::uint64_t disconnected = std::numeric_limits<std::uint64_t>::max();
+    std::vector<std::uint64_t> cardinalities(N, disconnected);
+    std::vector<std::uint8_t> connected(N, false);
+
+    // Seed singleton cardinalities from the scan models Mutable already prepared in the plan table.
+    for (std::size_t i = 0; i < n; ++i) {
+        const std::uint64_t mask = std::uint64_t{1} << i;
+        connected[mask] = true;
+        M_insist(bool(PT[Subproblem(mask)].model), "DPconv requires a model for every scan");
+        cardinalities[mask] = CE.predict_cardinality(*PT[Subproblem(mask)].model);
+    }
+    if (n == 1) {
+        const auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::high_resolution_clock::now() - t_start).count();
+        std::cout << "DPconv_Cmax = 0\nDPconv_Thresholds = 0\nPlanningTime_us = " << elapsed_us << '\n';
+        return;
+    }
+
+    // Ask the estimator directly for each whole-subproblem model.  This avoids tying the Cmax input to a particular
+    // join-tree decomposition, and uses the estimator's intended multi-source API.  The selected tree is subsequently
+    // materialized with PT.update(), which calculates Mutable's configured plan cost.
+    for (std::size_t size = 2; size <= n; ++size) {
+        for (std::uint64_t mask = 1; mask < N; ++mask) {
+            if (static_cast<std::size_t>(std::popcount(mask)) != size)
+                continue;
+            const Subproblem S(mask);
+            if (not M.is_connected(S))
+                continue;
+            connected[mask] = true;
+            cnf::CNF condition; // Consistent with current plan enumerators; join-condition estimation is TODO.
+            PT[S].model = CE.estimate_join_all(G, PT, S, condition);
+            cardinalities[mask] = CE.predict_cardinality(*PT[S].model);
+        }
+    }
+
+    std::vector<std::uint64_t> thresholds;
+    thresholds.reserve(N);
+    for (std::uint64_t mask = 1; mask < N; ++mask)
+        if (std::popcount(mask) > 1 and connected[mask])
+            thresholds.emplace_back(cardinalities[mask]);
+    std::sort(thresholds.begin(), thresholds.end());
+    thresholds.erase(std::unique(thresholds.begin(), thresholds.end()), thresholds.end());
+    if (thresholds.empty() or not connected[N - 1])
+        throw std::invalid_argument("DPconv requires a connected query graph with at least one join");
+
+    auto solve_threshold = [&](std::uint64_t W) {
+        std::vector<std::uint8_t> feasible(N, false);
+        // Ranked subset zeta values: row r at mask S is the sum of feasible r-element subsets of S.
+        std::vector<std::uint32_t> ranked((n + 1) * N, 0);
+        for (std::uint64_t mask = 1; mask < N; ++mask) {
+            if (std::popcount(mask) == 1) {
+                feasible[mask] = true; // Base relations are not counted as intermediate results in Cmax.
+                ranked[N + mask] = 1;
+            }
+        }
+        for (std::size_t bit = 0; bit < n; ++bit)
+            for (std::uint64_t mask = 0; mask < N; ++mask)
+                if (mask & (std::uint64_t{1} << bit))
+                    ranked[N + mask] += ranked[N + (mask ^ (std::uint64_t{1} << bit))];
+
+        for (std::size_t k = 2; k <= n; ++k) {
+            std::vector<std::int64_t> convolution(N, 0);
+            for (std::uint64_t mask = 0; mask < N; ++mask) {
+                for (std::size_t i = 1; i < k; ++i)
+                    convolution[mask] += std::int64_t(ranked[i * N + mask]) * ranked[(k - i) * N + mask];
+            }
+            // Möbius inversion leaves exactly the ordered disjoint partitions for each k-element subset.
+            for (std::size_t bit = 0; bit < n; ++bit)
+                for (std::uint64_t mask = 0; mask < N; ++mask)
+                    if (mask & (std::uint64_t{1} << bit))
+                        convolution[mask] -= convolution[mask ^ (std::uint64_t{1} << bit)];
+
+            for (std::uint64_t mask = 1; mask < N; ++mask) {
+                if (std::popcount(mask) != k)
+                    continue;
+                feasible[mask] = connected[mask] and cardinalities[mask] <= W and convolution[mask] > 0;
+                ranked[k * N + mask] = feasible[mask];
+            }
+            for (std::size_t bit = 0; bit < n; ++bit)
+                for (std::uint64_t mask = 0; mask < N; ++mask)
+                    if (mask & (std::uint64_t{1} << bit))
+                        ranked[k * N + mask] += ranked[k * N + (mask ^ (std::uint64_t{1} << bit))];
+        }
+        return feasible;
+    };
+
+    // Feasibility is monotone in W. Search the sorted set of distinct estimated intermediate cardinalities.
+    std::size_t low = 0, high = thresholds.size();
+    while (low < high) {
+        const std::size_t middle = low + (high - low) / 2;
+        const auto feasible = solve_threshold(thresholds[middle]);
+        if (feasible[N - 1])
+            high = middle;
+        else
+            low = middle + 1;
+    }
+    if (low == thresholds.size())
+        throw std::runtime_error("DPconv could not find a feasible join tree");
+    const std::uint64_t best_cmax = thresholds[low];
+    const auto feasible = solve_threshold(best_cmax);
+
+    // Recover a witness split only along the final tree. This costs at most O(2^n) subset checks overall.
+    cnf::CNF condition;
+    std::function<void(std::uint64_t)> materialize = [&](std::uint64_t mask) {
+        if (std::popcount(mask) == 1)
+            return;
+        bool found = false;
+        for (std::uint64_t left = (mask - 1) & mask; left != 0; left = (left - 1) & mask) {
+            const std::uint64_t right = mask ^ left;
+            if (left >= right or not feasible[left] or not feasible[right])
+                continue;
+            materialize(left);
+            materialize(right);
+            PT.update(G, CE, CF, Subproblem(left), Subproblem(right), condition);
+            found = true;
+            break;
+        }
+        M_insist(found, "DPconv feasibility result must have a witness split");
+    };
+    materialize(N - 1);
+
+    const auto t_end = std::chrono::high_resolution_clock::now();
+    const auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_start).count();
+    std::cout << "DPconv_Cmax = " << best_cmax << '\n';
+    std::cout << "DPconv_Thresholds = " << thresholds.size() << '\n';
     std::cout << "PlanningTime_us = " << elapsed_us << '\n';
 }
 
@@ -792,6 +952,7 @@ void TDGOO::operator()(enumerate_tag, PlanTable &PT, const QueryGraph &G, const 
 
 #define LIST_PE(X) \
     X(DPccp,        "enumerates connected subgraph complement pairs") \
+    X(DPconv,       "subset-convolution join ordering minimizing maximum intermediate cardinality") \
     X(DPsize,       "size-based subproblem enumeration") \
     X(DPsizeOpt,    "optimized DPsize: does not enumerate symmetric subproblems") \
     X(DPsizeSub,    "DPsize with enumeration of subset complement pairs") \

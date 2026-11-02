@@ -39,7 +39,7 @@ def flatten_query(sql):
     for table in ast.find_all(exp.Table):
         name = table.name.lower()
         if name in TPCDS_TABLES:
-            alias = table.alias or name
+            alias = table.alias or namek
             tables_dict[alias] = name
             
     if not tables_dict:
